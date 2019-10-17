@@ -1,16 +1,17 @@
 import logging
 import numpy as np
-import re
+import random
 
 #
 # Learning for single client
 #
 class Learning:
-    def __init__(self, logLevel, dataPath, labelsPath, timePath):
+    def __init__(self, logLevel, dataPath, labelsPath, timePath, variables):
         logging.basicConfig(level=logLevel)
         self.dataPath = dataPath
         self.labelsPath = labelsPath
         self.timePath = timePath
+        self.variables = variables
 
     def runLearning(self):
         # BiFunction <double[], double[], Double> DISCRIMINATION_FUNCTION = (x, y) -> (x[0] - y[0]) / (Math.abs(x[1] + y[1]));  ###
@@ -23,9 +24,61 @@ class Learning:
         data = self.readMatrixFromFile(self.dataPath, time)  # returns 3D array of data
         logging.info("Data Loaded\n" + '%s' % (data))
 
+        self.learn(0.8, data, labels, time, self.variables)
 
-    def learn(self):
-        pass
+
+    def learn(self, trainPercentage, data, labels, time, variables):
+
+        #make positive and negative training trajectories
+        positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet = self.makeTrainingTrajectories(data, labels, trainPercentage)
+        NE = 50 # number of formulae in the initial population
+        FormulaPopulation pop = new FormulaPopulation(NE)
+
+        atTime = 0 #atTime = 1 for cgm vars
+        lower = [0, 0, 0, 0] #lowerbound
+        upper = [80, 45, 80, 45] # upperbound
+
+
+
+
+
+    def makeTrainingTrajectories(self, data, labels, trainPercentage):
+        positiveTrajectories = []
+        negativeTrajectories = []
+
+        for i in range(len(labels)):
+            if labels[i] == -1:
+                negativeTrajectories.append(i)
+            else:
+                positiveTrajectories.append(i)
+
+        random.shuffle(positiveTrajectories)
+        random.shuffle(negativeTrajectories)
+
+        trainPositiveSize = len(positiveTrajectories) * trainPercentage
+        validationPositiveSize = len(positiveTrajectories) - trainPositiveSize
+        trainNegativeSize = len(negativeTrajectories) * trainPercentage
+        validationNegativeSize = len(negativeTrajectories) - trainNegativeSize
+
+        # these were all 3d arrays  [] [] [] --> I made them one D, and then need to convert to 3D later
+        positiveTrainSet = []  # trainPositiveSize
+        negativeTrainSet = []  # trainNegativeSize
+        positiveValidationSet = []  # validationPositiveSize
+        negativeValidationSet = []  # validationNegativeSize
+
+        for i in range(int(trainPositiveSize)):
+            positiveTrainSet.append(data[positiveTrajectories[i]])
+
+        for i in range(int(trainNegativeSize)):
+            negativeTrainSet.append(data[negativeTrajectories[i]])
+
+        for i in range(int(validationPositiveSize)):
+            positiveValidationSet.append(data[positiveTrajectories[int(trainPositiveSize + i)]])
+
+        for i in range(int(validationNegativeSize)):
+            negativeValidationSet.append(data[negativeTrajectories[int(trainNegativeSize + i)]])
+
+        return positiveTrainSet, negativeTrainSet, positiveValidationSet, negativeValidationSet
 
 
     #Read in 1D vector from a txt file
