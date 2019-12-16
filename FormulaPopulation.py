@@ -32,13 +32,18 @@ class FormulaPopulation:
         self.lowerBound[v] = lower
         self.upperBound[v] = upper
 
+    # Generate initial atomic formulas of G, F, U for each variable
+    # Creates formulas with no params, just rule structure
     def addGeneticInitFormula(self, genOps):
-        #Generate initial atomic formulas of G, F, U for each variable
-        #Creates formulas with no params, just rule structure
-        self.population = self.formulaGen.atomicGeneticFormula(self.formulaGen, variables=self.variables, genOps=genOps)
+        initialFormula = self.formulaGen.atomicGeneticFormula(self.formulaGen, variables=self.variables, genOps=genOps)
+        self.population.extend(initialFormula)
+        self.logFormulas(initialFormula, "Initial")
 
-        self.logFormulas(self.population, "Initial")
 
+    def addRandomInitFormula(self, genOps):
+        randFormula = self.formulaGen.randomFormula(self.formulaGen, genOps=genOps)
+        self.population.extend(randFormula)
+        self.logFormulas(randFormula, "Random")
 
 
     def logFormulas(self, pop, type):

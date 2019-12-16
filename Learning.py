@@ -73,8 +73,11 @@ class Learning:
         #self.genOps.use_or = False
 
         #adding initial Formulae (atomic + G +F + U ), using number of variables
-        #TODO  add this part  in  formula pop
         pop.addGeneticInitFormula(self.genOps)
+
+        #Add random formulas
+        for i in range(self.genOps.max_num_rand):
+            pop.addRandomInitFormula(self.genOps)
 
 
 

@@ -1,6 +1,7 @@
 from FormulaSpec import Formula as FormulaClass
 from FormulaSpec import Parameter as ParamClass
 import itertools
+from scipy.stats import geom
 
 #Generates different formula sets, mainly used for Formula Population
 class FormulaGenerator:
@@ -175,3 +176,20 @@ class FormulaGenerator:
 
 
         return formulas
+
+
+    #TODO Working Here!!!
+    #Generates one random formula with random number of atomic nodes
+    def randomFormula(self, genOps):
+        if(genOps.init__random_number_of_atoms):
+            n = 1 + geom.rvs(1 / genOps.init__average_number_of_atoms, 1)
+        else:
+            n = genOps.init__fixed_number_of_atoms
+
+
+        # MTLnode root = this.generateRandomFormula(n);
+        # MTLformula f = new MTLformula(root);
+        # f.initalize(this.reference_population.store, parameters, null);
+        #
+        # Formula F = new Formula(f);
+        # return F;

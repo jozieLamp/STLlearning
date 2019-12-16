@@ -3,7 +3,7 @@ class GeneticOptions:
     def __init__(self):
 
         self.initialPopSize = 50
-
+        self.max_num_rand = 10
         self.use_or = True
 
         self.threshold_name = "Theta"
