@@ -45,15 +45,23 @@ class Learning:
         #make positive and negative training trajectories
         positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet = self.makeTrainingTrajectories(data, labels, trainPercentage)
 
+        logging.info("Formula Variables" + '%s' % (variables))
+        logging.info("Variable Lower Bounds" + '%s' % (lower))
+        logging.info("Variable Upper Bounds" + '%s' % (upper))
+
+        #Make param dictionary for formula pop
+        pd = {}
+        for i in range(len(variables)):
+            pd.update({variables[i]: [lower[i], upper[i]]})
+
+        logging.info("Param Dict Created" + '%s' % (pd) + "\n")
+
         #Make formula population object to handle formulas
-        pop = FormulaPopulation(self.genOps.initialPopSize)
+        pop = FormulaPopulation(popSize=self.genOps.initialPopSize, paramDict=pd)
 
         #TODO - do we need this variable????
         atTime = min(time) #atTime = 1 for cgm vars #What value time starts at, usually 0 or 1
 
-        logging.info("Formula Variables" + '%s' % (variables))
-        logging.info("Variable Lower Bounds" + '%s' % (lower))
-        logging.info("Variable Upper Bounds" + '%s' % (upper))
 
         #add vars and their values to the formula pop object
         for i in range(len(variables)):
@@ -62,14 +70,15 @@ class Learning:
         #Set some genetic options for min and max time bounds
         self.genOps.min_time_bound = min(time)
         self.genOps.max_time_bound = max(time)
+        #self.genOps.use_or = False
 
         #adding initial Formulae (atomic + G +F + U ), using number of variables
         #TODO  add this part  in  formula pop
-        pop.addGeneticInitFormula(len(variables))
+        pop.addGeneticInitFormula(self.genOps)
 
 
 
-        #Begin  genetic algorithm learning part
+        #Begin genetic algorithm learning part
 
 
 
