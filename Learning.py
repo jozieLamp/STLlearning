@@ -2,6 +2,7 @@ import logging
 import numpy as np
 import random
 from FormulaPopulation import FormulaPopulation
+from GeneticOptions import GeneticOptions
 
 #
 # Learning for single client
@@ -16,18 +17,17 @@ class Learning:
         self.lowerBounds = lower
         self.upperBounds = upper
 
-        #Genetic Options
-        self.initialPopSize = 50 # number of formulae in the initial population
-
-    def setGeneticOptions(self, NE):
-        self.initialPopSize = NE
+        #Genetic Options Object
+        self.genOps = GeneticOptions()
+        self.genOps.initialPopSize = 50 # number of formulae in the initial population
 
 
-
-    def runLearning(self):
+    #start learning process
+    def run(self):
         # BiFunction <double[], double[], Double> DISCRIMINATION_FUNCTION = (x, y) -> (x[0] - y[0]) / (Math.abs(x[1] + y[1]));  ###
 
-        #TODO - add some automatic re-shaping of the actual input data files to be in 3D and not 2D, and create labels
+        #TODO - add some automatic re-shaping of the actual input data files to be in 3D and not 2D
+        #First load labels, time and data
         labels = self.readVectorFromFile(self.labelsPath) # returns one D array of labels
         time = self.readVectorFromFile(self.timePath) # returns one D array of time
         logging.info("Time ROWS "+ str(len(time)))
@@ -35,6 +35,8 @@ class Learning:
         data = self.readMatrixFromFile(self.dataPath, time)  # returns 3D array of data
         logging.info("Data Loaded\n" + '%s' % (data) + "\n")
 
+
+        #Run learning
         self.learn(0.8, data, labels, time, self.variables, self.lowerBounds, self.upperBounds)
 
 
@@ -43,76 +45,35 @@ class Learning:
         #make positive and negative training trajectories
         positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet = self.makeTrainingTrajectories(data, labels, trainPercentage)
 
-        pop = FormulaPopulation(self.initialPopSize)
+        #Make formula population object to handle formulas
+        pop = FormulaPopulation(self.genOps.initialPopSize)
 
-        atTime = 0 #atTime = 1 for cgm vars
+        #TODO - do we need this variable????
+        atTime = min(time) #atTime = 1 for cgm vars #What value time starts at, usually 0 or 1
 
         logging.info("Formula Variables" + '%s' % (variables))
         logging.info("Variable Lower Bounds" + '%s' % (lower))
         logging.info("Variable Upper Bounds" + '%s' % (upper))
 
+        #add vars and their values to the formula pop object
         for i in range(len(variables)):
             pop.addVariable(variables[i], lower[i], upper[i])
 
-        #adding initial Formulae (atomic + G +F + U )
+        #Set some genetic options for min and max time bounds
+        self.genOps.min_time_bound = min(time)
+        self.genOps.max_time_bound = max(time)
+
+        #adding initial Formulae (atomic + G +F + U ), using number of variables
+        #TODO  add this part  in  formula pop
         pop.addGeneticInitFormula(len(variables))
 
 
 
-    def setGeneticOptions(self):
-        threshold_name = "Theta"
-        solution_set_size = 10
-        #can be one of "regularised_logodds", "logodds"
-        fitness_type = "regularised_logodds"
-        size_penalty_coefficient = 1
-        undefined_reference_threshold = 0.1
-        init__random_number_of_atoms = False
-        init__average_number_of_atoms = 3
-        init__fixed_number_of_atoms = 2
-        init__prob_of_less_than = 0.5
-        init__prob_of_true_atom = 0#0.01
-        init__and_weight = 1
-        init__or_weight = 1
-        init__not_weight = 1
-        init__imply_weight = 1
-        init__eventually_weight = 1
-        init__globally_weight = 1
-        init__until_weight = 1
-        init__eventuallyglobally_weight = 1
-        init__globallyeventually_weight = 1
-        min_time_bound = 0 #they set this to 0
-        max_time_bound = 100 #they set this to 11
-        mutate__one_node = True
-        mutate__mutation_probability_per_node = 0.01
-        mutate__mutation_probability_one_node = 1 # 0.05;
-        mutate__insert__weight = 2
-        mutate__delete__weight = 2
-        mutate__replace__weight = 4
-        mutate__change__weight = 0
-        mutate__delete__keep_left_node = 0.5
-        mutate__insert__eventually_weight = 2
-        mutate__insert__globally_weight = 2
-        mutate__insert__negation_weight = 1
-        mutate__replace__modal_to_modal_weight = 3
-        mutate__replace__modal_to_bool_weight = 1
-        mutate__replace__bool_to_modal_weight = 1
-        mutate__replace__bool_to_bool_weight = 3
-        mutate__replace__keep_left_node = 0.5
-        mutate__replace__eventually_weight = 1
-        mutate__replace__globally_weight = 1
-        mutate__replace__until_weight = 1
-        mutate__replace__and_weight = 1
-        mutate__replace__or_weight = 1
-        mutate__replace__imply_weight = 1
-        mutate__replace__not_weight = 1
-        mutate__replace__new_left_node_for_boolean = 0.5
-        mutate__replace__new_left_node_for_until = 0.5
-        mutate__replace__new_left_node_for_until_from_globally = 0.05
-        mutate__replace__new_left_node_for_until_from_eventually = 0.95
-        mutate__change__prob_lower_bound = 0.5
-        mutate__change__proportion_of_variation = 0.1
+        #Begin  genetic algorithm learning part
 
 
+
+    #Make positive and negative training and validation sets
     def makeTrainingTrajectories(self, data, labels, trainPercentage):
         positiveTrajectories = []
         negativeTrajectories = []
@@ -148,6 +109,11 @@ class Learning:
 
         for i in range(int(validationNegativeSize)):
             negativeValidationSet.append(data[negativeTrajectories[int(trainNegativeSize + i)]])
+
+        logging.info("Positive Train Set Size " + str(len(positiveTrainSet)))
+        logging.info("Positive Validation Set Size " + str(len(positiveValidationSet)))
+        logging.info("Negative Train Set Size " + str(len(negativeTrainSet)))
+        logging.info("Negative Validation Set Size " + str(len(negativeValidationSet)) + "\n")
 
         return positiveTrainSet, negativeTrainSet, positiveValidationSet, negativeValidationSet
 

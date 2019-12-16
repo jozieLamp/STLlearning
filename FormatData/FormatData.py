@@ -8,7 +8,7 @@ import numpy as np
 # labelsDeath = []
 # labelsBoth = []
 #
-# with open('hemoSmall 3.csv') as csv_file:
+# with open('hemoChangesOriginal.csv') as csv_file:
 #     csv_reader = csv.reader(csv_file, delimiter=',')
 #     line_count = 0
 #     for line in csv_reader:
@@ -18,11 +18,11 @@ import numpy as np
 #             if i == 0: #DEID Num
 #                 base.append(line[i])
 #                 final.append(line[i])
-#             elif i == 19:
+#             elif i == 79:
 #                 labelsHosp.append([line[i]])
-#             elif i == 20:
+#             elif i == 80:
 #                 labelsDeath.append([line[i]])
-#             elif i == 21:
+#             elif i == 81:
 #                 labelsBoth.append([line[i]])
 #             elif i % 2 == 0.0: #even
 #                 final.append(line[i])
@@ -30,13 +30,13 @@ import numpy as np
 #                 base.append(line[i])
 #         vals.append(base)
 #         vals.append(final)
-
+#
 # print(vals)
 # print(labelsHosp)
 # print(labelsDeath)
 # print(labelsBoth)
-
-# with open('hemo1.csv', 'w') as csvFile:
+#
+# with open('hemoChanges.csv', 'w') as csvFile:
 #     writer = csv.writer(csvFile)
 #     writer.writerows(vals)
 #
@@ -61,18 +61,22 @@ import numpy as np
 # csvFile.close()
 
 
-#format to be in 3D
 
+
+# format to be in 3D
+
+#matlab code
 # data = hemo1{:,2:10};
-# # time = [1,2];
+# time = [1,2];
 # # this is slices x time x attributeNum
-# # data = permute(reshape(data, 433, 2, 9), [1 3 2]);
-#   In ACTUAL order: slices x attributes x time
+# data = permute(reshape(data, 433, 2, 9), [1 3 2]);
+# In ACTUAL order: slices x attributes x time
+
 
 #make 3d array of zeros
 numSlices = 433
 numTime = 2
-numAttb = 9
+numAttb = 39
 
 data = [[[0 for k in range(numAttb)] for j in range(numTime)] for i in range(numSlices)]
 #to access values in 3d array: data[slice][time][attributeNumber]
@@ -86,7 +90,7 @@ data = [[[0 for k in range(numAttb)] for j in range(numTime)] for i in range(num
 #     for line in csv_reader:
 
 
-df = pandas.read_csv('hemo1_noHeader.csv')
+df = pandas.read_csv('hemoChanges.csv')
 print(df)
 
 #row col
@@ -108,7 +112,7 @@ for s in range(numSlices):
 
 #save into txt file
 line = []
-with open('cData.txt', 'w') as outfile:
+with open('cDataChanges.txt', 'w') as outfile:
     for x in range(len(data)):
         for i in range(numTime):
             line = line + data[x][i]

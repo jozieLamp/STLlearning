@@ -20,7 +20,7 @@ class FormulaPopulation:
         #bestSolutions = new TreeSet < Solution > ();
         #setFitness(GeneticOptions.fitness_type);
 
-
+    #Add variables to formula pop store
     def addVariable(self, v, lower, upper):
         #store.addVariable(V, 0);
         self.variables.append(v)

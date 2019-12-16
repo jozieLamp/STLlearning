@@ -11,4 +11,4 @@ l = Learning(logging.INFO, "Data/values", "Data/labels", "Data/times", variables
 
 
 #start learning
-l.runLearning()
+l.run()
