@@ -3,6 +3,8 @@ import numpy as np
 import random
 from FormulaPopulation import FormulaPopulation
 from GeneticOptions import GeneticOptions
+from GeneticPopulation import GeneticPopulation
+from GeneticGenerator import GeneticGenerator
 
 #
 # Learning for single client
@@ -76,12 +78,23 @@ class Learning:
         pop.addGeneticInitFormula(self.genOps)
 
         #Add random formulas
-        for i in range(self.genOps.max_num_rand):
-            pop.addRandomInitFormula(self.genOps)
-
-
+        #TODO = complete this method
+        # for i in range(self.genOps.max_num_rand):
+        #     pop.addRandomInitFormula(self.genOps)
 
         #Begin genetic algorithm learning part
+        generation = GeneticPopulation()
+        genGenerator = GeneticGenerator()
+        numGen = self.genOps.number_generations
+        logging.info("NUMBER OF GENERATIONS: " + '%s' % (numGen))
+        logging.info("GENETIC ALGORITHM - START")
+
+        for k in range(numGen):
+            logging.info("GENERATION #: " + '%s' % (k))
+            logging.info("> OPTIMIZING POPULATION PARAMETER")
+            generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
+                positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
+                            negativeTestSet=negativeTestSet, atTime=atTime)
 
 
 

@@ -2,7 +2,7 @@ from SymbolArray import SymbolArray
 from FormulaSpec import FormulaGenerator as FG, Formula as Formula
 import logging
 
-
+#Class to hold populations of formulas, uses Formula Generator class to generate formulas themselves
 class FormulaPopulation:
     def __init__(self, popSize, paramDict={}):
         self.popSize = popSize
@@ -38,6 +38,7 @@ class FormulaPopulation:
         initialFormula = self.formulaGen.atomicGeneticFormula(self.formulaGen, variables=self.variables, genOps=genOps)
         self.population.extend(initialFormula)
         self.logFormulas(initialFormula, "Initial")
+        logging.info("New size of population is " + '%s' % (len(self.population)) + " formulas \n")
 
 
     def addRandomInitFormula(self, genOps):
@@ -51,3 +52,4 @@ class FormulaPopulation:
 
         for f in pop:
             logging.info('%s' % (f.toString()))
+        #logging.info("---------------------------------------------------\n")
