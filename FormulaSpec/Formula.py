@@ -1,13 +1,8 @@
-
-from enum import Enum
-
-class Operator(Enum) :
-    ALW = G = 1
-    UNTIL = U = 2
-    EV = F = 3
-    AND = 4
-    OR = 5
-    IMPLIES = 6
+from FormulaSpec import Operator
+# class Time:
+#     def __init__(self, lowerBound = 000, upperBound = 000):
+#         self.lowerBound = lowerBound
+#         self.upperBound =  upperBound
 
 #Formula definition
 class Formula:
@@ -21,18 +16,39 @@ class Formula:
         pass
 
 class Formula_G(Formula):
-    def __init__(self, temporalOperator=Operator.G, timeBound=["timeLower", "timeUpper"], boolOperator=None, paramList=[]):
+    def __init__(self, temporalOperator=Operator.Operator_G(), boolOperator=None, paramList=[]):
         self.temporalOperator  = temporalOperator
-        self.timeBound = timeBound
+        self.timeBound = self.temporalOperator.timeBound
         self.boolOperator = boolOperator
         self.paramList = paramList
 
     def toString(self):
+        #convert time to correct formats
+        if isinstance(self.timeBound[0], str):
+            timeLow = self.timeBound[0]
+            timeHigh = self.timeBound[1]
+        else: # type(self.timeBound[0]) == 'int' or type(self.timeBound[0]) == 'float':
+            timeLow = format(self.timeBound[0], '.3f')
+            timeHigh = format(self.timeBound[1], '.3f')
+        # else:
+        #     timeLow  = "ERROR in type format"
+        #     timeHigh = "ERROR in type format"
+
+        #convert param vals to correct formats
+        if isinstance(self.paramList[0].value,str):
+            p0 = self.paramList[0].value
+            if len(self.paramList) != 1:
+                p1 = self.paramList[1].value
+        else:
+            p0 = format(self.paramList[0].value, '.3f')
+            if len(self.paramList) != 1:
+                p1 =  format(self.paramList[1].value, '.3f')
+
         if self.boolOperator == None:
             if len(self.paramList) == 1:
-                statement = self.temporalOperator.name + "[" + self.timeBound[0]+ "," + self.timeBound[1] + "] " + "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + self.paramList[0].value + ")"
+                statement = self.temporalOperator.type.name + "[" + timeLow+ "," + timeHigh + "] " + "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + p0 + ")"
         else:
-            statement = self.temporalOperator.name + "[" + self.timeBound[0]+ "," + self.timeBound[1] + "] " + "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + self.paramList[0].value + " " + self.boolOperator.name + " " + self.paramList[1].name + " " + self.paramList[1].sign + " " + self.paramList[1].value + ")"
+            statement = self.temporalOperator.type.name + "[" + timeLow + "," + timeHigh + "] " + "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + p0 + " " + self.boolOperator.type.name + " " + self.paramList[1].name + " " + self.paramList[1].sign + " " + p1 + ")"
 
         return statement
 
@@ -41,18 +57,39 @@ class Formula_G(Formula):
 
 
 class Formula_F(Formula):
-    def __init__(self, temporalOperator=Operator.F, timeBound=["timeLower", "timeUpper"], boolOperator=None, paramList=[]):
+    def __init__(self, temporalOperator=Operator.Operator_F(), boolOperator=None, paramList=[]):
         self.temporalOperator  = temporalOperator
-        self.timeBound = timeBound
+        self.timeBound = self.temporalOperator.timeBound
         self.boolOperator = boolOperator
         self.paramList = paramList
 
     def toString(self):
+        # convert time to correct formats
+        if isinstance(self.timeBound[0], str):
+            timeLow = self.timeBound[0]
+            timeHigh = self.timeBound[1]
+        else: #type(self.timeBound[0] == 'int') or type(self.timeBound[0]) == 'float':
+            timeLow = format(self.timeBound[0], '.3f')
+            timeHigh = format(self.timeBound[1], '.3f')
+        # else:
+        #     timeLow = "ERROR in type format"
+        #     timeHigh = "ERROR in type format"
+
+        # convert param vals to correct formats
+        if isinstance(self.paramList[0].value, str):
+            p0 = self.paramList[0].value
+            if len(self.paramList) != 1:
+                p1 = self.paramList[1].value
+        else:
+            p0 = format(self.paramList[0].value, '.3f')
+            if len(self.paramList) != 1:
+                p1 = format(self.paramList[1].value, '.3f')
+
         if self.boolOperator == None:
             if len(self.paramList) == 1:
-                statement = self.temporalOperator.name + "[" + self.timeBound[0]+ "," + self.timeBound[1] + "] " + "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + self.paramList[0].value + ")"
+                statement = self.temporalOperator.type.name + "[" + timeLow + "," + timeHigh + "] " + "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + p0 + ")"
         else:
-            statement = self.temporalOperator.name + "[" + self.timeBound[0]+ "," + self.timeBound[1] + "] " + "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + self.paramList[0].value + " "+ self.boolOperator.name + " " + self.paramList[1].name + " " + self.paramList[1].sign + " " + self.paramList[1].value + ")"
+            statement = self.temporalOperator.type.name + "[" + timeLow + "," + timeHigh + "] " + "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + p0 + " "+ self.boolOperator.type.name + " " + self.paramList[1].name + " " + self.paramList[1].sign + " " + p1 + ")"
 
         return statement
 
@@ -61,14 +98,35 @@ class Formula_F(Formula):
 
 
 class Formula_U(Formula):
-    def __init__(self, temporalOperator=Operator.U, timeBound=["timeLower", "timeUpper"], boolOperator=None, paramList=[]):
+    def __init__(self, temporalOperator=Operator.Operator_U(), boolOperator=None, paramList=[]):
         self.temporalOperator  = temporalOperator
-        self.timeBound = timeBound
+        self.timeBound = self.temporalOperator.timeBound
         self.boolOperator = boolOperator
         self.paramList = paramList
 
     def toString(self):
-        statement = "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + self.paramList[0].value + ") " + self.temporalOperator.name + "[" + self.timeBound[0]+ "," + self.timeBound[1] + "] " + "(" + self.paramList[1].name + " " + self.paramList[1].sign + " " + self.paramList[1].value + ")"
+        # convert time to correct formats
+        if isinstance(self.timeBound[0], str):
+            timeLow = self.timeBound[0]
+            timeHigh = self.timeBound[1]
+        else: # type(self.timeBound[0] == 'int' or self.timeBound[0] == 'double'):
+            timeLow = format(self.timeBound[0], '.3f')
+            timeHigh = format(self.timeBound[1], '.3f')
+        # else:
+        #     timeLow = "ERROR in type format"
+        #     timeHigh = "ERROR in type format"
+
+        # convert param vals to correct formats
+        if isinstance(self.paramList[0].value, str):
+            p0 = self.paramList[0].value
+            if len(self.paramList) != 1:
+                p1 = self.paramList[1].value
+        else:
+            p0 = format(self.paramList[0].value, '.3f')
+            if len(self.paramList) != 1:
+                p1 = format(self.paramList[1].value, '.3f')
+
+        statement = "(" + self.paramList[0].name + " " + self.paramList[0].sign + " " + p0 + ") " + self.temporalOperator.type.name + "[" + timeLow + "," + timeHigh + "] " + "(" + self.paramList[1].name + " " + self.paramList[1].sign + " " + p1 + ")"
 
         return statement
 

@@ -51,7 +51,7 @@ class Learning:
         logging.info("Variable Lower Bounds" + '%s' % (lower))
         logging.info("Variable Upper Bounds" + '%s' % (upper))
 
-        #Make param dictionary for formula pop
+        #Make param dictionary for formula pop that stores vars and their lower and upper bounds
         pd = {}
         for i in range(len(variables)):
             pd.update({variables[i]: [lower[i], upper[i]]})
@@ -94,7 +94,7 @@ class Learning:
             logging.info("> OPTIMIZING POPULATION PARAMETER")
             generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
                 positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
-                            negativeTestSet=negativeTestSet, atTime=atTime)
+                            negativeTestSet=negativeTestSet, atTime=atTime, paramDict=pd)
 
 
 
