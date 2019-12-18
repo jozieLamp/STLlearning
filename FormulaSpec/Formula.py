@@ -30,9 +30,6 @@ class Formula_G(Formula):
         else: # type(self.timeBound[0]) == 'int' or type(self.timeBound[0]) == 'float':
             timeLow = format(self.timeBound[0], '.3f')
             timeHigh = format(self.timeBound[1], '.3f')
-        # else:
-        #     timeLow  = "ERROR in type format"
-        #     timeHigh = "ERROR in type format"
 
         #convert param vals to correct formats
         if isinstance(self.paramList[0].value,str):
@@ -71,9 +68,6 @@ class Formula_F(Formula):
         else: #type(self.timeBound[0] == 'int') or type(self.timeBound[0]) == 'float':
             timeLow = format(self.timeBound[0], '.3f')
             timeHigh = format(self.timeBound[1], '.3f')
-        # else:
-        #     timeLow = "ERROR in type format"
-        #     timeHigh = "ERROR in type format"
 
         # convert param vals to correct formats
         if isinstance(self.paramList[0].value, str):
@@ -112,9 +106,6 @@ class Formula_U(Formula):
         else: # type(self.timeBound[0] == 'int' or self.timeBound[0] == 'double'):
             timeLow = format(self.timeBound[0], '.3f')
             timeHigh = format(self.timeBound[1], '.3f')
-        # else:
-        #     timeLow = "ERROR in type format"
-        #     timeHigh = "ERROR in type format"
 
         # convert param vals to correct formats
         if isinstance(self.paramList[0].value, str):
@@ -132,3 +123,10 @@ class Formula_U(Formula):
 
     def printFormula(self):
         print(self.toString())
+
+class AdvancedFormula():
+    def __init__(self, temporalOperator, boolOperator, paramList=[]):
+        self.temporalOperator  = temporalOperator
+        self.timeBound = self.temporalOperator.timeBound
+        self.boolOperator = boolOperator
+        self.paramList = paramList
