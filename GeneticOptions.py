@@ -1,3 +1,4 @@
+
 #Class to handle specific parameteters of genetic algorithm learning process
 class GeneticOptions:
     def __init__(self):
@@ -66,3 +67,13 @@ class GeneticOptions:
 
         self.mutate__change__prob_lower_bound = 0.5
         self.mutate__change__proportion_of_variation = 0.1
+
+    def discriminationFunction(self, x, y):
+        return (x[0] - y[0]) / abs(x[1] + y[1])
+
+
+        #takes array  of doubles of x and  y as input
+        #returns double
+
+
+        #BiFunction <double[], double[], Double> DISCRIMINATION_FUNCTION = (x, y) -> (x[0] - y[0]) / (Math.abs(x[1] + y[1]));
