@@ -1,29 +1,23 @@
-grammar Test;
+grammar SignalTemporalLogic;
 
 
-options {
-	backtrack=true;
-	output=AST;
-}
-
-
-eval	:	statementList;
+evl	:	statementList;
 
 
 
 statementList
-	:	NEWLINE!* statement+
+	:	NEWLINE* statement+
 	;
 
 statement
-	:	declaration NEWLINE!+
-	|	exprOR NEWLINE!+
+	:	declaration NEWLINE+
+	|	exprOR NEWLINE+
 	;
 
 declaration
-	:	CONST^ DOUBLE ID ('='! (INTEGER | FLOAT))? SEMICOLON!
-	|	CONST^ INT ID ('='! INTEGER)? SEMICOLON!
-	|	CONST^ BOOL ID ('='! (TRUE | FALSE))? SEMICOLON!
+	:	CONST DOUBLE ID ('=' (INTEGER | FLOAT))? SEMICOLON
+	|	CONST INT ID ('=' INTEGER)? SEMICOLON
+	|	CONST BOOL ID ('=' (TRUE | FALSE))? SEMICOLON
 	;
 
 
@@ -31,18 +25,18 @@ declaration
 // $<Boolean Expressions
 
 exprOR
-	:	exprAND (OR^ exprAND)*
+	:	exprAND (OR exprAND)*
 	;
 
 exprAND
-	:	stlTerm (AND^ stlTerm)*
+	:	mitlTerm (AND mitlTerm)*
 	;
 
 
 
-stlTerm	:	booelanAtomic (U^ timeBound booelanAtomic)?
-		|	F^ timeBound booelanAtomic
-		|	G^ timeBound booelanAtomic
+mitlTerm	:	booelanAtomic (U timeBound booelanAtomic)?
+		|	F timeBound booelanAtomic
+		|	G timeBound booelanAtomic
 		;
 // $>
 
@@ -50,8 +44,8 @@ stlTerm	:	booelanAtomic (U^ timeBound booelanAtomic)?
 
 // $<Temporal Operators
 timeBound
-	:	'<='! termExpr
-	|	LBRAT! termExpr COMMA^ termExpr RBRAT!
+	:	'<=' termExpr
+	|	LBRAT termExpr COMMA termExpr RBRAT
 	|	termExpr
 	;
 // $>
@@ -60,9 +54,9 @@ timeBound
 
 
 booelanAtomic
-	:	NOT^?
+	:	NOT?
 		(	relationalExpr
-		|	LPAR! exprOR RPAR!
+		|	LPAR exprOR RPAR
 		|	TRUE
 		|	FALSE
 		)
@@ -71,7 +65,7 @@ booelanAtomic
 
 
 relationalExpr
-	:	termExpr (EQ | NEQ | GT | LT | GE | LE)^ termExpr
+	:	termExpr (EQ | NEQ | GT | LT | GE | LE) termExpr
 	;
 
 
@@ -81,29 +75,29 @@ relationalExpr
 
 termExpr
     :    factorExpr
-         ( PLUS^ factorExpr
-         | MINUS^ factorExpr
+         ( PLUS factorExpr
+         | MINUS factorExpr
          )*
     ;
 
 factorExpr
 	:	factor
-		( MULT^ factor
-		| DIV^ factor
+		( MULT factor
+		| DIV factor
 		)*
 	;
 
 factor
-	:	MINUS^?
+	:	MINUS?
 		(functionExpr
 		|	atomic
-		|	LPAR! termExpr RPAR!
+		|	LPAR termExpr RPAR
 
 		)
 	;
 
 functionExpr
-	:	ID^ LPAR! termExpr (COMMA! termExpr)* RPAR!
+	:	ID LPAR termExpr (COMMA termExpr)* RPAR
 	;
 
 atomic
@@ -175,14 +169,15 @@ NEWLINE	:	( '\r'| '\n' )
 
 
 
+
 // $<White space
 
 COMMENT
-    :   '//' ~('\n'|'\r')* {$channel=HIDDEN;}
+    :   '//' ~('\n'|'\r')* -> channel(HIDDEN)
     ;
 
 /* Ignore white space characters, except from newline */
 WS
-    :   (' ' | '\t' | NEWLINE ) {$channel=HIDDEN;}
+    :   (' ' | '\t' | NEWLINE ) -> channel(HIDDEN)
     ;
 // $>
