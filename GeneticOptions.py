@@ -68,6 +68,7 @@ class GeneticOptions:
         self.mutate__change__prob_lower_bound = 0.5
         self.mutate__change__proportion_of_variation = 0.1
 
+    #Takes two arrays of doubles
     def discriminationFunction(self, x, y):
         return (x[0] - y[0]) / abs(x[1] + y[1])
 

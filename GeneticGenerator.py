@@ -71,20 +71,26 @@ class GeneticGenerator:
         #takes list of double point
         #not sure where these numbers come from for point,
         # right now I am initializing them to random num btw 0 and 1 for num of params
+
+        #Initialize parameter values of formula
         point = []
         for i in range(numParams):
             point.append(random.uniform(0,1))
 
-        for i in range(0,numTimeBounds,2):
-            point[i + 1] = point[i] + point[i + 1] * (1 - point[i])
+        #objective function
+        # for i in range(0,numTimeBounds,2):
+        #     point[i + 1] = point[i] + point[i + 1] * (1 - point[i])
 
-        newPoint = []
+        paramVals = []
         for i in range(len(point)):
-            newPoint.append(paramLB[i] + point[i] * (paramUB[i] - paramLB[i]))
+            paramVals.append(paramLB[i] + point[i] * (paramUB[i] - paramLB[i]))
+
+        print("point", paramVals)
+        formula.printFormula()
 
         #TODO compute robustness for positive train set and negative train set
-        posRobustness = self.computeRobustness(time, positiveTrainSet, variablesUnique, formula, point, atTime)
-        negRobustness = self.computeRobustness(time, negativeTrainSet, variablesUnique, formula, point, atTime)
+        posRobustness = self.computeRobustness(time, positiveTrainSet, variablesUnique, formula, paramVals, atTime)
+        #negRobustness = self.computeRobustness(time, negativeTrainSet, variablesUnique, formula, point, atTime)
 
 
         # double[] value1 = computeAverageRobustnessMultiTrajectory(ds2Times, normal_model, variablesUnique, formula, point, atTime);
@@ -95,53 +101,72 @@ class GeneticGenerator:
         # }
         # return abs;
 
+    # -  implementation of GP UCB algorithm
+    def optimizeParams(self):
+        pass
+        #DiscrmFuncVal = GeneticOptions.discriminationFunction(x=, y=)
 
-    # find parameters that have the best robustness - implementation of GP UCB algorithm
-    def computeRobustness(self):
-        DiscrmFuncVal = GeneticOptions.discriminationFunction(x=, y=)
-        BayesianOptimization
+        #bo = BayesianOptimization(GeneticOptions.discriminationFunction(x=,y=))
 
 
-
-    # #find parameters that have the best robustness  -  implementation of GP UCB algorithm
-    # def computeRobustness(self, time, data, variablesUnique, formula, point, atTime):
+    # # find parameters that have the best robustness - implementation of GP UCB algorithm
+    # def computeRobustness(self, time, trainSet, variablesUnique, formula, paramVals, atTime):
+    #     #pos train set is real trajectory values
     #
-    #     #evaluate value for globally
-    #     minVal = 99999999999999
-    #     t1 = formula.temporalOperator.lowerBound + atTime
-    #     t2 = formula.temporalOperator.upperBound + atTime
     #
-    #     #time index after
-    #     timeIndexAfter = None
-    #     for i in range(len(time)):
-    #         if time[i] >= t1:
-    #             timeIndexAfter = i
-    #     timeIndexAfter = len(time)-1
-    #
-    #     timeIndexUntil = None
-    #     for i in range(len(time)):
-    #         if time[i] > t2:
-    #             timeIndexUntil = i - 1
-    #         elif time[i]==t2:
-    #             timeIndexUntil = i
-    #     timeIndexUntil = len(time) - 1
-    #
-    #     if (timeIndexAfter > timeIndexUntil or t1 == t2):
-    #         #TODO
+    #     robustnessList = []
+    #     for trajs in trainSet:
+    #         #robustnessList.append(eval of traj)
     #         pass
-    #         #return formula.evaluateValue(x, times[index2]);
-    #
-    #     #do this for all instances of x variable occurrence??
-    #     for i in range(timeIndexAfter, timeIndexUntil):
-    #         #gets value of actual x val, stored in original variable storage and predicted param value of x in formula
-    #
-    #         #double value = formula.evaluateValue(x, times[i]);
-    #             #value = Math.abs(value2 - value1); # this is x actual val - predicted val
-    #             #depending on what sign used, return value  or - value
-    #
-    #         # if value  <  minVal:
-    #         #     minVal = value
-    #         pass
-    #
-    #
-    #     return minVal
+
+
+
+    #find parameters that have the best robustness
+    def computeRobustness(self, time, trainSet, variablesUnique, formula, paramVals, atTime):
+
+        #Here need to calculate robustness of trajectory x values and time value by recursively calling evaluateValue on STL logic spec
+
+        robustnessList = []
+        for traj in trainSet:
+            val = self.evaluateValue(traj,atTime, formula, time)
+            print("Robustness val ", val)
+            robustnessList.append(val)
+
+
+    def evaluateValue(self, x, atTime, formula, time):
+        #evaluate value for globally
+        minVal = 99999999999999
+        t1 = formula.temporalOperator.lowerBound + atTime
+        t2 = formula.temporalOperator.upperBound + atTime
+
+        #time index after
+        timeIndexAfter = None
+        for i in range(len(time)):
+            if time[i] >= t1:
+                timeIndexAfter = i
+                break
+            else:
+                timeIndexAfter = len(time)-1
+
+        timeIndexUntil = None
+        for i in range(len(time)):
+            if time[i] > t2:
+                timeIndexUntil = i - 1
+                break
+            elif time[i]==t2:
+                timeIndexUntil = i
+                break
+            else:
+               timeIndexUntil = len(time) - 1
+
+        if (timeIndexAfter > timeIndexUntil or t1 == t2):
+            return self.evaluateValue(x, time[timeIndexUntil], formula, time)
+
+        for i in range(timeIndexAfter, timeIndexUntil):
+            #gets value of actual x val, stored in original variable storage and predicted param value of x in formula
+
+            value = self.evaluateValue(x, time[i], formula, time)
+            if value < minVal:
+                minVal = value
+
+        return minVal
