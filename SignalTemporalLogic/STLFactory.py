@@ -11,20 +11,21 @@ class STLFactory:
     def __init__(self):
         pass
 
+    def constructProperty(self, rule):
+        lex = SignalTemporalLogicLexer(InputStream(rule))
+        tokens = CommonTokenStream(lex)
+        parser = SignalTemporalLogicParser(tokens)
+        tree = parser.evl()
+        result = STLExtendedVisitor().visit(tree)
+        print(result)
 
 
 def main():
     factory = STLFactory()
 
     rule = "G[0,100] (x <= 33)\n"
-    # rule = "30"
 
-    lex = SignalTemporalLogicLexer(InputStream(rule))
-    tokens = CommonTokenStream(lex)
-    parser = SignalTemporalLogicParser(tokens)
-    tree = parser.evl()
-    result = STLExtendedVisitor().visit(tree)
-    print(result)
+    factory.constructProperty(rule)
 
 
 if __name__ == '__main__':
