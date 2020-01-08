@@ -1,8 +1,9 @@
 from SignalTemporalLogic.SignalTemporalLogicVisitor import SignalTemporalLogicVisitor
-from FormulaSpec import STLExpr
-from SignalTemporalLogic.FormulaTree import STLNode
-from FormulaSpec.TemporalOperator import *
-from SignalTemporalLogic.FormulaTree import FormulaTree
+from STLTree import STLExpr
+from STLTree.STLTree import STLNode
+from STLTree.STLTree import STLTree
+from STLTree.TemporalOperator import *
+from STLTree.STLExpr import OperatorEnum
 import re
 
 #Parse rule and save it into appropriate formula data structure
@@ -10,7 +11,7 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
     def visit(self, tree):
         #self.formulaTree = treelib.Tree()
-        self.formulaTree = FormulaTree()
+        self.formulaTree = STLTree()
         self.id = 0
         self.prevNode = None
         return tree.accept(self), self.formulaTree

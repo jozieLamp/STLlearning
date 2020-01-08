@@ -1,6 +1,6 @@
 
-from FormulaSpec import STLExpr
-from FormulaSpec.STLExpr import OperatorEnum
+from STLTree import STLExpr
+from STLTree.STLExpr import OperatorEnum
 
 
 class TemporalOperator(STLExpr.STLExpr):

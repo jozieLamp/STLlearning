@@ -5,10 +5,7 @@ from antlr4 import * #CommonTokenStream
 from SignalTemporalLogic.SignalTemporalLogicParser import SignalTemporalLogicParser
 from SignalTemporalLogic.SignalTemporalLogicVisitor import SignalTemporalLogicVisitor
 from SignalTemporalLogic.STLExtendedVisitor import STLExtendedVisitor
-from FormulaSpec import TemporalOperator
-from FormulaSpec.Atomic import Atomic
-import treelib as treelib
-from SignalTemporalLogic.FormulaTree import STLNode
+
 
 class STLFactory:
     def __init__(self):
@@ -19,11 +16,15 @@ class STLFactory:
         tokens = CommonTokenStream(lex)
         parser = SignalTemporalLogicParser(tokens)
         tree = parser.evl()
+
+        #print(tree)
+
         result, formulaTree = STLExtendedVisitor().visit(tree)
-
-        formulaTree.show()
-
-        print(formulaTree.treeToString())
+        print("RESULT", result)
+        #
+        # formulaTree.show()
+        #
+        # print(formulaTree.treeToString())
 
 
 
