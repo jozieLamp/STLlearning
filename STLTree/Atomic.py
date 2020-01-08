@@ -1,7 +1,7 @@
 
 from FormulaSpec import STLExpr
 
-class Atomic(STLExpr):
+class Atomic(STLExpr.STLExpr):
     def __init__(self, value=None):
         self.value = value
         self.previouslyUsedIndex = 0
@@ -15,7 +15,7 @@ class Atomic(STLExpr):
         index = STLExpr.timeIndexAfter_efficient(times, atTime, self.previouslyUsedIndex)
         self.previouslyUsedIndex = index
 
-        return self.expr.evalRobustness() #return value??
+        return self.value.evalRobustness() #return value??
 
 class Parameter(Atomic):
     def __init__(self, name):

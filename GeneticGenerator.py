@@ -1,5 +1,5 @@
 import logging
-from FormulaSpec import Formula
+from FormulaSpec import FormulaOld
 import random
 #from scikit import BayesianOptimization as BO
 import numpy as np
@@ -42,7 +42,7 @@ class GeneticGenerator:
         timeUB = []
 
         #if advanced formula, need to iterate through temporal operator list and get all time bounds
-        if isinstance(formula, Formula.AdvancedFormula):
+        if isinstance(formula, FormulaOld.AdvancedFormula):
             numTimeBounds = 0
             for op in formula.temporalOperator:
                 numTimeBounds += 1

@@ -12,8 +12,11 @@ class OperatorEnum(Enum):
 
 #General STL expression node
 class STLExpr:
-    def __init__(self):
-        pass
+    def __init__(self, expr=None):
+        self.expr = expr
+
+    def toString(self):
+        return self.expr
 
 
 def timeIndexAfter(time, t):

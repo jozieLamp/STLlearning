@@ -3,8 +3,8 @@ from FormulaSpec import STLExpr
 from FormulaSpec.STLExpr import OperatorEnum
 
 
-class TemporalOperator(STLExpr):
-    def __init__(self, type=OperatorEnum.NONE, lowerBound='l', upperBound='u', expr=None):
+class TemporalOperator(STLExpr.STLExpr):
+    def __init__(self, lowerBound='l', upperBound='u', expr=STLExpr.STLExpr, type=OperatorEnum.NONE):
         self.type = type
         self.lowerBound = lowerBound
         self.upperBound = upperBound
@@ -15,9 +15,10 @@ class TemporalOperator(STLExpr):
         return self.type.name + "[" + self.lowerBound + "," + self.upperBound + "]" + "(" + self.expr.toString() + ")"
 
 class Operator_G(TemporalOperator):
-    def __init__(self, type=OperatorEnum.G):
-        super().__init__()
+    def __init__(self, lowerBound='l', upperBound='u', expr=None, type=OperatorEnum.G ):
+        super().__init__(lowerBound, upperBound, expr)
         self.type = type
+
 
     def evalRobustness(self, trajectory, atTime):
         minVal = 9999999
@@ -40,8 +41,8 @@ class Operator_G(TemporalOperator):
 
 
 class Operator_F(TemporalOperator):
-    def __init__(self, type=OperatorEnum.F):
-        super().__init__()
+    def __init__(self, lowerBound='l', upperBound='u', expr=None, type=OperatorEnum.F ):
+        super().__init__(lowerBound, upperBound, expr)
         self.type = type
 
     def evalRobustness(self, trajectory, atTime):
@@ -64,8 +65,8 @@ class Operator_F(TemporalOperator):
 
 
 class Operator_U(TemporalOperator):
-    def __init__(self, type=OperatorEnum.U, expr2=None):
-        super().__init__()
+    def __init__(self, lowerBound='l', upperBound='u', expr=None, type=OperatorEnum.U, expr2=None):
+        super().__init__(lowerBound, upperBound, expr)
         self.type = type
         self.expr2 = expr2
 

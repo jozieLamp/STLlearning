@@ -12,8 +12,8 @@ class BooleanOperator(STLExpr):
 
 
 class Operator_AND(BooleanOperator):
-    def __init__(self, type=OperatorEnum.AND):
-        super().__init__()
+    def __init__(self, expr1=None, expr2=None, type=OperatorEnum.AND):
+        super().__init__(expr1, expr2)
         self.type = type
 
     def evalRobustness(self, trajectory, atTime):
@@ -21,8 +21,8 @@ class Operator_AND(BooleanOperator):
 
 
 class Operator_OR(BooleanOperator):
-    def __init__(self, type=OperatorEnum.OR):
-        super().__init__()
+    def __init__(self, expr1=None, expr2=None, type=OperatorEnum.OR):
+        super().__init__(expr1, expr2)
         self.type = type
 
     def evalRobustness(self, trajectory, atTime):
@@ -31,6 +31,6 @@ class Operator_OR(BooleanOperator):
 
 
 class Operator_IMPLIES(BooleanOperator):
-    def __init__(self, type=OperatorEnum.IMPLIES):
-        super().__init__()
+    def __init__(self, expr1=None, expr2=None, type=OperatorEnum.IMPLIES):
+        super().__init__(expr1, expr2)
         self.type = type

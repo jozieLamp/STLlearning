@@ -1,4 +1,4 @@
-from FormulaSpec import Formula as FormulaClass
+from FormulaSpec import FormulaOld as FormulaClass
 from FormulaSpec import Parameter as ParamClass
 from FormulaSpec import Operator as OperatorClass
 import itertools

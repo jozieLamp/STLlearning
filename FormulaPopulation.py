@@ -1,5 +1,5 @@
 from SymbolArray import SymbolArray
-from FormulaSpec import FormulaGenerator as FG, Formula as Formula
+from FormulaSpec import FormulaGenerator as FG, FormulaOld as Formula
 import logging
 
 #Class to hold populations of formulas, uses Formula Generator class to generate formulas themselves
