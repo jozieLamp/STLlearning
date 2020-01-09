@@ -9,5 +9,5 @@ class STLTree(treelib.Tree):
         nodes = self.all_nodes()
         for n in nodes:
             obj = n.data
-            print(obj.toString(), end = '')
+            print(obj.toString() + " ", end = '')
 

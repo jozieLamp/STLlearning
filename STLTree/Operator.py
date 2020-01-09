@@ -1,4 +1,5 @@
-from STLTree.STLExpr import *
+from STLTree.STLExpr import STLExpr
+from enum import Enum
 
 class OperatorEnum(Enum):
     ALW = G = 1
@@ -7,7 +8,13 @@ class OperatorEnum(Enum):
     AND = 4
     OR = 5
     IMPLIES = 6
-    NONE = 7
+    LT = 7
+    LE = 8
+    GT = 9
+    GE = 10
+    EQ = 11
+    NEQ = 12
+    NONE = 13
 
 class Operator(STLExpr):
     def __init__(self, type=OperatorEnum.NONE):
@@ -45,3 +52,42 @@ class Operator_IMPLIES(Operator):
     def __init__(self, type=OperatorEnum.IMPLIES):
         super(Operator_IMPLIES, self).__init__()
         self.type = type
+
+#Relational Operators
+class Operator_LT(Operator):
+    def __init__(self, type=OperatorEnum.LT):
+        super(Operator_LT, self).__init__()
+        self.type=type
+        self.symbol  = "<"
+
+class Operator_LE(Operator):
+    def __init__(self, type=OperatorEnum.LE):
+        super(Operator_LE, self).__init__()
+        self.type=type
+        self.symbol  = "<="
+
+class Operator_GT(Operator):
+    def __init__(self, type=OperatorEnum.GT):
+        super(Operator_GT, self).__init__()
+        self.type=type
+        self.symbol  = ">"
+
+class Operator_GE(Operator):
+    def __init__(self, type=OperatorEnum.GE):
+        super(Operator_GE, self).__init__()
+        self.type=type
+        self.symbol  = ">="
+
+class Operator_EQ(Operator):
+    def __init__(self, type=OperatorEnum.EQ):
+        super(Operator_EQ, self).__init__()
+        self.type=type
+        self.symbol  = "="
+
+class Operator_NEQ(Operator):
+    def __init__(self, type=OperatorEnum.NEQ):
+        super(Operator_NEQ, self).__init__()
+        self.type=type
+        self.symbol  = "!="
+
+

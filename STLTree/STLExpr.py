@@ -1,14 +1,19 @@
 
 from enum import Enum
 from SignalTemporalLogic import *
-from STLTree.Operator import *
 
 class ExprEnum(Enum):
-    evl = 1
+    eval = evl = 1
     statementList = 2
     statement = 3
-    mitlTerm = 4
-    timeBound = 5
+    declaration = 4
+    mitlTerm = 5
+    timeBound = 6
+    booleanAtomic = 7
+    termExpr = 8
+    factorExpr = 9
+    factor = 10
+    atomic = 11
 
 
 
@@ -18,11 +23,31 @@ class STLExpr:
     def __init__(self, type=ExprEnum.evl):
         self.type = type #expression type
 
+    # def toString(self):
+    #     return self.type.name
+
+class TimeBound(STLExpr):
+    def __init__(self, type=ExprEnum.timeBound, lowerBound="l", upperBound="u"):
+        super(TimeBound, self).__init__()
+        self.type = type
+        self.lowerBound = lowerBound
+        self.upperBound = upperBound
+        self.timeBound = [lowerBound, upperBound]
+
     def toString(self):
-        return self.type.name
+        return "[" + str(self.lowerBound) + "," + str(self.upperBound) + "]"
 
+class TermExpr(STLExpr):
+    def __init__(self): #finish
+        super(TermExpr, self).__init__()
 
+class FactorExpr(STLExpr):
+    def __init__(self): #Finish
+        super(FactorExpr, self).__init__()
 
+class Factor(STLExpr):
+    def __init__(self):#Finish
+        super(Factor, self).__init__()
 
 #Genral STL Expression functions
 
