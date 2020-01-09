@@ -1,5 +1,5 @@
 
-from FormulaSpec.STLExpr import STLExpr
+from STLTree.STLExpr import STLExpr
 
 class RelationalOperator(STLExpr):
     def __init__(self, expr1, rop, expr2):

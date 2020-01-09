@@ -1,10 +1,10 @@
 
 #Class to construct and recognize STL rules using parser and lexer
-from SignalTemporalLogic.SignalTemporalLogicLexer import SignalTemporalLogicLexer
 from antlr4 import * #CommonTokenStream
 from SignalTemporalLogic.SignalTemporalLogicParser import SignalTemporalLogicParser
-from SignalTemporalLogic.SignalTemporalLogicVisitor import SignalTemporalLogicVisitor
+from SignalTemporalLogic.SignalTemporalLogicLexer import SignalTemporalLogicLexer
 from SignalTemporalLogic.STLExtendedVisitor import STLExtendedVisitor
+import treelib as treelib
 
 
 class STLFactory:
@@ -17,10 +17,21 @@ class STLFactory:
         parser = SignalTemporalLogicParser(tokens)
         tree = parser.evl()
 
-        #print(tree)
+
+        # print(tree.toStringTree())
+        # for t in tree.getChildren():
+        #     print("\n")
+        #     print(t)
+
+        #Should traverse tree and at each spot get the parent and add it below the parent
+        #so maybe  traverse all the way to bottom to terminal node and then add in reverse order with parents
+
+        #print(tree.getChildren())
 
         result, formulaTree = STLExtendedVisitor().visit(tree)
         print("RESULT", result)
+
+
         #
         # formulaTree.show()
         #
@@ -37,14 +48,14 @@ def main():
 
     factory.constructProperty(rule)
 
-    # glOp = TemporalOperator.Operator_G(lowerBound="v", upperBound="x")
-    # at = Atomic(value="Bb")
-    #
+
     # tree = treelib.Tree()
-    # tree.create_node("G", "G", parent=None, data=STLNode(glOp))
-    # tree.create_node("Expr", "expr", parent="G", data=STLNode(at))
+    # tree.create_node("root", "root", parent=None)
+    # tree.create_node("1", "1", parent="root")
+    # tree.create_node("2", "2", parent="root")
+    # tree.create_node("3", "3", parent="root")
+    # tree.create_node("4", "4", parent="root")
     # tree.show()
-    # tree.show(data_property="expr")
 
 
 if __name__ == '__main__':

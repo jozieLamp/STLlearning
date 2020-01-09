@@ -1,9 +1,5 @@
 import treelib as treelib
 
-class STLNode():#Delete??
-    def __init__(self, expr):
-        self.expr = expr #STL expression
-
 
 class STLTree(treelib.Tree):
     def __init__(self):

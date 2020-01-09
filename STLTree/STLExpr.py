@@ -1,23 +1,30 @@
 
 from enum import Enum
+from SignalTemporalLogic import *
+from STLTree.Operator import *
 
-class OperatorEnum(Enum):
-    ALW = G = 1
-    UNTIL = U = 2
-    EV = F = 3
-    AND = 4
-    OR = 5
-    IMPLIES = 6
-    NONE = 7
+class ExprEnum(Enum):
+    evl = 1
+    statementList = 2
+    statement = 3
+    mitlTerm = 4
+    timeBound = 5
+
+
+
 
 #General STL expression node
 class STLExpr:
-    def __init__(self, expr=None):
-        self.expr = expr
+    def __init__(self, type=ExprEnum.evl):
+        self.type = type #expression type
 
     def toString(self):
-        return self.expr
+        return self.type.name
 
+
+
+
+#Genral STL Expression functions
 
 def timeIndexAfter(time, t):
     for i in range(len(time)):

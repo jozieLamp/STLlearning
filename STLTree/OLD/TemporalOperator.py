@@ -1,22 +1,18 @@
 
-from STLTree import STLExpr
-from STLTree.STLExpr import OperatorEnum
+
+from STLTree.STLExpr import *
 
 
-class TemporalOperator(STLExpr.STLExpr):
-    def __init__(self, lowerBound='l', upperBound='u', expr=STLExpr.STLExpr, type=OperatorEnum.NONE):
+class TemporalOperator(STLExpr):
+    def __init__(self, type=OperatorEnum.NONE):
         self.type = type
-        self.lowerBound = lowerBound
-        self.upperBound = upperBound
-        self.timeBound = [self.lowerBound, self.upperBound]
-        self.expr = expr
 
     def toString(self):
-        return self.type.name + "[" + self.lowerBound + "," + self.upperBound + "]" + "(" + self.expr.toString() + ")"
+        return self.type.name
 
 class Operator_G(TemporalOperator):
-    def __init__(self, lowerBound='l', upperBound='u', expr=None, type=OperatorEnum.G ):
-        super().__init__(lowerBound, upperBound, expr)
+    def __init__(self, type=OperatorEnum.G ):
+        super().__init__()
         self.type = type
 
 
@@ -25,8 +21,8 @@ class Operator_G(TemporalOperator):
         t1 = self.lowerBound + atTime
         t2 = self.upperBound + atTime
         times = trajectory.time
-        index1 = STLExpr.timeIndexAfter(times, t1)
-        index2 = STLExpr.timeIndexUntil(times, t2)
+        index1 = timeIndexAfter(times, t1)
+        index2 = timeIndexUntil(times, t2)
 
         if index1 > index2 or t1==t2:
             return self.expr.evalRobustness(trajectory, times[index2])
@@ -41,8 +37,8 @@ class Operator_G(TemporalOperator):
 
 
 class Operator_F(TemporalOperator):
-    def __init__(self, lowerBound='l', upperBound='u', expr=None, type=OperatorEnum.F ):
-        super().__init__(lowerBound, upperBound, expr)
+    def __init__(self, type=OperatorEnum.F ):
+        super().__init__()
         self.type = type
 
     def evalRobustness(self, trajectory, atTime):
@@ -65,10 +61,9 @@ class Operator_F(TemporalOperator):
 
 
 class Operator_U(TemporalOperator):
-    def __init__(self, lowerBound='l', upperBound='u', expr=None, type=OperatorEnum.U, expr2=None):
-        super().__init__(lowerBound, upperBound, expr)
+    def __init__(self, type=OperatorEnum.U):
+        super().__init__()
         self.type = type
-        self.expr2 = expr2
 
     def toString(self):
         return "(" + self.expr.toString() + ")" + self.type.name + "[" + self.lowerBound + "," + self.upperBound + "]" + "(" + self.expr2.toString() + ")"
