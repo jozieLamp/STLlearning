@@ -1,9 +1,19 @@
 
 from STLTree.STLExpr import STLExpr
+from enum import Enum
+
+class AtomicEnum(Enum):
+    Atomic = 1
+    BooleanAtomic = 2
+    Parameter = 3
+    Variable = 4
+
 
 class Atomic(STLExpr):
-    def __init__(self, value=None):
+    def __init__(self, value=None, type=AtomicEnum.Atomic):
+        super(Atomic, self).__init__()
         self.value = value
+        self.type = type
 
     # def toString(self):
     #     return self.value
@@ -16,15 +26,20 @@ class Atomic(STLExpr):
     #
     #     return self.value.evalRobustness() #return value??
 
+#param value
 class Parameter(Atomic):
-    def __init__(self, name):
-        super(Parameter, self).__init__()
+    def __init__(self, value, type=AtomicEnum.Parameter):
+        super(Parameter, self).__init__(value)
+        self.type = type
 
+#defined var
 class Variable(Atomic):
-    def __init__(self):
-        super(Variable, self).__init__()
+    def __init__(self, value, type = AtomicEnum.Variable):
+        super(Variable, self).__init__(value)
+        self.type=type
 
 class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
-    def __init__(self, truthVal=None):
+    def __init__(self, type=AtomicEnum.BooleanAtomic, truthVal=None):
         super(BooleanAtomic, self).__init__()
         self.truthVal = truthVal
+        self.type = type

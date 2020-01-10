@@ -9,8 +9,6 @@ class ExprEnum(Enum):
     declaration = 4
     stlTerm = 5
     timeBound = 6
-    booleanAtomic = 7
-    atomic = 8
 
 
 
@@ -20,8 +18,8 @@ class STLExpr:
     def __init__(self, type=ExprEnum.evl):
         self.type = type #expression type
 
-    # def toString(self):
-    #     return self.type.name
+    def toString(self):
+        return ""
 
 class TimeBound(STLExpr):
     def __init__(self, type=ExprEnum.timeBound, lowerBound="l", upperBound="u"):

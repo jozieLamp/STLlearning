@@ -7,6 +7,7 @@ from STLTree.Operator import *
 from STLTree.Atomic import *
 import re
 from antlr4.tree.Tree import TerminalNodeImpl
+import treelib as treelib
 
 
 #Parse rule and save it into appropriate formula data structure
@@ -68,39 +69,25 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
     # Visit a parse tree produced by SignalTemporalLogicParser#boolExpr.
     def visitBoolExpr(self, ctx, parentID=None):
-        return self.visitChildren(ctx, parentID)
+        print("bool expr")
+        clds = []
+        for c in ctx.getChildren():
+            clds.append(c.getText())
 
-    # Visit a parse tree produced by SignalTemporalLogicParser#exprOR.
-    # def visitExprOR(self, ctx, parentID=None):
-    #     print("or")
-    #     clds = []
-    #     for c in ctx.getChildren():
-    #         clds.append(c.getText())
-    #
-    #     if "|" in clds:
-    #         id = self.generateID(OperatorEnum.OR)
-    #         self.formulaTree.create_node(id, id, parent=parentID, data=Operator_OR())
-    #
-    #         return self.visitChildren(ctx, id)
-    #     else:
-    #         return self.visitChildren(ctx, parentID)
-    #
-    #
-    # # Visit a parse tree produced by SignalTemporalLogicParser#exprAND.
-    # def visitExprAND(self, ctx, parentID=None):
-    #     print("and")
-    #     clds = []
-    #     for c in ctx.getChildren():
-    #         clds.append(c.getText())
-    #
-    #     if "&" in clds:
-    #         id = self.generateID(OperatorEnum.AND)
-    #         self.formulaTree.create_node(id, id, parent=parentID, data=Operator_AND())
-    #
-    #         return self.visitChildren(ctx, id)
-    #     else:
-    #         return self.visitChildren(ctx, parentID)
-
+        if "|" in clds:
+            id = self.generateID(OperatorEnum.OR)
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_OR())
+            return self.visitChildren(ctx, id)
+        elif "&" in clds:
+            id = self.generateID(OperatorEnum.AND)
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_AND())
+            return self.visitChildren(ctx, id)
+        elif "->" in clds:
+            id = self.generateID(OperatorEnum.IMPLIES)
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_IMPLIES())
+            return self.visitChildren(ctx, id)
+        else: #no actual and  or implies bool operator
+            return self.visitChildren(ctx, parentID)
 
 
     # Visit a parse tree produced by SignalTemporalLogicParser#stlTerm.
@@ -132,13 +119,14 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
     # Visit a parse tree produced by SignalTemporalLogicParser#timeBound.
     def visitTimeBound(self, ctx, parentID=None):
+        print("timebound")
         time = ctx.getText()
         numbers = re.findall(r"[\w']+", time)
 
         id = self.generateID(ExprEnum.timeBound)
         self.formulaTree.create_node(id, id, parent=parentID, data=TimeBound(numbers[0], numbers[1]))
 
-        return self.visitChildren(ctx, id)
+        return self.visitChildren(ctx, "NA")
 
 
     # Visit a parse tree produced by SignalTemporalLogicParser#booelanAtomic.
@@ -150,11 +138,11 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
             clds.append(c.getText())
 
         if "true" in clds or "false" in clds:
-            id = self.generateID(ExprEnum.booleanAtomic)
+            id = self.generateID(AtomicEnum.BooleanAtomic)
             self.formulaTree.create_node(id, id, parent=parentID, data=BooleanAtomic(truthVal=clds))
         else:
-            id = self.generateID(ExprEnum.booleanAtomic)
-            self.formulaTree.create_node(id, id, parent=parentID, data=BooleanAtomic(truthVal=None))
+            id = self.generateID(AtomicEnum.BooleanAtomic)
+            self.formulaTree.create_node(id, id, parent=parentID, data=BooleanAtomic())
 
 
         return self.visitChildren(ctx, id)
@@ -168,36 +156,37 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
         for c in ctx.getChildren():
             clds.append(c.getText())
 
+        var = Variable(value=clds[0])
+        param = Parameter(value=clds[2])
 
         if "<" in clds:
             id = self.generateID(OperatorEnum.LT)
-            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_LT())
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_LT(var, param))
         elif "<=" in clds:
             id = self.generateID(OperatorEnum.LE)
-            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_LE())
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_LE(var, param))
         elif ">" in clds:
             id = self.generateID(OperatorEnum.GT)
-            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_GT())
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_GT(var, param))
         elif ">=" in clds:
             id = self.generateID(OperatorEnum.GE)
-            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_GE())
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_GE(var, param))
         elif "=" in clds:
             id = self.generateID(OperatorEnum.EQ)
-            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_EQ())
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_EQ(var, param))
         else: #NEQ
             id = self.generateID(OperatorEnum.NEQ)
-            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_NEQ())
+            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_NEQ(var, param))
 
-
-
-        return self.visitChildren(ctx, id)
+        return self.visitChildren(ctx, "NA")
 
 
     def visitAtomic(self, ctx, parentID=None):
         print("atomic", ctx.getText())
 
-        id = self.generateID(ExprEnum.atomic)
-        self.formulaTree.create_node(id, id, parent=parentID, data=Atomic(value=ctx.getText()))
+        if parentID != "NA":
+            id = self.generateID(AtomicEnum.Atomic)
+            self.formulaTree.create_node(id, id, parent=parentID, data=Atomic(value=ctx.getText()))
 
         return ctx.getText()
 
