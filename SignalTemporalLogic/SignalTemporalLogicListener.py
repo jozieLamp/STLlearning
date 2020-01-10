@@ -44,30 +44,21 @@ class SignalTemporalLogicListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SignalTemporalLogicParser#exprOR.
-    def enterExprOR(self, ctx:SignalTemporalLogicParser.ExprORContext):
+    # Enter a parse tree produced by SignalTemporalLogicParser#boolExpr.
+    def enterBoolExpr(self, ctx:SignalTemporalLogicParser.BoolExprContext):
         pass
 
-    # Exit a parse tree produced by SignalTemporalLogicParser#exprOR.
-    def exitExprOR(self, ctx:SignalTemporalLogicParser.ExprORContext):
-        pass
-
-
-    # Enter a parse tree produced by SignalTemporalLogicParser#exprAND.
-    def enterExprAND(self, ctx:SignalTemporalLogicParser.ExprANDContext):
-        pass
-
-    # Exit a parse tree produced by SignalTemporalLogicParser#exprAND.
-    def exitExprAND(self, ctx:SignalTemporalLogicParser.ExprANDContext):
+    # Exit a parse tree produced by SignalTemporalLogicParser#boolExpr.
+    def exitBoolExpr(self, ctx:SignalTemporalLogicParser.BoolExprContext):
         pass
 
 
-    # Enter a parse tree produced by SignalTemporalLogicParser#mitlTerm.
-    def enterMitlTerm(self, ctx:SignalTemporalLogicParser.MitlTermContext):
+    # Enter a parse tree produced by SignalTemporalLogicParser#stlTerm.
+    def enterStlTerm(self, ctx:SignalTemporalLogicParser.StlTermContext):
         pass
 
-    # Exit a parse tree produced by SignalTemporalLogicParser#mitlTerm.
-    def exitMitlTerm(self, ctx:SignalTemporalLogicParser.MitlTermContext):
+    # Exit a parse tree produced by SignalTemporalLogicParser#stlTerm.
+    def exitStlTerm(self, ctx:SignalTemporalLogicParser.StlTermContext):
         pass
 
 
@@ -95,42 +86,6 @@ class SignalTemporalLogicListener(ParseTreeListener):
 
     # Exit a parse tree produced by SignalTemporalLogicParser#relationalExpr.
     def exitRelationalExpr(self, ctx:SignalTemporalLogicParser.RelationalExprContext):
-        pass
-
-
-    # Enter a parse tree produced by SignalTemporalLogicParser#termExpr.
-    def enterTermExpr(self, ctx:SignalTemporalLogicParser.TermExprContext):
-        pass
-
-    # Exit a parse tree produced by SignalTemporalLogicParser#termExpr.
-    def exitTermExpr(self, ctx:SignalTemporalLogicParser.TermExprContext):
-        pass
-
-
-    # Enter a parse tree produced by SignalTemporalLogicParser#factorExpr.
-    def enterFactorExpr(self, ctx:SignalTemporalLogicParser.FactorExprContext):
-        pass
-
-    # Exit a parse tree produced by SignalTemporalLogicParser#factorExpr.
-    def exitFactorExpr(self, ctx:SignalTemporalLogicParser.FactorExprContext):
-        pass
-
-
-    # Enter a parse tree produced by SignalTemporalLogicParser#factor.
-    def enterFactor(self, ctx:SignalTemporalLogicParser.FactorContext):
-        pass
-
-    # Exit a parse tree produced by SignalTemporalLogicParser#factor.
-    def exitFactor(self, ctx:SignalTemporalLogicParser.FactorContext):
-        pass
-
-
-    # Enter a parse tree produced by SignalTemporalLogicParser#functionExpr.
-    def enterFunctionExpr(self, ctx:SignalTemporalLogicParser.FunctionExprContext):
-        pass
-
-    # Exit a parse tree produced by SignalTemporalLogicParser#functionExpr.
-    def exitFunctionExpr(self, ctx:SignalTemporalLogicParser.FunctionExprContext):
         pass
 
 

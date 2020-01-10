@@ -5,7 +5,6 @@ from STLTree.Operator import OperatorEnum
 from STLTree.STLExpr import TimeBound
 from STLTree.Operator import *
 from STLTree.Atomic import *
-from STLTree.STLExpr import TermExpr, Factor, FactorExpr
 import re
 from antlr4.tree.Tree import TerminalNodeImpl
 
@@ -13,7 +12,7 @@ from antlr4.tree.Tree import TerminalNodeImpl
 #Parse rule and save it into appropriate formula data structure
 class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
-    #Overwride of parse tree methods
+    #Overwrite of parse tree methods
     def visit(self, tree):
         self.formulaTree = STLTree()
         self.idDict =  {}
@@ -34,8 +33,6 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
             result = self.aggregateResult(result, childResult)
 
         return result
-
-
 
 
     # Visit a parse tree produced by SignalTemporalLogicParser#evl.
@@ -69,46 +66,50 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
         self.formulaTree.create_node(id, id, parent=parentID, data=STLExpr(type=ExprEnum.declaration))
         return self.visitChildren(ctx, id)
 
+    # Visit a parse tree produced by SignalTemporalLogicParser#boolExpr.
+    def visitBoolExpr(self, ctx, parentID=None):
+        return self.visitChildren(ctx, parentID)
 
     # Visit a parse tree produced by SignalTemporalLogicParser#exprOR.
-    def visitExprOR(self, ctx, parentID=None):
-        print("or")
-        clds = []
-        for c in ctx.getChildren():
-            clds.append(c.getText())
+    # def visitExprOR(self, ctx, parentID=None):
+    #     print("or")
+    #     clds = []
+    #     for c in ctx.getChildren():
+    #         clds.append(c.getText())
+    #
+    #     if "|" in clds:
+    #         id = self.generateID(OperatorEnum.OR)
+    #         self.formulaTree.create_node(id, id, parent=parentID, data=Operator_OR())
+    #
+    #         return self.visitChildren(ctx, id)
+    #     else:
+    #         return self.visitChildren(ctx, parentID)
+    #
+    #
+    # # Visit a parse tree produced by SignalTemporalLogicParser#exprAND.
+    # def visitExprAND(self, ctx, parentID=None):
+    #     print("and")
+    #     clds = []
+    #     for c in ctx.getChildren():
+    #         clds.append(c.getText())
+    #
+    #     if "&" in clds:
+    #         id = self.generateID(OperatorEnum.AND)
+    #         self.formulaTree.create_node(id, id, parent=parentID, data=Operator_AND())
+    #
+    #         return self.visitChildren(ctx, id)
+    #     else:
+    #         return self.visitChildren(ctx, parentID)
 
-        if "|" in clds:
-            id = self.generateID(OperatorEnum.OR)
-            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_OR())
-
-            return self.visitChildren(ctx, id)
-        else:
-            return self.visitChildren(ctx, parentID)
 
 
-    # Visit a parse tree produced by SignalTemporalLogicParser#exprAND.
-    def visitExprAND(self, ctx, parentID=None):
-        print("and")
-        clds = []
-        for c in ctx.getChildren():
-            clds.append(c.getText())
+    # Visit a parse tree produced by SignalTemporalLogicParser#stlTerm.
+    def visitStlTerm(self, ctx, parentID=None):
 
-        if "&" in clds:
-            id = self.generateID(OperatorEnum.AND)
-            self.formulaTree.create_node(id, id, parent=parentID, data=Operator_AND())
+        print("stlTerm")
 
-            return self.visitChildren(ctx, id)
-        else:
-            return self.visitChildren(ctx, parentID)
-
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#mitlTerm.
-    def visitMitlTerm(self, ctx, parentID=None):
-        print("mitlTerm")
-
-        mitlID = self.generateID(ExprEnum.mitlTerm)
-        self.formulaTree.create_node(mitlID, mitlID, parent=parentID, data=STLExpr(type=ExprEnum.mitlTerm))
+        stlID = self.generateID(ExprEnum.stlTerm)
+        self.formulaTree.create_node(stlID, stlID, parent=parentID, data=STLExpr(type=ExprEnum.stlTerm))
 
         clds = []
         for c in ctx.getChildren():
@@ -116,17 +117,17 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
         if "G" in clds:
             id = self.generateID(OperatorEnum.G)
-            self.formulaTree.create_node(id, id, parent=mitlID, data=Operator_G())
+            self.formulaTree.create_node(id, id, parent=stlID, data=Operator_G())
         elif "F" in clds:
             id = self.generateID(OperatorEnum.F)
-            self.formulaTree.create_node(id, id, parent=mitlID, data=Operator_F())
+            self.formulaTree.create_node(id, id, parent=stlID, data=Operator_F())
         elif "U" in clds:
             id = self.generateID(OperatorEnum.U)
-            self.formulaTree.create_node(id, id, parent=mitlID, data=Operator_U())
+            self.formulaTree.create_node(id, id, parent=stlID, data=Operator_U())
         else:
             pass
 
-        return self.visitChildren(ctx, mitlID)
+        return self.visitChildren(ctx, stlID)
 
 
     # Visit a parse tree produced by SignalTemporalLogicParser#timeBound.
@@ -190,42 +191,6 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
 
         return self.visitChildren(ctx, id)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#termExpr.
-    def visitTermExpr(self, ctx, parentID=None):
-        print("term expr")
-        print("PARET", parentID)
-
-        id = self.generateID(ExprEnum.termExpr)
-        self.formulaTree.create_node(id, id, parent=parentID, data=TermExpr())
-
-        return self.visitChildren(ctx, id)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#factorExpr.
-    def visitFactorExpr(self, ctx, parentID=None):
-        print("factor expr")
-
-        id = self.generateID(ExprEnum.factorExpr)
-        self.formulaTree.create_node(id, id, parent=parentID, data=FactorExpr())
-
-        return self.visitChildren(ctx, id)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#factor.
-    def visitFactor(self, ctx, parentID=None):
-        print("factor")
-        id = self.generateID(ExprEnum.factor)
-        self.formulaTree.create_node(id, id, parent=parentID, data=Factor())
-
-        return self.visitChildren(ctx, id)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#functionExpr.
-    def visitFunctionExpr(self, ctx, parentID=None):
-
-        return self.visitChildren(ctx)
 
 
     def visitAtomic(self, ctx, parentID=None):

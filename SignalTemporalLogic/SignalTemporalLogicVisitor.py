@@ -29,18 +29,13 @@ class SignalTemporalLogicVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by SignalTemporalLogicParser#exprOR.
-    def visitExprOR(self, ctx:SignalTemporalLogicParser.ExprORContext):
+    # Visit a parse tree produced by SignalTemporalLogicParser#boolExpr.
+    def visitBoolExpr(self, ctx:SignalTemporalLogicParser.BoolExprContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by SignalTemporalLogicParser#exprAND.
-    def visitExprAND(self, ctx:SignalTemporalLogicParser.ExprANDContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#mitlTerm.
-    def visitMitlTerm(self, ctx:SignalTemporalLogicParser.MitlTermContext):
+    # Visit a parse tree produced by SignalTemporalLogicParser#stlTerm.
+    def visitStlTerm(self, ctx:SignalTemporalLogicParser.StlTermContext):
         return self.visitChildren(ctx)
 
 
@@ -56,26 +51,6 @@ class SignalTemporalLogicVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by SignalTemporalLogicParser#relationalExpr.
     def visitRelationalExpr(self, ctx:SignalTemporalLogicParser.RelationalExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#termExpr.
-    def visitTermExpr(self, ctx:SignalTemporalLogicParser.TermExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#factorExpr.
-    def visitFactorExpr(self, ctx:SignalTemporalLogicParser.FactorExprContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#factor.
-    def visitFactor(self, ctx:SignalTemporalLogicParser.FactorContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by SignalTemporalLogicParser#functionExpr.
-    def visitFunctionExpr(self, ctx:SignalTemporalLogicParser.FunctionExprContext):
         return self.visitChildren(ctx)
 
 

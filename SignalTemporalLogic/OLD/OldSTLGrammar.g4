@@ -1,7 +1,9 @@
-grammar SignalTemporalLogic;
+//grammar SignalTemporalLogic;
+grammar OldSTLGrammar;
 
 
 evl	:	statementList;
+
 
 
 statementList
@@ -10,7 +12,7 @@ statementList
 
 statement
 	:	declaration NEWLINE+
-	|	boolExpr NEWLINE+
+	|	exprOR NEWLINE+
 	;
 
 declaration
@@ -22,14 +24,18 @@ declaration
 
 
 // $<Boolean Expressions
-boolExpr
-    :   stlTerm (OR stlTerm)*
-    |   stlTerm (AND stlTerm)*
-    |   stlTerm (IMPLIES stlTerm)*
-    ;
+
+exprOR
+	:	exprAND (OR exprAND)*
+	;
+
+exprAND
+	:	mitlTerm (AND mitlTerm)*
+	;
 
 
-stlTerm	:	booelanAtomic (U timeBound booelanAtomic)?
+
+mitlTerm	:	booelanAtomic (U timeBound booelanAtomic)?
 		|	F timeBound booelanAtomic
 		|	G timeBound booelanAtomic
 		;
@@ -39,9 +45,9 @@ stlTerm	:	booelanAtomic (U timeBound booelanAtomic)?
 
 // $<Temporal Operators
 timeBound
-	:	'<=' atomic
-	|	LBRAT atomic COMMA atomic RBRAT
-	|	atomic
+	:	'<=' termExpr
+	|	LBRAT termExpr COMMA termExpr RBRAT
+	|	termExpr
 	;
 // $>
 
@@ -51,7 +57,7 @@ timeBound
 booelanAtomic
 	:	NOT?
 		(	relationalExpr
-		|	LPAR boolExpr RPAR
+		|	LPAR exprOR RPAR
 		|	TRUE
 		|	FALSE
 		)
@@ -60,9 +66,40 @@ booelanAtomic
 
 
 relationalExpr
-	:	atomic (EQ | NEQ | GT | LT | GE | LE) atomic
+	:	termExpr (EQ | NEQ | GT | LT | GE | LE) termExpr
 	;
 
+
+
+
+// $<Arithmetic Expressions
+
+termExpr
+    :    factorExpr
+         ( PLUS factorExpr
+         | MINUS factorExpr
+         )*
+    ;
+
+factorExpr
+	:	factor
+		( MULT factor
+		| DIV factor
+		)*
+	;
+
+factor
+	:	MINUS?
+		(functionExpr
+		|	atomic
+		|	LPAR termExpr RPAR
+
+		)
+	;
+
+functionExpr
+	:	ID LPAR termExpr (COMMA termExpr)* RPAR
+	;
 
 atomic
 	:	(INTEGER | FLOAT)
@@ -89,9 +126,13 @@ G       :	'G';
 TRUE	:	'true';
 FALSE	:	'false';
 
+PLUS	:	'+';
+MINUS	:	'-';
+MULT	:	'*';
+DIV	:	'/';
+
 AND	:	'&';
 OR	:	'|';
-IMPLIES: '->';
 NOT	:	'!';
 
 EQ	:	'=';

@@ -7,13 +7,10 @@ class ExprEnum(Enum):
     statementList = 2
     statement = 3
     declaration = 4
-    mitlTerm = 5
+    stlTerm = 5
     timeBound = 6
     booleanAtomic = 7
-    termExpr = 8
-    factorExpr = 9
-    factor = 10
-    atomic = 11
+    atomic = 8
 
 
 
@@ -37,17 +34,6 @@ class TimeBound(STLExpr):
     def toString(self):
         return "[" + str(self.lowerBound) + "," + str(self.upperBound) + "]"
 
-class TermExpr(STLExpr):
-    def __init__(self): #finish
-        super(TermExpr, self).__init__()
-
-class FactorExpr(STLExpr):
-    def __init__(self): #Finish
-        super(FactorExpr, self).__init__()
-
-class Factor(STLExpr):
-    def __init__(self):#Finish
-        super(Factor, self).__init__()
 
 #Genral STL Expression functions
 
