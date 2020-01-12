@@ -4,8 +4,8 @@ from antlr4 import * #CommonTokenStream
 from SignalTemporalLogic.SignalTemporalLogicParser import SignalTemporalLogicParser
 from SignalTemporalLogic.SignalTemporalLogicLexer import SignalTemporalLogicLexer
 from SignalTemporalLogic.STLExtendedVisitor import STLExtendedVisitor
+from STLTree.STLTree import STLTree
 import treelib as treelib
-
 
 class STLFactory:
     def __init__(self):
@@ -35,7 +35,7 @@ class STLFactory:
 
         formulaTree.show()
 
-        print(formulaTree.treeToString())
+        print(formulaTree.printTree())
         #formulaTree.expand_tree(mode=treelib.Tree.DEPTH)
 
 
@@ -45,18 +45,19 @@ def main():
 
     #rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n"
     #rule = "G[0,100] x <= 33 & y >= 20\n"
-    rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n (z > 4 U[20,20] q > 3)\n"
+    rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n (z > 4 U[0,20] q > 3)"
 
 
     factory.constructProperty(rule)
 
 
-    # tree = treelib.Tree()
-    # tree.create_node("b", "root", parent=None)
-    # tree.create_node("1", "s", parent="root")
-    # tree.create_node("2", "2s", parent="root")
-    # tree.create_node("3", "3s", parent="root")
-    # tree.create_node("4", "4s", parent="root")
+    #Need to figure out how to show  this in order
+    # tree = STLTree()
+    # tree.create_node("root", "root", parent=None)
+    # tree.create_node("one", "one", parent="root")
+    # tree.create_node("two", "two", parent="root")
+    # tree.create_node("three", "three", parent="root")
+    # tree.create_node("four", "four", parent="root")
     # tree.show()
 
 

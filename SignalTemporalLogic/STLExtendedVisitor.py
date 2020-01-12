@@ -122,9 +122,10 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
         print("timebound")
         time = ctx.getText()
         numbers = re.findall(r"[\w']+", time)
+        print(numbers[0])
 
         id = self.generateID(ExprEnum.timeBound)
-        self.formulaTree.create_node(id, id, parent=parentID, data=TimeBound(numbers[0], numbers[1]))
+        self.formulaTree.create_node(id, id, parent=parentID, data=TimeBound(lowerBound=numbers[0], upperBound=numbers[1]))
 
         return self.visitChildren(ctx, "NA")
 
@@ -182,9 +183,9 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
 
     def visitAtomic(self, ctx, parentID=None):
-        print("atomic", ctx.getText())
 
         if parentID != "NA":
+            print("atomic", ctx.getText())
             id = self.generateID(AtomicEnum.Atomic)
             self.formulaTree.create_node(id, id, parent=parentID, data=Atomic(value=ctx.getText()))
 
