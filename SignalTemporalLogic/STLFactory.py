@@ -29,11 +29,11 @@ class STLFactory:
         #print(tree.getChildren())
 
         result, formulaTree = STLExtendedVisitor().visit(tree)
-        print("RESULT", result)
 
 
 
         formulaTree.show()
+        #formulaTree.test()
 
         print(formulaTree.printTree())
         #formulaTree.expand_tree(mode=treelib.Tree.DEPTH)
@@ -45,7 +45,7 @@ def main():
 
     #rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n"
     #rule = "G[0,100] x <= 33 & y >= 20\n"
-    rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n (z > 4 U[0,20] q > 3)"
+    rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n (z > 4 U[0,20] q > 3)\n"
 
 
     factory.constructProperty(rule)

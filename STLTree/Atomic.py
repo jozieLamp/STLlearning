@@ -16,7 +16,8 @@ class Atomic(STLExpr):
         self.type = type
 
     # def toString(self):
-    #     return self.value
+    #     if self.value != None:
+    #         return self.value)
     #
     # # May need to do something here cause these are terminal nodes, return true values or something
     # def evalRobustness(self, trajectory, atTime):
@@ -32,11 +33,17 @@ class Parameter(Atomic):
         super(Parameter, self).__init__(value)
         self.type = type
 
+    def toString(self):
+        return str(self.value)
+
 #defined var
 class Variable(Atomic):
     def __init__(self, value, type = AtomicEnum.Variable):
         super(Variable, self).__init__(value)
         self.type=type
+
+    def toString(self):
+        return self.value
 
 class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
     def __init__(self, type=AtomicEnum.BooleanAtomic, truthVal=None):

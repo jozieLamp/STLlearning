@@ -58,48 +58,46 @@ class Operator_IMPLIES(Operator):
 
 #Relational Operators
 class RelationalOperator(Operator):
-    def __init__(self, atomic1, atomic2, type, symbol="??"):
+    def __init__(self, type, symbol="??"):
         super(RelationalOperator, self).__init__(type)
-        self.atomic1 = atomic1
-        self.atomic2 = atomic2
         self.symbol = symbol
 
     def toString(self):
-        return self.atomic1.value + " " + self.symbol + " " + self.atomic2.value
+        return self.symbol
 
 class Operator_LT(RelationalOperator):
-    def __init__(self, atomic1, atomic2, type=OperatorEnum.LT, symbol="<"):
-        super(Operator_LT, self).__init__(atomic1, atomic2, type)
+    def __init__(self, type=OperatorEnum.LT, symbol="<"):
+        super(Operator_LT, self).__init__(type)
         self.type=type
-        self.symbol  = symbol
+        self.symbol = symbol
 
 class Operator_LE(RelationalOperator):
-    def __init__(self, atomic1, atomic2, type=OperatorEnum.LE, symbol="<="):
-        super(Operator_LE, self).__init__(atomic1, atomic2, type)
+    def __init__(self, type=OperatorEnum.LE, symbol="<="):
+        super(Operator_LE, self).__init__(type)
         self.type=type
         self.symbol  = symbol
 
 class Operator_GT(RelationalOperator):
-    def __init__(self, atomic1, atomic2, type=OperatorEnum.GT, symbol=">"):
-        super(Operator_GT, self).__init__(atomic1, atomic2, type)
+    def __init__(self, type=OperatorEnum.GT, symbol=">"):
+        super(Operator_GT, self).__init__(type)
         self.type=type
         self.symbol  = symbol
 
 class Operator_GE(RelationalOperator):
-    def __init__(self, atomic1, atomic2, type=OperatorEnum.GE, symbol=">="):
-        super(Operator_GE, self).__init__(atomic1, atomic2, type)
+    def __init__(self, type=OperatorEnum.GE, symbol=">="):
+        super(Operator_GE, self).__init__(type)
         self.type=type
         self.symbol  = symbol
 
 class Operator_EQ(RelationalOperator):
-    def __init__(self, atomic1, atomic2, type=OperatorEnum.EQ, symbol="="):
-        super(Operator_EQ, self).__init__(atomic1, atomic2, type)
+    def __init__(self, type=OperatorEnum.EQ, symbol="="):
+        super(Operator_EQ, self).__init__( type)
         self.type=type
         self.symbol  = symbol
 
 class Operator_NEQ(RelationalOperator):
-    def __init__(self, atomic1, atomic2, type=OperatorEnum.NEQ, symbol="!="):
-        super(Operator_NEQ, self).__init__(atomic1, atomic2, type)
+    def __init__(self, type=OperatorEnum.NEQ, symbol="!="):
+        super(Operator_NEQ, self).__init__(type)
         self.type=type
         self.symbol  = symbol
 

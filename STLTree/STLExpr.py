@@ -9,6 +9,7 @@ class ExprEnum(Enum):
     declaration = 4
     stlTerm = 5
     timeBound = 6
+    boolExpr = 7
 
 
 
