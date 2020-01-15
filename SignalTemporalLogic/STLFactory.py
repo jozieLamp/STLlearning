@@ -19,8 +19,8 @@ class STLFactory:
 
 
         result, formulaTree = STLExtendedVisitor().visit(tree)
-        formulaTree.show()
-        formulaTree.printTree()
+        # formulaTree.show()
+        # formulaTree.printTree()
 
         return formulaTree
 

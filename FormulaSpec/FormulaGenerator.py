@@ -18,171 +18,140 @@ class FormulaGenerator:
         #Make formulas with only one variable for each in the set of vars
         for n in variables:
             #G (x <= $)
-            f = "G[0,0](" + n + " <= -99)\n"
+            f = "G[0,0](" + n + " <= -0)\n"
             fTree = stlFac.constructFormulaTree(f)
-            fTree.printTree()
+            formulas.append(fTree)
+            #G (x >= $)
+            f = "G[0,0](" + n + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
             formulas.append(fTree)
 
-            p = ParamClass.Parameter(name=n, value='$', sign='<=')
-            f = FormulaClass.Formula_G(paramList=[p])
-            formulas.append(f)
-            #G (x >= $)
-            p = ParamClass.Parameter(name=n, value='$', sign='>=')
-            f = FormulaClass.Formula_G(paramList=[p])
-            formulas.append(f)
-
             #F (x <= $)
-            p = ParamClass.Parameter(name=n, value='$', sign='<=')
-            f = FormulaClass.Formula_F(paramList=[p])
-            formulas.append(f)
+            f = "F[0,0](" + n + " <= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             #F (x >= $)
-            p = ParamClass.Parameter(name=n, value='$', sign='>=')
-            f = FormulaClass.Formula_F(paramList=[p])
-            formulas.append(f)
+            f = "F[0,0](" + n + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
 
             if genOps.use_or == True:
                 # G (x <= $ | x >= $)
-                p1 = ParamClass.Parameter(name=n, value='$', sign='<=')
-                p2 = ParamClass.Parameter(name=n, value='$', sign='>=')
-                f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "G[0,0](" + n + " <= -0 | "  + n + " >= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # G (x >= $ | x <= $)
-                p1 = ParamClass.Parameter(name=n, value='$', sign='>=')
-                p2 = ParamClass.Parameter(name=n, value='$', sign='<=')
-                f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "G[0,0](" + n + " >= -0 | " + n + " <= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
 
                 # F (x <= $ | x >= $)
-                p1 = ParamClass.Parameter(name=n, value='$', sign='<=')
-                p2 = ParamClass.Parameter(name=n, value='$', sign='>=')
-                f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "F[0,0](" + n + " <= -0 | " + n + " >= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # F (x >= $ | x <= $)
-                p1 = ParamClass.Parameter(name=n, value='$', sign='>=')
-                p2 = ParamClass.Parameter(name=n, value='$', sign='<=')
-                f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "F[0,0](" + n + " >= -0 | " + n + " <= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
 
-            # (x >= $) Until (x <= x)
-            p1 = ParamClass.Parameter(name=n, value='$', sign='>=')
-            p2 = ParamClass.Parameter(name=n, value='$', sign='<=')
-            f = FormulaClass.Formula_U(paramList=[p1, p2])
-            formulas.append(f)
-            # (x <= $) Until (x >= x)
-            p1 = ParamClass.Parameter(name=n, value='$', sign='<=')
-            p2 = ParamClass.Parameter(name=n, value='$', sign='>=')
-            f = FormulaClass.Formula_U(paramList=[p1, p2])
-            formulas.append(f)
+            # (x >= $) Until (x <= $)
+            f = "(" + n + " >= -0) U[0,0] (" + n + " <= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
+
+            # (x <= $) Until (x >= $)
+            f = "(" + n + " <= -0) U[0,0] (" + n + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
 
         #Make rules with combos of variables
         combos = list(itertools.permutations(variables, 2))
         for c in combos:
             if genOps.use_or == True:
                 # all combos of G (x >= $ | y >= $)
-                p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-                p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-                f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "G[0,0](" + c[0] + " >= -0 | " + c[1] + " >= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # all combos of G (x <= $ | y >= $)
-                p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-                p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-                f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "G[0,0](" + c[0] + " <= -0 | " + c[1] + " >= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # all combos of G (x >= $ | y <= $)
-                p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-                p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-                f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "G[0,0](" + c[0] + " >= -0 | " + c[1] + " <= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # all combos of G (x <= $ | y <= $)
-                p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-                p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-                f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "G[0,0](" + c[0] + " <= -0 | " + c[1] + " <= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # all combos of F (x >= $ | y >= $)
-                p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-                p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-                f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "F[0,0](" + c[0] + " >= -0 | " + c[1] + " >= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # all combos of F (x <= $ | y >= $)
-                p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-                p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-                f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "F[0,0](" + c[0] + " <= -0 | " + c[1] + " >= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # all combos of F (x >= $ | y <= $)
-                p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-                p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-                f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "F[0,0](" + c[0] + " >= -0 | " + c[1] + " <= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
                 # all combos of F (x <= $ | y <= $)
-                p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-                p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-                f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_OR(), paramList=[p1, p2])
-                formulas.append(f)
+                f = "F[0,0](" + c[0] + " <= -0 | " + c[1] + " <= -0)\n"
+                fTree = stlFac.constructFormulaTree(f)
+                formulas.append(fTree)
 
             #AND
             # all combos of G (x >= $ AND y >= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-            f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_AND(), paramList=[p1, p2])
-            formulas.append(f)
+            f = "G[0,0](" + c[0] + " >= -0 & " + c[1] + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of G (x <= $ AND y >= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-            f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_AND(), paramList=[p1, p2])
-            formulas.append(f)
+            f = "G[0,0](" + c[0] + " <= -0 & " + c[1] + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of G (x >= $ AND y <= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-            f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_AND(), paramList=[p1, p2])
-            formulas.append(f)
+            f = "G[0,0](" + c[0] + " >= -0 & " + c[1] + " <= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of G (x <= $ AND y <= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-            f = FormulaClass.Formula_G(boolOperator=OperatorClass.Operator_AND(), paramList=[p1, p2])
-            formulas.append(f)
+            f = "G[0,0](" + c[0] + " <= -0 & " + c[1] + " <= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of F (x >= $ AND y >= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-            f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_AND(), paramList=[p1, p2])
-            formulas.append(f)
+            f = "F[0,0](" + c[0] + " >= -0 & " + c[1] + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of F (x <= $ AND y >= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-            f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_AND(), paramList=[p1, p2])
-            formulas.append(f)
+            f = "F[0,0](" + c[0] + " <= -0 & " + c[1] + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of F (x >= $ AND y <= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-            f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_AND(), paramList=[p1, p2])
-            formulas.append(f)
+            f = "F[0,0](" + c[0] + " >= -0 & " + c[1] + " <= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of F (x <= $ AND y <= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-            f = FormulaClass.Formula_F(boolOperator=OperatorClass.Operator_AND(), paramList=[p1, p2])
-            formulas.append(f)
+            f = "F[0,0](" + c[0] + " <= -0 & " + c[1] + " <= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
 
             #UNTIL
             # all combos of (x >= $) Until (y >= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-            f = FormulaClass.Formula_U(paramList=[p1, p2])
-            formulas.append(f)
+            f = "(" + c[0] + " >= -0) U[0,0] (" + c[1] + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of (x >= $) Until (y <= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='>=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-            f = FormulaClass.Formula_U(paramList=[p1, p2])
-            formulas.append(f)
+            f = "(" + c[0] + " >= -0) U[0,0] (" + c[1] + " <= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of (x <= $) Until (y >= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='>=')
-            f = FormulaClass.Formula_U(paramList=[p1, p2])
-            formulas.append(f)
+            f = "(" + c[0] + " <= -0) U[0,0] (" + c[1] + " >= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
             # all combos of (x <= $) Until (y <= $)
-            p1 = ParamClass.Parameter(name=c[0], value='$', sign='<=')
-            p2 = ParamClass.Parameter(name=c[1], value='$', sign='<=')
-            f = FormulaClass.Formula_U(paramList=[p1, p2])
-            formulas.append(f)
-
+            f = "(" + c[0] + " <= -0) U[0,0] (" + c[1] + " <= -0)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            formulas.append(fTree)
 
         return formulas
 
@@ -190,10 +159,16 @@ class FormulaGenerator:
     #TODO Working Here!!!
     #Generates one random formula with random number of atomic nodes
     def randomFormula(self, genOps):
+        #select max number of random atomic nodes
+        #in my version select max number of stl term exprs
+        #potentially change this part...
         if(genOps.init__random_number_of_atoms):
-            n = 1 + geom.rvs(1 / genOps.init__average_number_of_atoms, 1)
+            numAtomicNodes = 1 + geom.rvs(1 / genOps.init__average_number_of_atoms, 1)
         else:
-            n = genOps.init__fixed_number_of_atoms
+            numAtomicNodes = genOps.init__fixed_number_of_atoms
+
+
+
 
         # MTLnode root = this.generateRandomFormula(n);
         #ArrayList MITL nodes

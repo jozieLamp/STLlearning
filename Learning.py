@@ -77,11 +77,11 @@ class Learning:
         #adding initial Formulae (atomic + G +F + U ), using number of variables
         pop.addGeneticInitFormula(self.genOps)
 
-        # #Add random formulas
-        # #TODO = complete this method
-        # # for i in range(self.genOps.max_num_rand):
-        # #     pop.addRandomInitFormula(self.genOps)
-        #
+        #Add random formulas
+        #TODO = complete this method
+        for i in range(self.genOps.max_num_rand):
+            pop.addRandomInitFormula(self.genOps)
+
         # #Begin genetic algorithm learning part
         # generation = GeneticPopulation()
         # genGenerator = GeneticGenerator()
