@@ -2,6 +2,8 @@ import treelib as treelib
 from treelib.exceptions import*
 from STLTree.STLExpr import ExprEnum
 from STLTree.Operator import OperatorEnum
+import queue
+from STLTree.Operator import RelationalOperator
 
 #TODO - need to fix how nodes are stored and printed in the tree, should be DFS and in order
 class STLTree(treelib.Tree):
@@ -20,97 +22,80 @@ class STLTree(treelib.Tree):
 
         for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
             obj = self[node].data
-            print(obj.toString() + " ", end='')
+            print(node)
+            #print(obj.toString() + " ", end='')
             nodeQueue.append(obj)
-            #print(node)
 
-        self.printTreeHelper(nodeQueue)
+        #self.printTreeHelper(nodeQueue)
 
-        # i = 0
-        # while i < len(nodeList):
-        #     if nodeList[i].type == ExprEnum.statement:
-        #         print("\n", end = '')
-        #     elif nodeList[i].type == OperatorEnum.AND or nodeList[i].type == OperatorEnum.OR or nodeList[i].type == OperatorEnum.IMPLIES:
-        #         boolVal = nodeList[i]
-        #         stlTermCount = 0
-        #         while stlTermCount < 2:
-        #             i += 1
-        #             if nodeList[i].type == ExprEnum.stlTerm:
-        #                 stlTermCount += 1
-        #             print(nodeList[i].toString() + " ", end = '')
-        #         print(boolVal.toString()+ " ", end = '')
-        #
-        #     else:
-        #         print(nodeList[i].toString() + " ", end='')
-        #
-        #     i += 1
 
     #first do print then return string list of formula
-    def printTreeHelper(self, q):
-        print("\n\nTREE HELPER")
-        val = q[0]
-        q.pop(0)
+    def printTreeHelper(self, q, boolVal=None, count=0):
+        ignoreList =[ExprEnum.eval, ExprEnum.statementList, ExprEnum.declaration, ExprEnum.stlTerm, ExprEnum.boolExpr]
+
+        val = q.pop(0)
+
+
+
+
         if val.type == ExprEnum.statement:
             print("\n")
-            self.printTreeHelper(q)
         elif val.type == OperatorEnum.G or val.type == OperatorEnum.F:
-            print("(")
-            self.printTreeHelper(q)
-            print(")")
+            print(val.toString(), end='')
         elif val.type == OperatorEnum.AND or val.type == OperatorEnum.OR or val.type == OperatorEnum.IMPLIES:
-            pass
+            boolVal = val
+        elif val.type == OperatorEnum.U:
+            uExpr = val
+        elif isinstance(val, RelationalOperator):
+            relop = val
+            v1 = q.pop(0)
+            v2 = q.pop(0)
+            print(v1.toString(), relop.toString(), v2.toString(), end='')
+        elif val.type in ignoreList:
+            if val.type == ExprEnum.stlTerm and boolVal != None:
+                count += 1
         else:
             print(val.toString() + " ", end='')
 
+        #check for special case to pring bool ops
+        if boolVal != None and count == 2:
+            print("", boolVal.toString(), end='')
+            boolVal = None
+            count = 0
+
+        if len(q) > 0:
+            self.printTreeHelper(q, boolVal, count)
 
 
     def test(self):
-        for n in self.inorderTreeTraversal():
-            print(n)
+        for node in self.inorderTraversal():
+            obj = self[node].data
+            print(node)
 
-    def inorderTreeTraversal(self, nid=None, mode=treelib.Tree.DEPTH, filter=None, key=None,
-                        reverse=False, sorting=True):
-        # if root:
-        #     # First recur on left child
-        #     printInorder(root.left)
-        #
-        #     # then print the data of node
-        #     print(root.val),
-        #
-        #     # now recur on right child
-        #     printInorder(root.right)
+    #TODO - MAKE THIS WORK??  Or somehow figure out how to traverse tree myself
+    def inorderTraversal(self, nid=None, mode=treelib.Tree.DEPTH, filter=None, key=None,
+                    reverse=False, sorting=True):
 
         nid = self.root if nid is None else nid
         if not self.contains(nid):
             raise NodeIDAbsentError("Node '%s' is not in the tree" % nid)
 
-        #filter = self.__real_true if (filter is None) else filter
 
-
-        yield nid #return nid
-        queue = [self[i] for i in self[nid].fpointer ]#if filter(self[i])]
+        yield nid
+        queue = [self[i] for i in self[nid].fpointer]
 
         while queue:
             yield queue[0].identifier
-            expansion = [self[i] for i in queue[0].fpointer]#if filter(self[i])]
+            expansion = [self[i] for i in queue[0].fpointer]
 
-            queue = expansion + queue[1:]  # depth-first
+            if mode is self.DEPTH:
+                queue = expansion + queue[1:]  # depth-first
+            elif mode is self.WIDTH:
+                    queue = queue[1:] + expansion  # width-first
 
-    # def treeTraversal(self, nid=None):
-    #     queue = []
-    #     if nid == None:
-    #         nid = self.root
-    #
-    #     if not self.contains(nid):
-    #         raise NodeIDAbsentError("Node '%s' is not in the tree" % nid)
-    #
-    #     for i in self[nid].fpointer:
-    #         queue.append(self[i])
-    #
-    #     while queue:
-    #
-    #
-    #     return nid
+
+
+
 
 
     def show(self, nid=None, level=treelib.Tree.ROOT, idhidden=True, filter=None,

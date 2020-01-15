@@ -15,6 +15,7 @@ class OperatorEnum(Enum):
     EQ = 11
     NEQ = 12
     NONE = 13
+    RELOP = 14
 
 class Operator(STLExpr):
     def __init__(self, type=OperatorEnum.NONE):
@@ -58,7 +59,7 @@ class Operator_IMPLIES(Operator):
 
 #Relational Operators
 class RelationalOperator(Operator):
-    def __init__(self, type, symbol="??"):
+    def __init__(self, type=OperatorEnum.RELOP, symbol="??"):
         super(RelationalOperator, self).__init__(type)
         self.symbol = symbol
 

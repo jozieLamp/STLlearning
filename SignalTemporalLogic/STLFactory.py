@@ -35,8 +35,8 @@ class STLFactory:
         formulaTree.show()
         #formulaTree.test()
 
-        print(formulaTree.printTree())
-        #formulaTree.expand_tree(mode=treelib.Tree.DEPTH)
+        #formulaTree.printTree()
+        formulaTree.test()
 
 
 
