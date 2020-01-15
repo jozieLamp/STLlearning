@@ -8,20 +8,17 @@ class STLTree(treelib.Tree):
         super(STLTree, self).__init__()
 
     def treeToString(self):
-        nodes = self.all_nodes()
-
-        for n in nodes:
-            obj = n.data
-            print(obj.toString() + " ", end = '')
-
-    def printTree(self):
+        treeString = ""
         for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
             obj = self[node].data
             #print(node)
             if obj.type == ExprEnum.statement:
-                print(obj.toString() + " ", end='')
-                print("\n", end='')
+                treeString += obj.toString() + "\n"
 
+        return treeString
+
+    def printTree(self):
+        print(self.treeToString())
 
 
     def show(self, nid=None, level=treelib.Tree.ROOT, idhidden=True, filter=None,

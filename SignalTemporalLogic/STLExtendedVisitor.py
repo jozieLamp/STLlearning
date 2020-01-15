@@ -251,7 +251,7 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
         if parentID != "NA":
             #print("atomic", ctx.getText())
-            if ctx.getText().isnumeric():
+            if ctx.getText().lstrip('-+').isdigit():
                 id = self.generateID(AtomicEnum.Parameter)
                 n=self.formulaTree.create_node(id, id, parent=parentID, data=Parameter(value=ctx.getText()))
             else:
@@ -263,10 +263,15 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
             pNode = p.data
 
             if isinstance(pNode, RelationalOperator):
-                if ctx.getText().isnumeric():
-                    pNode.atomic2 = n.data
-                else:
+                if pNode.atomic1 == None:
                     pNode.atomic1 = n.data
+                else:
+                    pNode.atomic2 = n.data
+
+                # if ctx.getText().lstrip('-+').isdigit():
+                #     pNode.atomic2 = n.data
+                # else:
+                #     pNode.atomic1 = n.data
 
         return ctx.getText()
 

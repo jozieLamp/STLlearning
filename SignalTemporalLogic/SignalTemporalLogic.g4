@@ -105,7 +105,7 @@ LE	:	'<=';
 
 // $<Terminal
 
-INTEGER	:	'0'..'9'+
+INTEGER	:	'-'? '0'..'9'+
 	;
 
 FLOAT

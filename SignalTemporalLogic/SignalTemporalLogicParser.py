@@ -143,6 +143,7 @@ class SignalTemporalLogicParser ( Parser ):
 
 
 
+
     class EvlContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -246,13 +247,13 @@ class SignalTemporalLogicParser ( Parser ):
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 29 
+            self.state = 29
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
                 self.state = 28
                 self.statement()
-                self.state = 31 
+                self.state = 31
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << SignalTemporalLogicParser.CONST) | (1 << SignalTemporalLogicParser.LPAR) | (1 << SignalTemporalLogicParser.F) | (1 << SignalTemporalLogicParser.G) | (1 << SignalTemporalLogicParser.TRUE) | (1 << SignalTemporalLogicParser.FALSE) | (1 << SignalTemporalLogicParser.NOT) | (1 << SignalTemporalLogicParser.INTEGER) | (1 << SignalTemporalLogicParser.FLOAT) | (1 << SignalTemporalLogicParser.ID))) != 0)):
@@ -320,13 +321,13 @@ class SignalTemporalLogicParser ( Parser ):
                 self.enterOuterAlt(localctx, 1)
                 self.state = 33
                 self.declaration()
-                self.state = 35 
+                self.state = 35
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while True:
                     self.state = 34
                     self.match(SignalTemporalLogicParser.NEWLINE)
-                    self.state = 37 
+                    self.state = 37
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if not (_la==SignalTemporalLogicParser.NEWLINE):
@@ -337,13 +338,13 @@ class SignalTemporalLogicParser ( Parser ):
                 self.enterOuterAlt(localctx, 2)
                 self.state = 39
                 self.boolExpr()
-                self.state = 41 
+                self.state = 41
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while True:
                     self.state = 40
                     self.match(SignalTemporalLogicParser.NEWLINE)
-                    self.state = 43 
+                    self.state = 43
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if not (_la==SignalTemporalLogicParser.NEWLINE):
@@ -1078,6 +1079,9 @@ class SignalTemporalLogicParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
+
+
 
 
 

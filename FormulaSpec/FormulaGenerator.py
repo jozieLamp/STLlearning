@@ -1,6 +1,7 @@
 from FormulaSpec import FormulaOld as FormulaClass
 from FormulaSpec import Parameter as ParamClass
 from FormulaSpec import Operator as OperatorClass
+from  SignalTemporalLogic.STLFactory import STLFactory
 import itertools
 from scipy.stats import geom
 import random
@@ -11,11 +12,17 @@ class FormulaGenerator:
         pass
 
     def atomicGeneticFormula(self, variables, genOps):
+        stlFac = STLFactory()
         formulas = []
 
         #Make formulas with only one variable for each in the set of vars
         for n in variables:
             #G (x <= $)
+            f = "G[0,0](" + n + " <= -99)\n"
+            fTree = stlFac.constructFormulaTree(f)
+            fTree.printTree()
+            formulas.append(fTree)
+
             p = ParamClass.Parameter(name=n, value='$', sign='<=')
             f = FormulaClass.Formula_G(paramList=[p])
             formulas.append(f)

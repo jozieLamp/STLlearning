@@ -77,26 +77,26 @@ class Learning:
         #adding initial Formulae (atomic + G +F + U ), using number of variables
         pop.addGeneticInitFormula(self.genOps)
 
-        #Add random formulas
-        #TODO = complete this method
-        # for i in range(self.genOps.max_num_rand):
-        #     pop.addRandomInitFormula(self.genOps)
-
-        #Begin genetic algorithm learning part
-        generation = GeneticPopulation()
-        genGenerator = GeneticGenerator()
-        numGen = self.genOps.number_generations
-        logging.info("NUMBER OF GENERATIONS: " + '%s' % (numGen))
-        logging.info("GENETIC ALGORITHM - START")
-
-        for k in range(numGen):
-            logging.info("GENERATION #: " + '%s' % (k))
-            logging.info("> OPTIMIZING POPULATION PARAMETER")
-            generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
-                positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
-                            negativeTestSet=negativeTestSet, atTime=atTime, paramDict=pd, genOps=self.genOps)
-
-
+        # #Add random formulas
+        # #TODO = complete this method
+        # # for i in range(self.genOps.max_num_rand):
+        # #     pop.addRandomInitFormula(self.genOps)
+        #
+        # #Begin genetic algorithm learning part
+        # generation = GeneticPopulation()
+        # genGenerator = GeneticGenerator()
+        # numGen = self.genOps.number_generations
+        # logging.info("NUMBER OF GENERATIONS: " + '%s' % (numGen))
+        # logging.info("GENETIC ALGORITHM - START")
+        #
+        # for k in range(numGen):
+        #     logging.info("GENERATION #: " + '%s' % (k))
+        #     logging.info("> OPTIMIZING POPULATION PARAMETER")
+        #     generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
+        #         positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
+        #                     negativeTestSet=negativeTestSet, atTime=atTime, paramDict=pd, genOps=self.genOps)
+        #
+        #
 
     #Make positive and negative training and validation sets
     def makeTrainingTrajectories(self, data, labels, trainPercentage):
