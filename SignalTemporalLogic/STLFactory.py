@@ -18,23 +18,8 @@ class STLFactory:
         tree = parser.evl()
 
 
-        # print(tree.toStringTree())
-        # for t in tree.getChildren():
-        #     print("\n")
-        #     print(t)
-
-        #Should traverse tree and at each spot get the parent and add it below the parent
-        #so maybe  traverse all the way to bottom to terminal node and then add in reverse order with parents
-
-        #print(tree.getChildren())
-
         result, formulaTree = STLExtendedVisitor().visit(tree)
-
-
-
         formulaTree.show()
-        #formulaTree.test()
-
         formulaTree.printTree()
 
 
@@ -43,9 +28,9 @@ def main():
     factory = STLFactory()
 
     #rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n"
-    #rule = "G[0,100] x <= 33 & y >= 20\n"
-    rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n (z > 4 U[0,20] q > 3)\n"
-    rule = "G[10,20] (x> 4 | y < 12)  | G[10, 10] (v < 10)\n"
+    #rule = "F[0,100] (x <= 33 -> y >= 20) -> G[10,10](x>10)"
+    rule = "F[0, 300] (G[0,100] (x <= 33 | y >= 20))\n ((z > 4) U[0,20] (q > 3))\n"
+    #rule = "G[10,20] (x> 4 | y < 12)  & F[10, 10] (v < 10)\n"
 
 
     factory.constructProperty(rule)

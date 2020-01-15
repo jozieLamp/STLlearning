@@ -17,43 +17,50 @@ class OperatorEnum(Enum):
     RELOP = 14
 
 class Operator():
-    def __init__(self, type=OperatorEnum.NONE):
+    def __init__(self, type=OperatorEnum.NONE, symbol="?"):
         self.type = type
+        self.symbol = symbol
 
     def toString(self):
-        return self.type.name
+        return self.symbol
 
 #Temporal Operators
 class Operator_G(Operator):
-    def __init__(self, type=OperatorEnum.G ):
+    def __init__(self, type=OperatorEnum.G, symbol="G"):
         super(Operator_G, self).__init__()
         self.type = type
+        self.symbol = symbol
 
 class Operator_F(Operator):
-    def __init__(self, type=OperatorEnum.F ):
+    def __init__(self, type=OperatorEnum.F,  symbol="F"):
         super(Operator_F, self).__init__()
         self.type = type
+        self.symbol = symbol
 
 class Operator_U(Operator):
-    def __init__(self, type=OperatorEnum.U):
+    def __init__(self, type=OperatorEnum.U, symbol="U"):
         super(Operator_U, self).__init__()
         self.type = type
+        self.symbol = symbol
 
 #Boolean Operators
 class Operator_AND(Operator):
-    def __init__(self, type=OperatorEnum.AND):
+    def __init__(self, type=OperatorEnum.AND, symbol = "&"):
         super(Operator_AND, self).__init__()
         self.type = type
+        self.symbol = symbol
 
 class Operator_OR(Operator):
-    def __init__(self, type=OperatorEnum.OR):
+    def __init__(self, type=OperatorEnum.OR, symbol="|"):
         super(Operator_OR, self).__init__()
         self.type = type
+        self.symbol = symbol
 
 class Operator_IMPLIES(Operator):
-    def __init__(self, type=OperatorEnum.IMPLIES):
+    def __init__(self, type=OperatorEnum.IMPLIES, symbol="->"):
         super(Operator_IMPLIES, self).__init__()
         self.type = type
+        self.symbol = symbol
 
 #Relational Operators
 class RelationalOperator(Operator):

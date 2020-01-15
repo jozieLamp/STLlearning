@@ -10,6 +10,7 @@ from antlr4.tree.Tree import TerminalNodeImpl
 from STLTree.Operator import RelationalOperator
 from STLTree.STLExpr import BoolExpr
 from STLTree.STLExpr import STLTerm
+from STLTree.STLExpr import Statement
 import treelib as treelib
 
 
@@ -59,7 +60,7 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
     def visitStatement(self, ctx, parentID=None):
         #print("statement", ctx.getText())
         id = self.generateID(ExprEnum.statement)
-        self.formulaTree.create_node(id, id, parent=parentID, data=STLExpr(type=ExprEnum.statement))
+        self.formulaTree.create_node(id, id, parent=parentID, data=Statement(type=ExprEnum.statement))
         return self.visitChildren(ctx, id)
 
 
@@ -67,7 +68,13 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
     def visitDeclaration(self, ctx, parentID=None):
         #print("declaration", ctx.getText())
         id = self.generateID(ExprEnum.declaration)
-        self.formulaTree.create_node(id, id, parent=parentID, data=STLExpr(type=ExprEnum.declaration))
+        d = self.formulaTree.create_node(id, id, parent=parentID, data=STLExpr(type=ExprEnum.declaration))
+
+        p = self.formulaTree.get_node(parentID)
+        pNode = p.data
+        if pNode.type == ExprEnum.statement:
+            pNode.declaration = d.data
+
         return self.visitChildren(ctx, id)
 
     # Visit a parse tree produced by SignalTemporalLogicParser#boolExpr.
@@ -87,19 +94,29 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
                 b = self.formulaTree.create_node(id, id, parent=boolId, data=Operator_OR())
                 bi.data.boolOperator = b.data
         elif "&" in clds:
-            ct = clds.count("|")
+            ct = clds.count("&")
             for c in range(0, ct):
                 id = self.generateID(OperatorEnum.AND)
                 b  = self.formulaTree.create_node(id, id, parent=boolId, data=Operator_AND())
                 bi.data.boolOperator = b.data
         elif "->" in clds:
-            ct = clds.count("|")
+            ct = clds.count("->")
             for c in range(0, ct):
                 id = self.generateID(OperatorEnum.IMPLIES)
                 b = self.formulaTree.create_node(id, id, parent=boolId, data=Operator_IMPLIES())
                 bi.data.boolOperator = b.data
         else: #no actual and  or implies bool operator
             pass
+
+
+        # handle bool expr for bool atomic and statement
+        p = self.formulaTree.get_node(parentID)
+        pNode = p.data
+        if pNode.type == AtomicEnum.BooleanAtomic:
+            pNode.boolExpr = bi.data
+        elif pNode.type == ExprEnum.statement:
+            pNode.boolExpr = bi.data
+
 
         return self.visitChildren(ctx, boolId)
 
@@ -110,6 +127,7 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
         stlID = self.generateID(ExprEnum.stlTerm)
         st = self.formulaTree.create_node(stlID, stlID, parent=parentID, data=STLTerm(type=ExprEnum.stlTerm))
+        stData = st.data
 
         #Handle bool expr
         p = self.formulaTree.get_node(parentID)
@@ -130,15 +148,15 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
         if "G" in clds:
             id = self.generateID(OperatorEnum.G)
             g = self.formulaTree.create_node(id, id, parent=stlID, data=Operator_G())
-            st.data.temporalOperator = g.data
+            stData.tempOperator = g.data
         elif "F" in clds:
             id = self.generateID(OperatorEnum.F)
             f = self.formulaTree.create_node(id, id, parent=stlID, data=Operator_F())
-            st.data.temporalOperator = f.data
+            stData.tempOperator = f.data
         elif "U" in clds:
             id = self.generateID(OperatorEnum.U)
             u = self.formulaTree.create_node(id, id, parent=stlID, data=Operator_U())
-            st.data.temporalOperator = u.data
+            stData.tempOperator = u.data
         else:
             pass
 
@@ -151,7 +169,14 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
         time = ctx.getText()
         numbers = re.findall(r"[\w']+", time)
         id = self.generateID(ExprEnum.timeBound)
-        self.formulaTree.create_node(id, id, parent=parentID, data=TimeBound(lowerBound=numbers[0], upperBound=numbers[1]))
+        tb = self.formulaTree.create_node(id, id, parent=parentID, data=TimeBound(lowerBound=numbers[0], upperBound=numbers[1]))
+
+        #handle timebound for stl  term
+        p = self.formulaTree.get_node(parentID)
+        pNode = p.data
+        if pNode.type == ExprEnum.stlTerm:
+            pNode.timebound = tb.data
+
 
         return self.visitChildren(ctx, "NA")
 
@@ -172,6 +197,7 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
             id = self.generateID(AtomicEnum.BooleanAtomic)
             b = self.formulaTree.create_node(id, id, parent=parentID, data=BooleanAtomic())
 
+        #handle bool atomic for stl term
         p = self.formulaTree.get_node(parentID)
         pNode = p.data
         if pNode.type == ExprEnum.stlTerm:

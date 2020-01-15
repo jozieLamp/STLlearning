@@ -22,6 +22,20 @@ class STLExpr:
     def toString(self):
         return ""
 
+#Basically encapsulates an entire rule
+class Statement(STLExpr):
+    def __init__(self, type=ExprEnum.statement, declaration=None, boolExpr=None):
+        super(Statement, self).__init__()
+        self.type = type
+        self.declaration = declaration
+        self.boolExpr = boolExpr
+
+    def toString(self):
+        if self.declaration != None:
+            return self.declaration.toString()
+        else:
+            return self.boolExpr.toString()
+
 class TimeBound(STLExpr):
     def __init__(self, type=ExprEnum.timeBound, lowerBound="l", upperBound="u"):
         super(TimeBound, self).__init__()
@@ -44,7 +58,7 @@ class BoolExpr(STLExpr):
     def toString(self):
         st = self.stlTerm1.toString()
         if self.boolOperator != None:
-            st += self.boolOperator.toString()
+            st += " " +self.boolOperator.toString() + " "
         if self.stlTerm2 != None:
             st += self.stlTerm2.toString()
 
@@ -64,7 +78,7 @@ class STLTerm(STLExpr):
             if self.tempOperator.type == OperatorEnum.G or self.tempOperator.type == OperatorEnum.F:
                 st = self.tempOperator.toString() + self.timebound.toString() + "(" + self.boolAtomic1.toString() + ")"
             elif self.tempOperator.type == OperatorEnum.U: #U
-                st = "(" + self.boolAtomic1.toString() + ")" + self.tempOperator.toString() + "("+ self.boolAtomic2.toString() + ")"
+                st = "((" + self.boolAtomic1.toString() + ") " + self.tempOperator.toString() + self.timebound.toString() + " ("+ self.boolAtomic2.toString() + "))"
         else: #self.tempOperator == None:
             st = self.boolAtomic1.toString()
 
