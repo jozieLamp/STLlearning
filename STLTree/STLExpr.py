@@ -1,6 +1,6 @@
 
 from enum import Enum
-from SignalTemporalLogic import *
+from STLTree.Operator import OperatorEnum
 
 class ExprEnum(Enum):
     eval = evl = 1
@@ -32,6 +32,43 @@ class TimeBound(STLExpr):
 
     def toString(self):
         return "[" + str(self.lowerBound) + "," + str(self.upperBound) + "]"
+
+class BoolExpr(STLExpr):
+    def __init__(self, type=ExprEnum.boolExpr, boolOperator=None, stlTerm1=None, stlTerm2=None):
+        super(BoolExpr, self).__init__()
+        self.type = type
+        self.boolOperator = boolOperator
+        self.stlTerm1 =  stlTerm1
+        self.stlTerm2 = stlTerm2
+
+    def toString(self):
+        st = self.stlTerm1.toString()
+        if self.boolOperator != None:
+            st += self.boolOperator.toString()
+        if self.stlTerm2 != None:
+            st += self.stlTerm2.toString()
+
+        return st
+
+class STLTerm(STLExpr):
+    def __init__(self, type=ExprEnum.stlTerm, tempOperator=None, timebound=None, boolAtomic1=None, boolAtomic2=None):
+        super(STLTerm, self).__init__()
+        self.type = type
+        self.tempOperator = tempOperator
+        self.timebound = timebound
+        self.boolAtomic1 =  boolAtomic1
+        self.boolAtomic2 = boolAtomic2
+
+    def toString(self):
+        if self.tempOperator != None:
+            if self.tempOperator.type == OperatorEnum.G or self.tempOperator.type == OperatorEnum.F:
+                st = self.tempOperator.toString() + self.timebound.toString() + "(" + self.boolAtomic1.toString() + ")"
+            elif self.tempOperator.type == OperatorEnum.U: #U
+                st = "(" + self.boolAtomic1.toString() + ")" + self.tempOperator.toString() + "("+ self.boolAtomic2.toString() + ")"
+        else: #self.tempOperator == None:
+            st = self.boolAtomic1.toString()
+
+        return st
 
 
 #Genral STL Expression functions

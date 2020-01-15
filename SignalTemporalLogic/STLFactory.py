@@ -35,8 +35,7 @@ class STLFactory:
         formulaTree.show()
         #formulaTree.test()
 
-        #formulaTree.printTree()
-        formulaTree.test()
+        formulaTree.printTree()
 
 
 
@@ -46,6 +45,7 @@ def main():
     #rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n"
     #rule = "G[0,100] x <= 33 & y >= 20\n"
     rule = "F[0, 300] (G[0,100] x <= 33 | y >= 20)\n (z > 4 U[0,20] q > 3)\n"
+    rule = "G[10,20] (x> 4 | y < 12)  | G[10, 10] (v < 10)\n"
 
 
     factory.constructProperty(rule)

@@ -3,6 +3,7 @@ from treelib.exceptions import*
 from STLTree.STLExpr import ExprEnum
 from STLTree.Operator import OperatorEnum
 import queue
+from STLTree.Atomic import AtomicEnum
 from STLTree.Operator import RelationalOperator
 
 #TODO - need to fix how nodes are stored and printed in the tree, should be DFS and in order
@@ -19,81 +20,95 @@ class STLTree(treelib.Tree):
 
     def printTree(self):
         nodeQueue = []
+        nList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.boolExpr, ExprEnum.stlTerm, AtomicEnum.BooleanAtomic]
 
         for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
             obj = self[node].data
-            print(node)
+            if obj.type in nList:
+            #print(node)
             #print(obj.toString() + " ", end='')
-            nodeQueue.append(obj)
+                nodeQueue.append(obj)
 
-        #self.printTreeHelper(nodeQueue)
+        self.printTreeHelper(nodeQueue)
 
 
     #first do print then return string list of formula
-    def printTreeHelper(self, q, boolVal=None, count=0):
+    def printTreeHelper(self, q):
         ignoreList =[ExprEnum.eval, ExprEnum.statementList, ExprEnum.declaration, ExprEnum.stlTerm, ExprEnum.boolExpr]
 
         val = q.pop(0)
 
-
-
-
         if val.type == ExprEnum.statement:
             print("\n")
-        elif val.type == OperatorEnum.G or val.type == OperatorEnum.F:
-            print(val.toString(), end='')
-        elif val.type == OperatorEnum.AND or val.type == OperatorEnum.OR or val.type == OperatorEnum.IMPLIES:
-            boolVal = val
-        elif val.type == OperatorEnum.U:
-            uExpr = val
-        elif isinstance(val, RelationalOperator):
-            relop = val
-            v1 = q.pop(0)
-            v2 = q.pop(0)
-            print(v1.toString(), relop.toString(), v2.toString(), end='')
-        elif val.type in ignoreList:
-            if val.type == ExprEnum.stlTerm and boolVal != None:
-                count += 1
+        # elif val.type == ExprEnum.boolExpr:
+        #     pass
+        # elif isinstance(val, RelationalOperator):
+        #     print(val.toString() + " ", end='')
+        # elif val.type == ExprEnum.stlTerm:
+        #     print(val.toString())
         else:
             print(val.toString() + " ", end='')
 
-        #check for special case to pring bool ops
-        if boolVal != None and count == 2:
-            print("", boolVal.toString(), end='')
-            boolVal = None
-            count = 0
-
         if len(q) > 0:
-            self.printTreeHelper(q, boolVal, count)
+            self.printTreeHelper(q)
 
 
-    def test(self):
-        for node in self.inorderTraversal():
-            obj = self[node].data
-            print(node)
+        # if val.type == ExprEnum.statement:
+        #     print("\n")
+        # elif val.type == OperatorEnum.G or val.type == OperatorEnum.F:
+        #     print(val.toString(), end='')
+        # elif val.type == OperatorEnum.AND or val.type == OperatorEnum.OR or val.type == OperatorEnum.IMPLIES:
+        #     boolVal = val
+        # elif val.type == OperatorEnum.U:
+        #     uExpr = val
+        # elif isinstance(val, RelationalOperator):
+        #     relop = val
+        #     v1 = q.pop(0)
+        #     v2 = q.pop(0)
+        #     print(v1.toString(), relop.toString(), v2.toString(), end='')
+        # elif val.type in ignoreList:
+        #     if val.type == ExprEnum.stlTerm and boolVal != None:
+        #         count += 1
+        # else:
+        #     print(val.toString() + " ", end='')
+        #
+        # #check for special case to pring bool ops
+        # if boolVal != None and count == 2:
+        #     print("", boolVal.toString(), end='')
+        #     boolVal = None
+        #     count = 0
+        #
+        # if len(q) > 0:
+        #     self.printTreeHelper(q, boolVal, count)
 
-    #TODO - MAKE THIS WORK??  Or somehow figure out how to traverse tree myself
-    def inorderTraversal(self, nid=None, mode=treelib.Tree.DEPTH, filter=None, key=None,
-                    reverse=False, sorting=True):
 
-        nid = self.root if nid is None else nid
-        if not self.contains(nid):
-            raise NodeIDAbsentError("Node '%s' is not in the tree" % nid)
-
-
-        yield nid
-        queue = [self[i] for i in self[nid].fpointer]
-
-        while queue:
-            yield queue[0].identifier
-            expansion = [self[i] for i in queue[0].fpointer]
-
-            if mode is self.DEPTH:
-                queue = expansion + queue[1:]  # depth-first
-            elif mode is self.WIDTH:
-                    queue = queue[1:] + expansion  # width-first
-
-
+    # def test(self):
+    #     for node in self.inorderTraversal():
+    #         obj = self[node].data
+    #         print(node)
+    #
+    # #TODO - MAKE THIS WORK??  Or somehow figure out how to traverse tree myself
+    # def inorderTraversal(self, nid=None, mode=treelib.Tree.DEPTH, filter=None, key=None,
+    #                 reverse=False, sorting=True):
+    #
+    #     nid = self.root if nid is None else nid
+    #     if not self.contains(nid):
+    #         raise NodeIDAbsentError("Node '%s' is not in the tree" % nid)
+    #
+    #
+    #     yield nid
+    #     queue = [self[i] for i in self[nid].fpointer]
+    #
+    #     while queue:
+    #         yield queue[0].identifier
+    #         expansion = [self[i] for i in queue[0].fpointer]
+    #
+    #         if mode is self.DEPTH:
+    #             queue = expansion + queue[1:]  # depth-first
+    #         elif mode is self.WIDTH:
+    #                 queue = queue[1:] + expansion  # width-first
+    #
+    #
 
 
 

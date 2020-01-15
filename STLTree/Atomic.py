@@ -46,7 +46,14 @@ class Variable(Atomic):
         return self.value
 
 class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
-    def __init__(self, type=AtomicEnum.BooleanAtomic, truthVal=None):
+    def __init__(self, type=AtomicEnum.BooleanAtomic, relExpr=None, truthVal=None):
         super(BooleanAtomic, self).__init__()
+        self.relExpr = relExpr
         self.truthVal = truthVal
         self.type = type
+
+    def toString(self):
+        if self.relExpr != None:
+            return self.relExpr.toString()
+        else:
+            return ""
