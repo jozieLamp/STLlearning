@@ -7,7 +7,7 @@ class FormulaPopulation:
     def __init__(self, popSize, paramDict={}):
         self.popSize = popSize
         self.paramDict = paramDict #dictionary- VarName key: {lower bound, upper bound}
-        self.formulaGen = FG.FormulaGenerator #class to generate formula sets
+        self.formulaGen = FG.FormulaGenerator() #class to generate formula sets
 
         self.population = [] #arrayList of formulas
         self.fitness = None
@@ -35,14 +35,14 @@ class FormulaPopulation:
     # Generate initial atomic formulas of G, F, U for each variable
     # Creates formulas with no params, just rule structure
     def addGeneticInitFormula(self, genOps):
-        initialFormula = self.formulaGen.atomicGeneticFormula(self.formulaGen, variables=self.variables, genOps=genOps)
+        initialFormula = self.formulaGen.atomicGeneticFormula(variables=self.variables, genOps=genOps)
         self.population.extend(initialFormula)
         self.logFormulas(initialFormula, "Initial")
         logging.info("New size of population is " + '%s' % (len(self.population)) + " formulas \n")
 
 
     def addRandomInitFormula(self, genOps):
-        randFormula = self.formulaGen.randomFormula(self.formulaGen, genOps=genOps)
+        randFormula = self.formulaGen.randomFormula(variables=self.variables, paramDict=self.paramDict, genOps=genOps)
         self.population.extend(randFormula)
         self.logFormulas(randFormula, "Random")
 

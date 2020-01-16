@@ -158,30 +158,28 @@ class FormulaGenerator:
 
     #TODO Working Here!!!
     #Generates one random formula with random number of atomic nodes
-    def randomFormula(self, genOps):
+    def randomFormula(self, variables, paramDict, genOps):
         #select max number of random atomic nodes
-        #in my version select max number of stl term exprs
-        #potentially change this part...
-        if(genOps.init__random_number_of_atoms):
-            numAtomicNodes = 1 + geom.rvs(1 / genOps.init__average_number_of_atoms, 1)
-        else:
-            numAtomicNodes = genOps.init__fixed_number_of_atoms
-
-
-
-
-        # MTLnode root = this.generateRandomFormula(n);
-        #ArrayList MITL nodes
+        maxNodes = genOps.init__max_number_of_atoms
+        numAtomicNodes = random.randint(1,maxNodes)
+        # if(genOps.init__random_number_of_atoms):
+        #     numAtomicNodes = 1 + geom.rvs(1 / genOps.init__average_number_of_atoms, 1)
+        # else:
+        #     numAtomicNodes = genOps.init__fixed_number_of_atoms
 
         nodes = []
-        for i in range(n):
-            if random.random() < genOps.init__prob_of_true_atom:
-                nodes.append(True) #constantAtom(true)
-            else:
-                nodes.append(False)#newAtomicNode(false)
+        for i in range(numAtomicNodes):
+            # if random.random() < genOps.init__prob_of_true_atom:
+            #     nodes.append(True) #constantAtom(true)
+            # else:
+            exp = self.newAtomicNode(variables, paramDict)
+            nodes.append(exp)
 
 
-
+        #Make different types of nodes:
+        count = 0
+        while count < 3:
+            pass
 
 
 
@@ -190,3 +188,15 @@ class FormulaGenerator:
         #
         # Formula F = new Formula(f);
         # return F;
+
+
+    def newAtomicNode(self, variables, paramDict):
+        relopList = [">=", "<=", ">", "<"]
+        relop = random.choice(relopList)
+
+        var = random.choice(variables)
+        vBounds = paramDict[var]
+        param = random.uniform(vBounds[0], vBounds[1])
+
+        exp = var + " " + relop + " " + str(param)
+        return exp
