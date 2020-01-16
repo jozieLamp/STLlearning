@@ -16,7 +16,7 @@ class GeneticOptions:
         self.undefined_reference_threshold = 0.1
 
 
-        self.init__max_number_of_atoms = 4 #used
+        self.init__max_number_of_atoms = 3
 
         self.init__random_number_of_atoms = False
         self.init__average_number_of_atoms = 3

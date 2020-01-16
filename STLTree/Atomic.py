@@ -34,7 +34,10 @@ class Parameter(Atomic):
         self.type = type
 
     def toString(self):
-        return str(self.value)
+        if type(self.value) == str:
+            self.value = float(self.value)
+        v = format(self.value, '.3f')
+        return str(v)
 
 #defined var
 class Variable(Atomic):
@@ -46,17 +49,25 @@ class Variable(Atomic):
         return self.value
 
 class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
-    def __init__(self, type=AtomicEnum.BooleanAtomic, boolExpr= None, relExpr=None, truthVal=None):
+    def __init__(self, type=AtomicEnum.BooleanAtomic, boolExpr= None, relExpr=None, truthVal=None, notExpr=None):
         super(BooleanAtomic, self).__init__()
         self.relExpr = relExpr
         self.truthVal = truthVal
         self.type = type
         self.boolExpr = boolExpr
+        self.notExpr = notExpr
 
     def toString(self):
-        if self.relExpr != None:
-            return self.relExpr.toString()
-        elif self.boolExpr!= None:
-            return self.boolExpr.toString()
+        expr = ""
+        if self.notExpr != None:
+            if self.relExpr != None:
+                return "!(" + self.relExpr.toString() + ")"
+            elif self.boolExpr != None:
+                return "!(" + self.boolExpr.toString() + ")"
         else:
-            return ""
+            if self.relExpr != None:
+                return expr + self.relExpr.toString()
+            elif self.boolExpr!= None:
+                return expr + self.boolExpr.toString()
+            else:
+                return ""

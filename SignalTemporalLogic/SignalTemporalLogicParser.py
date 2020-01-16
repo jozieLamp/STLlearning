@@ -142,8 +142,6 @@ class SignalTemporalLogicParser ( Parser ):
 
 
 
-
-
     class EvlContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -1079,11 +1077,4 @@ class SignalTemporalLogicParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
-
-
-
-
-
-
-
 

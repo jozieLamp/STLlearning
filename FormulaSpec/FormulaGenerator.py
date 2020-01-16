@@ -1,6 +1,4 @@
-from FormulaSpec import FormulaOld as FormulaClass
-from FormulaSpec import Parameter as ParamClass
-from FormulaSpec import Operator as OperatorClass
+
 from  SignalTemporalLogic.STLFactory import STLFactory
 import itertools
 from scipy.stats import geom
@@ -156,22 +154,14 @@ class FormulaGenerator:
         return formulas
 
 
-    #TODO Working Here!!!
     #Generates one random formula with random number of atomic nodes
     def randomFormula(self, variables, paramDict, genOps):
         #select max number of random atomic nodes
         maxNodes = genOps.init__max_number_of_atoms
         numAtomicNodes = random.randint(1,maxNodes)
-        # if(genOps.init__random_number_of_atoms):
-        #     numAtomicNodes = 1 + geom.rvs(1 / genOps.init__average_number_of_atoms, 1)
-        # else:
-        #     numAtomicNodes = genOps.init__fixed_number_of_atoms
 
         nodes = []
         for i in range(numAtomicNodes):
-            # if random.random() < genOps.init__prob_of_true_atom:
-            #     nodes.append(True) #constantAtom(true)
-            # else:
             exp = self.newAtomicNode(variables, paramDict)
             nodes.append(exp)
 
@@ -179,15 +169,100 @@ class FormulaGenerator:
         #Make different types of nodes:
         count = 0
         while count < 3:
-            pass
+            count+=1
 
+            #check termination condition
+            if len(nodes) == 1 and ("G" in nodes[0] or "F" in nodes[0] or "U" in nodes[0]):
+                break
 
+            r = random.randint(0, len(nodes)-1)
+            c1 = nodes.pop(r)
+            c2 = None
 
-        # MTLformula f = new MTLformula(root);
-        # f.initalize(this.reference_population.store, parameters, null);
-        #
-        # Formula F = new Formula(f);
-        # return F;
+            #Set likelihood of different node types
+            if len(nodes) >= 1:
+                l1 = genOps.init__and_weight * 1
+                l2 = genOps.init__or_weight * 1
+                l3 = genOps.init__imply_weight * 1
+                l7 = genOps.init__until_weight * 1
+            else:
+                l1 = genOps.init__and_weight * 0
+                l2 = genOps.init__or_weight * 0
+                l3 = genOps.init__imply_weight * 0
+                l7 = genOps.init__until_weight * 0
+
+            if "!" in c1:
+                l4 = genOps.init__not_weight * 0
+            else:
+                l4 = genOps.init__not_weight * 1
+
+            if "F" in c1:
+                l5 = genOps.init__eventually_weight * 0
+                l9 = genOps.init__globallyeventually_weight * 0
+            else:
+                l5 = genOps.init__eventually_weight * 1
+                l9 = genOps.init__globallyeventually_weight * 1
+
+            if "G" in c1:
+                l6 = genOps.init__globally_weight * 0
+                l8 = genOps.init__eventuallyglobally_weight * 0
+            else:
+                l6 = genOps.init__globally_weight * 1
+                l8 = genOps.init__eventuallyglobally_weight * 1
+
+            x = [l1, l2, l3, l4, l5, l6, l7, l8, l9]
+
+            #sample from x
+            c = -1
+            xSum = sum(x)
+            p = random.uniform(0,1) * xSum
+            s = 0
+            for i in range(0, len(x)):
+                s += x[i]
+                if p <= s:
+                    c = i
+                    break
+
+            if len(nodes) > 0 and (c==0 or c==1 or c==2 or c==6):
+                j = random.randint(0, len(nodes)-1)
+                c2 = nodes.pop(j)
+
+            #Make new formula node
+            if c == 0: #and
+                expr = "(" + c1 + " & " + c2 + ")"
+            elif c == 1: #or
+                expr = "(" + c1 + " | " + c2 + ")"
+            elif c == 2: #imply
+                expr = "(" + c1  + " -> " + c2 + ")"
+            elif c == 3: #not
+                expr = "!(" + c1 + ")"
+            elif c == 4:#ev
+                t1, t2 = self.newTimebound(genOps)
+                expr = "F[" + str(t1) + "," + str(t2) + "](" + c1 + ")"
+            elif c == 5:#alw
+                t1, t2 = self.newTimebound(genOps)
+                expr = "G[" + str(t1) + "," + str(t2) + "](" + c1 + ")"
+            elif c == 6: #until
+                t1, t2 = self.newTimebound(genOps)
+                expr = "((" + c1 + ") " + "U[" + str(t1) + "," + str(t2) + "](" + c2 + "))"
+            elif c == 7: #ev alw
+                t1f, t2f = self.newTimebound(genOps)
+                t1g, t2g = self.newTimebound(genOps)
+                expr = "F[" + str(t1f) + "," + str(t2f) + "](G[" + str(t1g) + "," + str(t2g) + "](" + c1 + "))"
+            elif c == 8: #alw ev
+                t1f, t2f = self.newTimebound(genOps)
+                t1g, t2g = self.newTimebound(genOps)
+                expr = "G[" + str(t1g) + "," + str(t2g) + "](F[" + str(t1f) + "," + str(t2f) + "](" + c1 + "))"
+            else:
+                expr = None
+                break
+
+            nodes.append(expr)
+
+        stlFac = STLFactory()
+        f = nodes[0] + "\n"
+        fTree = stlFac.constructFormulaTree(f)
+        return fTree
 
 
     def newAtomicNode(self, variables, paramDict):
@@ -200,3 +275,13 @@ class FormulaGenerator:
 
         exp = var + " " + relop + " " + str(param)
         return exp
+
+    def newTimebound(self, genOps):
+        t1 = random.randint(genOps.min_time_bound, genOps.max_time_bound)
+        t2 = random.randint(genOps.min_time_bound, genOps.max_time_bound)
+        if t1 > t2:
+            temp = t1
+            t1 = t2
+            t2 = temp
+
+        return t1, t2

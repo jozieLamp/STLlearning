@@ -1,5 +1,5 @@
 from SymbolArray import SymbolArray
-from FormulaSpec import FormulaGenerator as FG, FormulaOld as Formula
+import FormulaSpec.FormulaGenerator as FG
 import logging
 
 #Class to hold populations of formulas, uses Formula Generator class to generate formulas themselves
@@ -42,10 +42,13 @@ class FormulaPopulation:
 
 
     def addRandomInitFormula(self, genOps):
-        randFormula = self.formulaGen.randomFormula(variables=self.variables, paramDict=self.paramDict, genOps=genOps)
-        self.population.extend(randFormula)
-        self.logFormulas(randFormula, "Random")
-
+        rFormulas = []
+        for i in range(genOps.max_num_rand):
+            randFormula = self.formulaGen.randomFormula(variables=self.variables, paramDict=self.paramDict, genOps=genOps)
+            rFormulas.append(randFormula)
+        self.population.extend(rFormulas)
+        self.logFormulas(rFormulas, "Random")
+        logging.info("New size of population is " + '%s' % (len(self.population)) + " formulas \n")
 
     def logFormulas(self, pop, type):
         logging.info(type + " Formula Population:")

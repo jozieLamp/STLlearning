@@ -1,5 +1,4 @@
 import logging
-from FormulaSpec import FormulaOld
 import random
 #from scikit import BayesianOptimization as BO
 import numpy as np

@@ -190,12 +190,16 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
         for c in ctx.getChildren():
             clds.append(c.getText())
 
+
         if "true" in clds or "false" in clds:
             id = self.generateID(AtomicEnum.BooleanAtomic)
             b = self.formulaTree.create_node(id, id, parent=parentID, data=BooleanAtomic(truthVal=clds))
         else:
             id = self.generateID(AtomicEnum.BooleanAtomic)
             b = self.formulaTree.create_node(id, id, parent=parentID, data=BooleanAtomic())
+
+        if "!" in clds:
+            b.data.notExpr = True
 
         #handle bool atomic for stl term
         p = self.formulaTree.get_node(parentID)
@@ -247,11 +251,8 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
 
     def visitAtomic(self, ctx, parentID=None):
 
-
-
         if parentID != "NA":
-            #print("atomic", ctx.getText())
-            if ctx.getText().lstrip('-+').isdigit():
+            if ctx.getText().lstrip('-+').replace('.', '', 1).isdigit():
                 id = self.generateID(AtomicEnum.Parameter)
                 n=self.formulaTree.create_node(id, id, parent=parentID, data=Parameter(value=ctx.getText()))
             else:
@@ -267,11 +268,6 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
                     pNode.atomic1 = n.data
                 else:
                     pNode.atomic2 = n.data
-
-                # if ctx.getText().lstrip('-+').isdigit():
-                #     pNode.atomic2 = n.data
-                # else:
-                #     pNode.atomic1 = n.data
 
         return ctx.getText()
 
