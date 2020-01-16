@@ -61,10 +61,6 @@ class Learning:
         #Make formula population object to handle formulas
         pop = FormulaPopulation(popSize=self.genOps.initialPopSize, paramDict=pd)
 
-        #TODO - do we need this variable????
-        atTime = min(time) #atTime = 1 for cgm vars #What value time starts at, usually 0 or 1
-
-
         #add vars and their values to the formula pop object
         for i in range(len(variables)):
             pop.addVariable(variables[i], lower[i], upper[i])
@@ -87,13 +83,13 @@ class Learning:
         logging.info("NUMBER OF GENERATIONS: " + '%s' % (numGen))
         logging.info("GENETIC ALGORITHM - START")
 
-        # for k in range(numGen):
-        #     logging.info("GENERATION #: " + '%s' % (k))
-        #     logging.info("> OPTIMIZING POPULATION PARAMETER")
-        #     generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
-        #         positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
-        #                     negativeTestSet=negativeTestSet, atTime=atTime, paramDict=pd, genOps=self.genOps)
-        #
+        for k in range(numGen):
+            logging.info("GENERATION #: " + '%s' % (k))
+            logging.info("> OPTIMIZING POPULATION PARAMETER")
+            generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
+                positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
+                            negativeTestSet=negativeTestSet, atTime=min(time), paramDict=pd, genOps=self.genOps)
+
 
 
     #Make positive and negative training and validation sets
