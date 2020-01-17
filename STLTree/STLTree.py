@@ -1,7 +1,8 @@
 import treelib as treelib
 from treelib.exceptions import*
 from STLTree.STLExpr import ExprEnum
-
+from STLTree.Atomic import AtomicEnum
+from STLTree.STLExpr import ExprEnum
 
 class STLTree(treelib.Tree):
     def __init__(self):
@@ -20,6 +21,23 @@ class STLTree(treelib.Tree):
     def printTree(self):
         print(self.toString())
 
+    def getAllVars(self):
+        varList =  []
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            if obj.type == AtomicEnum.Variable:
+                varList.append(obj)
+
+        return varList
+
+    def getAllTimebounds(self):
+        timeList = []
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            if obj.type == ExprEnum.timeBound:
+                timeList.append(obj)
+
+        return timeList
 
     def show(self, nid=None, level=treelib.Tree.ROOT, idhidden=True, filter=None,
              key=None, reverse=False, line_type='ascii-ex', data_property=None):

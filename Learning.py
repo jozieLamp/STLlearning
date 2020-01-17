@@ -88,7 +88,7 @@ class Learning:
             logging.info("> OPTIMIZING POPULATION PARAMETER")
             generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
                 positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
-                            negativeTestSet=negativeTestSet, atTime=min(time), paramDict=pd, genOps=self.genOps)
+                            negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps)
 
 
 
