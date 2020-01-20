@@ -33,7 +33,7 @@ class Learning:
         labels = self.readVectorFromFile(self.labelsPath) # returns one D array of labels
         time = self.readVectorFromFile(self.timePath) # returns one D array of time
         logging.info("Time ROWS "+ str(len(time)))
-        logging.info("Labels DEPTH " + str(len(labels)))
+        logging.info("Labels/Num Layers DEPTH " + str(len(labels)))
         data = self.readMatrixFromFile(self.dataPath, time)  # returns 3D array of data
         logging.info("Data Loaded\n" + '%s' % (data) + "\n")
 
@@ -106,32 +106,33 @@ class Learning:
         random.shuffle(positiveTrajectories)
         random.shuffle(negativeTrajectories)
 
-        trainPositiveSize = len(positiveTrajectories) * trainPercentage
-        validationPositiveSize = len(positiveTrajectories) - trainPositiveSize
-        trainNegativeSize = len(negativeTrajectories) * trainPercentage
-        validationNegativeSize = len(negativeTrajectories) - trainNegativeSize
+        trainPositiveSize = int(round((len(positiveTrajectories) * trainPercentage),3))
+        validationPositiveSize = int(round((len(positiveTrajectories) - trainPositiveSize),3))
+        trainNegativeSize = int(round((len(negativeTrajectories) * trainPercentage),3))
+        validationNegativeSize = int(round((len(negativeTrajectories) - trainNegativeSize),3))
 
-        # TODO these were all 3d arrays  [] [] [] --> I made them one D, and then need to convert to 3D later
-        positiveTrainSet = []  # trainPositiveSize
-        negativeTrainSet = []  # trainNegativeSize
-        positiveValidationSet = []  # validationPositiveSize
-        negativeValidationSet = []  # validationNegativeSize
+        numTime = data.shape[1]
+        numAttb = data.shape[2]
+        positiveTrainSet = np.zeros((trainPositiveSize,numTime,numAttb))# trainPositiveSize
+        negativeTrainSet = np.zeros((trainNegativeSize,numTime,numAttb))  # trainNegativeSize
+        positiveValidationSet = np.zeros((validationPositiveSize,numTime,numAttb))  # validationPositiveSize
+        negativeValidationSet = np.zeros((validationNegativeSize,numTime,numAttb)) # validationNegativeSize
 
-        for i in range(int(trainPositiveSize)):
-            positiveTrainSet.append(data[positiveTrajectories[i]])
+        for i in range(trainPositiveSize):
+            positiveTrainSet[i, :, :] = data[positiveTrajectories[i], :, :]
 
-        for i in range(int(trainNegativeSize)):
-            negativeTrainSet.append(data[negativeTrajectories[i]])
+        for i in range(trainNegativeSize):
+            negativeTrainSet[i, :, :] = data[negativeTrajectories[i], :, :]
 
-        for i in range(int(validationPositiveSize)):
-            positiveValidationSet.append(data[positiveTrajectories[int(trainPositiveSize + i)]])
+        for i in range(validationPositiveSize):
+            positiveValidationSet[i, :, :] = data[positiveTrajectories[trainPositiveSize + i], :, :]
 
-        for i in range(int(validationNegativeSize)):
-            negativeValidationSet.append(data[negativeTrajectories[int(trainNegativeSize + i)]])
+        for i in range(validationNegativeSize):
+            negativeValidationSet[i, :, :] = data[negativeTrajectories[trainNegativeSize + i], :, :]
 
         logging.info("Positive Train Set Size " + str(len(positiveTrainSet)))
-        logging.info("Positive Validation Set Size " + str(len(positiveValidationSet)))
         logging.info("Negative Train Set Size " + str(len(negativeTrainSet)))
+        logging.info("Positive Validation Set Size " + str(len(positiveValidationSet)))
         logging.info("Negative Validation Set Size " + str(len(negativeValidationSet)) + "\n")
 
         return positiveTrainSet, negativeTrainSet, positiveValidationSet, negativeValidationSet

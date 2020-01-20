@@ -1,10 +1,26 @@
 
 from SignalTemporalLogic.STLFactory import STLFactory
 import random
+#from scikit import BayesianOptimization as BO
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
+from bayes_opt import BayesianOptimization
+from bayes_opt import UtilityFunction
+from GeneticOptions import GeneticOptions
 
 #Generates different genetic population sets, mainly used for Genetic Population
 class GeneticGenerator:
     def __init__(self):
+        self.time = None
+        self.positiveTrainSet = None
+        self.negativeTrainSet = None
+        self.formula = None
+        self.variables = None
+        self.atTime = None
+        self.formulaBounds = None
+        self.lb = None
+        self.ub = None
         pass
 
     #returns Genetic Population
@@ -14,16 +30,18 @@ class GeneticGenerator:
         rankScore = []
 
         #for loop to go through  all formulas in pop
+        # for i in range(len(pop.population)):
+        #     formula = pop.population[i]
 
         # formula  = pop.population[0]
         formula = "G[0,900](x > 20 & y < 30)"
         stlFac = STLFactory()
         formula =  stlFac.constructFormulaTree(formula)
 
-        self.computeAverageMultiTrajectory(variables, pop.paramDict, formula)
+        self.computeAverageMultiTrajectory(time, positiveTrainSet, negativeTrainSet, variables, atTime, pop.paramDict, formula)
 
-
-    def computeAverageMultiTrajectory(self, allVariables, paramDict, formula):
+    #returns list of new optimized params
+    def computeAverageMultiTrajectory(self, time, positiveTrainSet, negativeTrainSet, variables, atTime, paramDict, formula):
         formulaVars = formula.getAllVars() #get vars in formula
         formulaBounds = formula.getAllTimebounds() #get all timebounds in formula
         timeLB = [float(b.lowerBound) for b in formulaBounds]
@@ -42,10 +60,54 @@ class GeneticGenerator:
         ub.extend(timeUB)
         ub.extend(varUB)
 
+        #update private variables
+        self.time = time
+        self.positiveTrainSet = positiveTrainSet
+        self.negativeTrainSet = negativeTrainSet
+        self.formula = formula
+        self.variables= variables
+        self.atTime = atTime
+        self.lb = lb
+        self.ub = ub
+
+        point = []
+        value1 = self.computeRobustness(self.time, self.positiveTrainSet, self.variables, self.formula, point,
+                                        self.atTime)
+        value2 = self.computeRobustness(self.time, self.negativeTrainSet, self.variables, self.formula, point,
+                                        self.atTime)
+
+        #GP-UCB Param Optimization
+        # optimizer = BayesianOptimization(
+        #     f=self.objectiveFunction,
+        #     pbounds={'x': (0, 80), 'y': (0, 45)},
+        #     verbose=2,
+        #     random_state=1,
+        # )
+        #
+        # optimizer.maximize(
+        #     init_points=2,
+        #     n_iter=3,
+        # )
+        # print(optimizer.max)
+
+        # utility = UtilityFunction(kind="ucb", kappa=2.5, xi=0.0)
+        #
+        # for _ in range(5):
+        #     next_point = optimizer.suggest(utility)
+        #     target = self.objectiveFunction(**next_point, time, positiveTrainSet, negativeTrainSet, formula, variables, atTime, formulaBounds, lb, ub)
+        #     optimizer.register(params=next_point, target=target)
+        #
+        #     print(target, next_point)
+        # print(optimizer.max)
 
 
-    def objectiveFunction(self, point, formulaBounds, lb, ub):
-        for i in range(0,2,len(formulaBounds)-1):
+
+
+
+    def objectiveFunction(self, point):
+        formulaBoundsList = self.formula.getAllTimeboundsList()
+
+        for i in range(0,2,len(formulaBoundsList)):
             point[i+1] = point[i] + point[i + 1] * (1 - point[i])
 
         p = point #array of point copy
@@ -53,14 +115,14 @@ class GeneticGenerator:
 
         newList = []
         for i in l:
-            x = lb[i] + p[i] * (ub[i] - lb[i])
+            x = self.lb[i] + p[i] * (self.ub[i] - self.lb[i])
             newList.append(x)
 
         point = newList
 
-        #TODO - conplete this part with robustness
-        value1 = self.computeRobustness()
-        value2 = self.computeRobustness()
+        #TODO - complete this part with robustness
+        value1 = self.computeRobustness(self.time, self.positiveTrainSet, self.variables, self.formula, point, self.atTime)
+        value2 = self.computeRobustness(self.time, self.negativeTrainSet, self.variables, self.formula, point, self.atTime)
 
         abs = self.discriminationFunction(value1, value2)
 
@@ -70,8 +132,24 @@ class GeneticGenerator:
             return abs
 
 
+    #TODO here
+    def computeRobustness(self, time, trainSet, variables, formula, point, atTime):
+        for i in trainSet:
+            print(i)
+
+        pass
+
+
+
     def discriminationFunction(self, x, y): #list x and y
         return (x[0]-y[0]) / abs(x[1] + y[1])
+
+
+
+
+
+
+
 
 
     #Grid sampler class
@@ -94,8 +172,4 @@ class GeneticGenerator:
     def sampleVars(self, n, params):#takes list of params
         pass
         #return new double [0][]
-
-    #TODO here
-    def computeRobustness(self):
-        pass
 

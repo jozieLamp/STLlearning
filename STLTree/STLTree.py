@@ -39,6 +39,18 @@ class STLTree(treelib.Tree):
 
         return timeList
 
+    def  getAllTimeboundsList(self):
+        timeList = []
+
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            if obj.type == ExprEnum.timeBound:
+                timeList.append(obj.lowerBound)
+                timeList.append(obj.upperBound)
+
+        return timeList
+
+
     def show(self, nid=None, level=treelib.Tree.ROOT, idhidden=True, filter=None,
              key=None, reverse=False, line_type='ascii-ex', data_property=None):
         """
