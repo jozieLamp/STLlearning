@@ -22,7 +22,9 @@ class GeneticGenerator:
         self.formulaBounds = None
         self.lb = None
         self.ub = None
-        pass
+        self.paramDict = None
+        self.formula = None
+
 
     #returns Genetic Population
     def optimizeGenerationParameters(self, pop, variables, time, positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet, atTime, genOps):
@@ -34,15 +36,15 @@ class GeneticGenerator:
         # for i in range(len(pop.population)):
         #     formula = pop.population[i]
 
-        # formula  = pop.population[0]
-        formula = "G[0,900](x > 40 & y < 80)\n"
+        #formula  = pop.population[0]
+        formula = "G[28, 260]((x <= 5.95 | x >= 8.84))\n"
         stlFac = STLFactory()
         formula =  stlFac.constructFormulaTree(formula)
 
-        self.computeAverageMultiTrajectory(time, positiveTrainSet, negativeTrainSet, variables, atTime, pop.paramDict, formula)
+        self.computeAverageMultiTrajectory(time, positiveTrainSet, negativeTrainSet, variables, atTime, pop.varDict, pop.paramDict, formula)
 
     #returns list of new optimized params
-    def computeAverageMultiTrajectory(self, time, positiveTrainSet, negativeTrainSet, variables, atTime, paramDict, formula):
+    def computeAverageMultiTrajectory(self, time, positiveTrainSet, negativeTrainSet, variables, atTime, varDict, paramDict, formula):
         formulaVars = formula.getAllVars() #get vars in formula
         formulaBounds = formula.getAllTimebounds() #get all timebounds in formula
         timeLB = [float(b.lowerBound) for b in formulaBounds]
@@ -50,9 +52,10 @@ class GeneticGenerator:
         varLB = []
         varUB =  []
         for x in formulaVars:
-            b = paramDict.get(x.toString())
+            b = varDict.get(x.toString())
             varLB.append(float(b[0]))
             varUB.append(float(b[1]))
+
         #make list  of all  lower bounds and all upper bounds
         lb = []
         lb.extend(timeLB)
@@ -70,14 +73,11 @@ class GeneticGenerator:
         self.atTime = atTime
         self.lb = lb
         self.ub = ub
+        self.paramDict = paramDict
+        self.formula = formula
 
-        point = []
 
-        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.time, self.atTime, point, self.variables, formula)
-        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, self.time, self.atTime, point, self.variables, formula)
-
-        print("val1", val1Mean, "val2", val2Mean)
-
+        #TODO - complete param optimization part here
         #GP-UCB Param Optimization
         # optimizer = BayesianOptimization(
         #     f=self.objectiveFunction,
@@ -102,25 +102,6 @@ class GeneticGenerator:
         #     print(target, next_point)
         # print(optimizer.max)
 
-    # TODO here, need to fix value calculation
-    # More robust when value higher
-    def computeRobustness(self, trainSet, time, atTime, point, variables, formula):
-
-        rVals = []
-        #loop through train set and calculate robustness for each variable
-        for i in trainSet:  # i is 2d array of values for each var
-            #print(i)
-            traj = Trajectory(i, time, point, variables, values=[0,0,0,0])
-            rVals.append(formula.evaluateRobustness(traj, atTime))
-
-        print("rvals", rVals)
-
-        mean = sum(rVals) / len(rVals)
-        variance = np.var(rVals)
-
-        return mean, variance #return two doubles
-
-
 
     def objectiveFunction(self, point):
         formulaBoundsList = self.formula.getAllTimeboundsList()
@@ -138,12 +119,10 @@ class GeneticGenerator:
 
         point = newList
 
-        #TODO - complete this part with robustness
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.time, self.atTime, point, self.variables, self.paramDict, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, self.time, self.atTime, point, self.variables, self.paramDict, self.formula)
 
-        value1 = self.computeRobustness(self.time, self.positiveTrainSet, self.variables, self.formula, point, self.atTime)
-        value2 = self.computeRobustness(self.time, self.negativeTrainSet, self.variables, self.formula, point, self.atTime)
-
-        abs = self.discriminationFunction(value1, value2)
+        abs = self.discriminationFunction(val1Mean, val2Mean)
 
         if abs == None:
             return 0
@@ -151,7 +130,20 @@ class GeneticGenerator:
             return abs
 
 
+    # More robust when value higher
+    def computeRobustness(self, trainSet, time, atTime, point, variables, paramDict, formula):
 
+        rVals = []
+        #loop through train set and calculate robustness for each variable
+        for i in trainSet:  # i is 2d array of values for each var
+            #print(i)
+            traj = Trajectory(i, time, point, variables, paramDict, values=[0,0,0,0])
+            rVals.append(formula.evaluateRobustness(traj, atTime))
+
+        mean = sum(rVals) / len(rVals)
+        variance = np.std(rVals)
+
+        return mean, variance #return two doubles
 
 
 

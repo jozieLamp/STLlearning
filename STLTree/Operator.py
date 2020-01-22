@@ -75,7 +75,7 @@ class RelationalOperator(Operator):
 
     def evaluateRobustness(self, traj, timeIndex):
         value1 = float(self.atomic1.evaluateRobustness(traj, timeIndex))
-        value2 = float(self.atomic2.evaluateRobustness(traj, timeIndex))
+        value2 = float(self.atomic2.evaluateRobustness(traj, timeIndex)) #send variable name
 
         if self.type == OperatorEnum.LT:
             truthVal = value1 < value2

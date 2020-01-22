@@ -174,8 +174,8 @@ class STLTerm(STLExpr):
 #Genral STL Expression functions
 
 def timeIndexAfter(time, t):
-    for i in range(len(time)):
-        if time[i] >= t:
+    for i in range(0,len(time)):
+        if time[i] > t:
             return i
     return len(time)-1
 

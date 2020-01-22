@@ -16,23 +16,13 @@ class Atomic(STLExpr):
         self.value = value
         self.type = type
 
-    # def toString(self):
-    #     if self.value != None:
-    #         return self.value)
-    #
-    # # May need to do something here cause these are terminal nodes, return true values or something
-    # def evalRobustness(self, trajectory, atTime):
-    #     times = trajectory.time
-    #     index = STLExpr.timeIndexAfter_efficient(times, atTime, self.previouslyUsedIndex)
-    #     self.previouslyUsedIndex = index
-    #
-    #     return self.value.evalRobustness() #return value??
 
 #param value
 class Parameter(Atomic):
-    def __init__(self, value, type=AtomicEnum.Parameter):
+    def __init__(self, value, name, type=AtomicEnum.Parameter):
         super(Parameter, self).__init__(value)
         self.type = type
+        self.name = name
 
     def toString(self):
         if type(self.value) == str:
@@ -57,6 +47,7 @@ class Variable(Atomic):
         for i in range(0,len(traj.variables)):
             if traj.variables[i] == self.value:
                 index = i
+                break
 
         return traj.values[index]
 

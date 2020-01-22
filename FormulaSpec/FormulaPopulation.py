@@ -4,9 +4,10 @@ import logging
 
 #Class to hold populations of formulas, uses Formula Generator class to generate formulas themselves
 class FormulaPopulation:
-    def __init__(self, popSize, paramDict={}):
+    def __init__(self, popSize, varDict={}, paramDict={}):
         self.popSize = popSize
-        self.paramDict = paramDict #dictionary- VarName key: {lower bound, upper bound}
+        self.varDict = varDict #dictionary- VarName key: {lower bound, upper bound}
+        self.paramDict  = paramDict #dictionary- paramName key: {list of param values}
         self.formulaGen = FG.FormulaGenerator() #class to generate formula sets
 
         self.population = [] #arrayList of formulas
@@ -44,7 +45,7 @@ class FormulaPopulation:
     def addRandomInitFormula(self, genOps):
         rFormulas = []
         for i in range(genOps.max_num_rand):
-            randFormula = self.formulaGen.randomFormula(variables=self.variables, paramDict=self.paramDict, genOps=genOps)
+            randFormula = self.formulaGen.randomFormula(variables=self.variables, varDict=self.varDict, genOps=genOps)
             rFormulas.append(randFormula)
         self.population.extend(rFormulas)
         self.logFormulas(rFormulas, "Random")

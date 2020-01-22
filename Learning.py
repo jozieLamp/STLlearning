@@ -26,9 +26,7 @@ class Learning:
 
     #start learning process
     def run(self):
-        # BiFunction <double[], double[], Double> DISCRIMINATION_FUNCTION = (x, y) -> (x[0] - y[0]) / (Math.abs(x[1] + y[1]));  ###
 
-        #TODO - add some automatic re-shaping of the actual input data files to be in 3D and not 2D
         #First load labels, time and data
         labels = self.readVectorFromFile(self.labelsPath) # returns one D array of labels
         time = self.readVectorFromFile(self.timePath) # returns one D array of time
@@ -51,15 +49,20 @@ class Learning:
         logging.info("Variable Lower Bounds" + '%s' % (lower))
         logging.info("Variable Upper Bounds" + '%s' % (upper))
 
-        #Make param dictionary for formula pop that stores vars and their lower and upper bounds
-        pd = {}
+        #Make variable dictionary for formula pop that stores vars and their lower and upper bounds
+        vd = {}
         for i in range(len(variables)):
-            pd.update({variables[i]: [lower[i], upper[i]]})
+            vd.update({variables[i]: [lower[i], upper[i]]})
 
-        logging.info("Param Dict Created" + '%s' % (pd) + "\n")
+        logging.info("Variable Dict Created" + '%s' % (vd) + "\n")
+
+        #Make param dict to store parameter values for each variable
+        pd = {}
+        for v in variables:
+            pd["theta_" + v] = []
 
         #Make formula population object to handle formulas
-        pop = FormulaPopulation(popSize=self.genOps.initialPopSize, paramDict=pd)
+        pop = FormulaPopulation(popSize=self.genOps.initialPopSize, varDict=vd, paramDict=pd)
 
         #add vars and their values to the formula pop object
         for i in range(len(variables)):

@@ -254,7 +254,10 @@ class STLExtendedVisitor(SignalTemporalLogicVisitor):
         if parentID != "NA":
             if ctx.getText().lstrip('-+').replace('.', '', 1).isdigit():
                 id = self.generateID(AtomicEnum.Parameter)
-                n=self.formulaTree.create_node(id, id, parent=parentID, data=Parameter(value=ctx.getText()))
+                n=self.formulaTree.create_node(id, id, parent=parentID, data=Parameter(name="", value=ctx.getText()))
+            elif "theta_" in ctx.getText():
+                id = self.generateID(AtomicEnum.Parameter)
+                n = self.formulaTree.create_node(id, id, parent=parentID, data=Parameter(name=ctx.getText(), value=0))
             else:
                 id = self.generateID(AtomicEnum.Variable)
                 n=self.formulaTree.create_node(id, id, parent=parentID, data=Variable(value=ctx.getText()))
