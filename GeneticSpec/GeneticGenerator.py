@@ -8,6 +8,7 @@ from matplotlib import gridspec
 from bayes_opt import BayesianOptimization
 from bayes_opt import UtilityFunction
 from GeneticOptions import GeneticOptions
+from GeneticSpec.Trajectory import Trajectory
 
 #Generates different genetic population sets, mainly used for Genetic Population
 class GeneticGenerator:
@@ -34,7 +35,7 @@ class GeneticGenerator:
         #     formula = pop.population[i]
 
         # formula  = pop.population[0]
-        formula = "G[0,900](x > 20 & y < 30)"
+        formula = "G[0,900](x > 40 & y < 80)\n"
         stlFac = STLFactory()
         formula =  stlFac.constructFormulaTree(formula)
 
@@ -71,10 +72,11 @@ class GeneticGenerator:
         self.ub = ub
 
         point = []
-        value1 = self.computeRobustness(self.time, self.positiveTrainSet, self.variables, self.formula, point,
-                                        self.atTime)
-        value2 = self.computeRobustness(self.time, self.negativeTrainSet, self.variables, self.formula, point,
-                                        self.atTime)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.time, self.atTime, point, self.variables, formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, self.time, self.atTime, point, self.variables, formula)
+
+        print("val1", val1Mean, "val2", val2Mean)
 
         #GP-UCB Param Optimization
         # optimizer = BayesianOptimization(
@@ -100,7 +102,23 @@ class GeneticGenerator:
         #     print(target, next_point)
         # print(optimizer.max)
 
+    # TODO here, need to fix value calculation
+    # More robust when value higher
+    def computeRobustness(self, trainSet, time, atTime, point, variables, formula):
 
+        rVals = []
+        #loop through train set and calculate robustness for each variable
+        for i in trainSet:  # i is 2d array of values for each var
+            #print(i)
+            traj = Trajectory(i, time, point, variables, values=[0,0,0,0])
+            rVals.append(formula.evaluateRobustness(traj, atTime))
+
+        print("rvals", rVals)
+
+        mean = sum(rVals) / len(rVals)
+        variance = np.var(rVals)
+
+        return mean, variance #return two doubles
 
 
 
@@ -121,6 +139,7 @@ class GeneticGenerator:
         point = newList
 
         #TODO - complete this part with robustness
+
         value1 = self.computeRobustness(self.time, self.positiveTrainSet, self.variables, self.formula, point, self.atTime)
         value2 = self.computeRobustness(self.time, self.negativeTrainSet, self.variables, self.formula, point, self.atTime)
 
@@ -132,12 +151,7 @@ class GeneticGenerator:
             return abs
 
 
-    #TODO here
-    def computeRobustness(self, time, trainSet, variables, formula, point, atTime):
-        for i in trainSet:
-            print(i)
 
-        pass
 
 
 

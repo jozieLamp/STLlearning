@@ -1,6 +1,7 @@
 
 from STLTree.STLExpr import STLExpr
 from enum import Enum
+from STLTree.STLExpr import timeIndexAfter_efficient
 
 class AtomicEnum(Enum):
     Atomic = 1
@@ -39,6 +40,9 @@ class Parameter(Atomic):
         v = format(self.value, '.3f')
         return str(v)
 
+    def evaluateRobustness(self, traj, timeIndex):
+        return self.value
+
 #defined var
 class Variable(Atomic):
     def __init__(self, value, type = AtomicEnum.Variable):
@@ -48,6 +52,15 @@ class Variable(Atomic):
     def toString(self):
         return self.value
 
+    def evaluateRobustness(self, traj, timeIndex):
+        index = 0
+        for i in range(0,len(traj.variables)):
+            if traj.variables[i] == self.value:
+                index = i
+
+        return traj.values[index]
+
+
 class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
     def __init__(self, type=AtomicEnum.BooleanAtomic, boolExpr= None, relExpr=None, truthVal=None, notExpr=None):
         super(BooleanAtomic, self).__init__()
@@ -56,6 +69,7 @@ class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
         self.type = type
         self.boolExpr = boolExpr
         self.notExpr = notExpr
+        self.prevIndex = 0
 
     def toString(self):
         expr = ""
@@ -71,3 +85,25 @@ class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
                 return expr + self.boolExpr.toString()
             else:
                 return ""
+
+    def evaluateRobustness(self, traj, timeIndex):
+        index = timeIndexAfter_efficient(traj.time, timeIndex, self.prevIndex)
+        self.prevIndex = index
+
+        for i in range(0,len(traj.variables)):
+            x = traj.trajectories[i]
+            xVal = x[index]
+            traj.values[i] = xVal
+
+
+        if self.notExpr != None:
+            if self.relExpr != None:
+                return -self.relExpr.evaluateRobustness(traj, timeIndex)
+            elif self.boolExpr != None:
+                return -self.boolExpr.evaluateRobustness(traj, timeIndex)
+        else:
+            if self.relExpr != None:
+                return self.relExpr.evaluateRobustness(traj, timeIndex)
+            elif self.boolExpr != None:
+                return self.boolExpr.evaluateRobustness(traj, timeIndex)
+

@@ -21,6 +21,14 @@ class STLTree(treelib.Tree):
     def printTree(self):
         print(self.toString())
 
+    def evaluateRobustness(self, traj, timeIndex):
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            #print(node)
+            if obj.type == ExprEnum.statement:
+                return obj.evaluateRobustness(traj, timeIndex)
+
+    #get all variables in formula tree
     def getAllVars(self):
         varList =  []
         for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
@@ -30,6 +38,7 @@ class STLTree(treelib.Tree):
 
         return varList
 
+    #get all time bounds in formula tree as timebound objects
     def getAllTimebounds(self):
         timeList = []
         for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
@@ -39,6 +48,7 @@ class STLTree(treelib.Tree):
 
         return timeList
 
+    #Get all time bounds in formula tree in  a list format
     def  getAllTimeboundsList(self):
         timeList = []
 

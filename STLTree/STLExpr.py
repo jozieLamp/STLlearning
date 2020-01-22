@@ -36,6 +36,12 @@ class Statement(STLExpr):
         else:
             return self.boolExpr.toString()
 
+    def evaluateRobustness(self, traj, timeIndex):
+        if self.declaration != None:
+            return None
+        else:
+            return self.boolExpr.evaluateRobustness(traj, timeIndex)
+
 class TimeBound(STLExpr):
     def __init__(self, type=ExprEnum.timeBound, lowerBound="l", upperBound="u"):
         super(TimeBound, self).__init__()
@@ -64,6 +70,23 @@ class BoolExpr(STLExpr):
 
         return st
 
+    def evaluateRobustness(self, traj, timeIndex):
+        if self.boolOperator != None:
+            if self.boolOperator.type == OperatorEnum.AND:
+                return min(self.stlTerm1.evaluateRobustness(traj, timeIndex), self.stlTerm2.evaluateRobustness(traj, timeIndex))
+            elif self.boolOperator.type == OperatorEnum.OR:
+                return max(self.stlTerm1.evaluateRobustness(traj, timeIndex), self.stlTerm2.evaluateRobustness(traj, timeIndex))
+            elif self.boolOperator.type == OperatorEnum.IMPLIES:
+                return -max(self.stlTerm1.evaluateRobustness(traj, timeIndex), self.stlTerm2.evaluateRobustness(traj, timeIndex))
+
+        elif self.stlTerm2 != None:
+            return self.stlTerm2.evaluateRobustness(traj, timeIndex)
+
+        else:
+            return self.stlTerm1.evaluateRobustness(traj, timeIndex)
+
+
+
 class STLTerm(STLExpr):
     def __init__(self, type=ExprEnum.stlTerm, tempOperator=None, timebound=None, boolAtomic1=None, boolAtomic2=None):
         super(STLTerm, self).__init__()
@@ -83,6 +106,69 @@ class STLTerm(STLExpr):
             st = self.boolAtomic1.toString()
 
         return st
+
+
+    def evaluateRobustness(self, traj, timeIndex):
+        if self.tempOperator != None:
+            if self.tempOperator.type == OperatorEnum.G:
+                minVal = 9999999
+                t1 = float(self.timebound.lowerBound) + timeIndex
+                t2 = float(self.timebound.upperBound) + timeIndex
+
+                index1 = timeIndexAfter(traj.time, t1)
+                index2 = timeIndexUntil(traj.time, t2)
+
+                if index1 > index2 or t1==t2:
+                    return self.boolAtomic1.evaluateRobustness(traj, traj.time[index2])
+                for i in range(index1, index2):
+                    val = self.boolAtomic1.evaluateRobustness(traj, traj.time[i])
+                    if val < minVal:
+                        minVal = val
+
+                return minVal
+
+            elif self.tempOperator.type == OperatorEnum.F:
+                maxVal = -9999999
+                t1 = float(self.timebound.lowerBound) + timeIndex
+                t2 = float(self.timebound.upperBound) + timeIndex
+
+                index1 = timeIndexAfter(traj.time, t1)
+                index2 = timeIndexUntil(traj.time, t2)
+
+                if index1 > index2 or t1 == t2:
+                    return self.boolAtomic1.evaluateRobustness(traj, traj.time[index2])
+
+
+                for i in range(index1, index2):
+                    val = self.boolAtomic1.evaluateRobustness(traj, traj.time[i])
+                    if val > maxVal:
+                        maxVal = val
+
+                return maxVal
+
+            elif self.tempOperator.type == OperatorEnum.U:
+                maxVal = -9999999
+                t1 = float(self.timebound.lowerBound) + timeIndex
+                t2 = float(self.timebound.upperBound) + timeIndex
+
+                index1 = timeIndexAfter(traj.time, t1)
+                index2 = timeIndexUntil(traj.time, t2)
+
+                if index1 > index2 or t1 == t2:
+                    return max(self.boolAtomic1.evaluateRobustness(traj, traj.time[index2]), self.boolAtomic2.evaluateRobustness(traj, traj.time[index2]))
+
+                for i in range(index1+1, index2):
+                    valueF22 = self.boolAtomic2.evaluateRobustness(traj, traj.time[i + 1])
+                    valueF11 = 9999999
+                    for j in range(index1, i):
+                        valueF11 = min(valueF11, self.boolAtomic1.evaluateRobustness(traj, traj.time[j]))
+
+                    maxVal = max(maxVal, min(valueF11, valueF22))
+
+                return maxVal
+        else:
+            return self.boolAtomic1.evaluateRobustness(traj, timeIndex)
+
 
 
 #Genral STL Expression functions

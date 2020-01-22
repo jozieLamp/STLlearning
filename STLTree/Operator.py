@@ -73,6 +73,31 @@ class RelationalOperator(Operator):
     def toString(self):
         return self.atomic1.toString() + " " + self.symbol + " " + self.atomic2.toString()
 
+    def evaluateRobustness(self, traj, timeIndex):
+        value1 = float(self.atomic1.evaluateRobustness(traj, timeIndex))
+        value2 = float(self.atomic2.evaluateRobustness(traj, timeIndex))
+
+        if self.type == OperatorEnum.LT:
+            truthVal = value1 < value2
+        elif self.type == OperatorEnum.LE:
+            truthVal = value1 <= value2
+        elif self.type == OperatorEnum.GT:
+            truthVal = value1 > value2
+        elif self.type == OperatorEnum.GE:
+            truthVal = value1 >= value2
+        elif self.type == OperatorEnum.EQ:
+            truthVal = value1 == value2
+        elif self.type == OperatorEnum.NEQ:
+            truthVal = value1 != value2
+        else:
+            truthVal = False
+
+        val = abs(value2 - value1)
+        if truthVal == True:
+            return val
+        else:
+            return -val
+
 class Operator_LT(RelationalOperator):
     def __init__(self, atomic1=None, atomic2=None, type=OperatorEnum.LT, symbol="<"):
         super(Operator_LT, self).__init__(atomic1, atomic2, type)
