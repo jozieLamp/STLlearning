@@ -82,16 +82,21 @@ class Learning:
         #Begin genetic algorithm learning part
         generation = GeneticPopulation()
         genGenerator = GeneticGenerator()
-        numGen = self.genOps.number_generations
+        numGen = 1#self.genOps.number_generations
         logging.info("NUMBER OF GENERATIONS: " + '%s' % (numGen))
         logging.info("GENETIC ALGORITHM - START")
 
         for k in range(numGen):
             logging.info("GENERATION #: " + '%s' % (k))
-            logging.info("> OPTIMIZING POPULATION PARAMETER")
+            logging.info("> OPTIMIZING POPULATION PARAMETERS")
+            #Todo - fix optimization to not be so slow here
             generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
                 positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
                             negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps)
+
+            generation.sortPopulation()
+            #TODO stopped here
+
 
 
 

@@ -16,10 +16,3 @@ l = Learning(logging.INFO, "Data/values", "Data/labels", "Data/times", variables
 #start learning
 l.run()
 
-# pd  = {}
-#
-# pd["theta0"] = [-0]
-# pd["theta0"].append(-0)
-#
-#
-# print(pd)

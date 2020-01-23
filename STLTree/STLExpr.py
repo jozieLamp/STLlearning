@@ -51,7 +51,7 @@ class TimeBound(STLExpr):
         self.timeBound = [lowerBound, upperBound]
 
     def toString(self):
-        return "[" + str(self.lowerBound) + "," + str(self.upperBound) + "]"
+        return "[" + str(round(float(self.lowerBound))) + "," + str(round(float(self.upperBound))) + "]"
 
 class BoolExpr(STLExpr):
     def __init__(self, type=ExprEnum.boolExpr, boolOperator=None, stlTerm1=None, stlTerm2=None):
