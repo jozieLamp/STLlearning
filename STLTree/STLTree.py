@@ -28,6 +28,35 @@ class STLTree(treelib.Tree):
             if obj.type == ExprEnum.statement:
                 return obj.evaluateRobustness(traj, timeIndex)
 
+    def getAllParams(self):
+        pList = []
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            if obj.type == AtomicEnum.Variable:
+                pList.append(obj.value)
+            elif obj.type == ExprEnum.timeBound:
+                pList.append("tl")
+                pList.append("tu")
+            else:
+                pass
+
+        return pList
+
+    def updateParams(self, newParams):
+        count = 0
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            if obj.type == AtomicEnum.Parameter:
+                obj.value = newParams[count]
+                count += 1
+            elif obj.type == ExprEnum.timeBound:
+                obj.lowerBound = newParams[count]
+                count += 1
+                obj.upperBound  = newParams[count]
+                count += 1
+            else:
+                pass
+
     #get all variables in formula tree
     def getAllVars(self):
         varList =  []
