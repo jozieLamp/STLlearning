@@ -9,6 +9,7 @@ from bayes_opt import BayesianOptimization
 from bayes_opt import UtilityFunction
 from GeneticOptions import GeneticOptions
 from GeneticSpec.Trajectory import Trajectory
+import logging
 
 #Generates different genetic population sets, mainly used for Genetic Population
 class GeneticGenerator:
@@ -19,11 +20,7 @@ class GeneticGenerator:
         self.formula = None
         self.variables = None
         self.atTime = None
-        self.formulaBounds = None
-        self.lb = None
-        self.ub = None
         self.paramDict = None
-        self.formula = None
 
 
     #returns Genetic Population
@@ -38,7 +35,7 @@ class GeneticGenerator:
 
         #formula  = pop.population[0]
         formula = "G[28, 260](x <= 5.95 & z < 90) & F[30,40] v > 20\n"
-        formula = "G[10, 30] x < 4\n"
+        #formula = "G[10, 30] x < 4\n"
         stlFac = STLFactory()
         formula =  stlFac.constructFormulaTree(formula)
 
@@ -51,46 +48,59 @@ class GeneticGenerator:
         self.atTime = atTime
         self.paramDict = pop.paramDict
 
-        #call optimize function
-        self.optimize(formula, pop.varDict, genOps)
-
-
-
-
-    def optimize(self, formula, varDict, genOps):
-        #get params from formula to optimize
+        #start optimization call
+        # get params from formula to optimize
         params = formula.getAllParams()
 
-        #make bounds for params
+        # make bounds for params
         pbounds = {}
         for i in range(len(params)):
             if params[i] == "tl" or params[i] == "tu":
-                pbounds["p"+ str(i)] = (genOps.min_time_bound, genOps.max_time_bound)
+                pbounds["p" + str(i)] = (genOps.min_time_bound, genOps.max_time_bound)
             else:
-                v = varDict[params[i]]
-                pbounds["p"+ str(i)] = (v[0], v[1])
+                v = pop.varDict[params[i]]
+                pbounds["p" + str(i)] = (v[0], v[1])
 
-        #Fix this so tu cant be > than tl
+        #call bayes opt based on number of params in objective function
+        if len(pbounds) == 3:
+            self.optimize(pbounds, self.objectiveFunction3)
+        elif len(pbounds) == 4:
+            self.optimize(pbounds, self.objectiveFunction4)
+        elif len(pbounds) == 5:
+            self.optimize(pbounds, self.objectiveFunction5)
+        elif len(pbounds) == 6:
+            self.optimize(pbounds, self.objectiveFunction6)
+        elif len(pbounds) == 7:
+            self.optimize(pbounds, self.objectiveFunction7)
+        elif len(pbounds) == 8:
+            self.optimize(pbounds, self.objectiveFunction8)
+        else:
+            logging.error("TOO MANY PARAMETERS IN OPTIMIZATION")
+
+        #TODO  - continue here!!!!
+
+
+
+    def optimize(self, pbounds, function, init_pts=2, n_iter=3):
         optimizer = BayesianOptimization(
-            f=self.objectiveFunction,
+            f=function,
             pbounds=pbounds,
-            verbose=1,
+            verbose=0,
             random_state=1,
         )
 
         optimizer.maximize(
-            init_points=2,
-            n_iter=3,
+            init_points=init_pts,
+            n_iter=n_iter,
         )
         print(optimizer.max)
 
 
 
-    def objectiveFunction(self, p0, p1, p2):
+    #Defining objective functions with different number of params
+    def objectiveFunction3(self, p0, p1, p2):
         #first construct formula with new bounds
         params = [p0, p1, p2]
-
-        #Save new formula??
         self.formula.updateParams(params)
 
         val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
@@ -103,9 +113,81 @@ class GeneticGenerator:
         else:
             return abs
 
+    def objectiveFunction4(self, p0, p1, p2, p3):
+        #first construct formula with new bounds
+        params = [p0, p1, p2, p3]
+        self.formula.updateParams(params)
 
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
 
-    #TODO - fix here
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        if abs == None:
+            return 0
+        else:
+            return abs
+
+    def objectiveFunction5(self, p0, p1, p2, p3, p4):
+        #first construct formula with new bounds
+        params = [p0, p1, p2, p3, p4]
+        self.formula.updateParams(params)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
+
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        if abs == None:
+            return 0
+        else:
+            return abs
+
+    def objectiveFunction6(self, p0, p1, p2, p3, p4, p5):
+        #first construct formula with new bounds
+        params = [p0, p1, p2, p3, p4, p5]
+        self.formula.updateParams(params)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
+
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        if abs == None:
+            return 0
+        else:
+            return abs
+
+    def objectiveFunction7(self, p0, p1, p2, p3, p4, p5, p6):
+        #first construct formula with new bounds
+        params = [p0, p1, p2, p3, p4, p5, p6]
+        self.formula.updateParams(params)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
+
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        if abs == None:
+            return 0
+        else:
+            return abs
+
+    def objectiveFunction8(self, p0, p1, p2, p3, p4, p5, p6, p7):
+        #first construct formula with new bounds
+        params = [p0, p1, p2, p3, p4, p5, p6, p7]
+        self.formula.updateParams(params)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
+
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        if abs == None:
+            return 0
+        else:
+            return abs
+
     # More robust when value higher
     def computeRobustness(self, trainSet, formula):
 
@@ -125,100 +207,3 @@ class GeneticGenerator:
 
     def discriminationFunction(self, xMean, xVar, yMean, yVar): #list x and y
         return (xMean - yMean) / abs(xVar + yVar)
-
-
-
-
-
-
-
-    #TODO - delete
-
-    # #TODO
-    # def objectiveFunction(self, point): #point is array of doubles, array of param vals trying to optimize
-    #     formulaBoundsList = self.formula.getAllTimeboundsList()
-    #
-    #     # for i in range(0,2,len(formulaBoundsList)):
-    #     #     point[i+1] = point[i] + point[i + 1] * (1 - point[i])
-    #     #
-    #     # p = point #array of point copy
-    #     # l = list(range(0, len(point)))
-    #     #
-    #     # newList = []
-    #     # for i in l:
-    #     #     x = self.lb[i] + p[i] * (self.ub[i] - self.lb[i])
-    #     #     newList.append(x)
-    #     #
-    #     # point = newList
-    #
-    #     val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.time, self.atTime, point, self.variables, self.paramDict, self.formula)
-    #     val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, self.time, self.atTime, point, self.variables, self.paramDict, self.formula)
-    #
-    #     abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
-    #
-    #     if abs == None:
-    #         return 0
-    #     else:
-    #         return abs
-
-    #Grid sampler class
-    #for time bounds, returns 2D list
-    def sampleTime(self, n, lbounds, ubounds, formulaBounds):
-        #n rows and m  columns, [[0] * m for i in range(n)]
-        res = [[0] * len(lbounds) for i in range(n)]
-
-        for i in range(0,n):
-            for j in range(0, 2, len(formulaBounds)):
-                res[i][j] = lbounds[j] + random.uniform(0,1) * (ubounds[j] - lbounds[j])
-
-                res[i][j+1] = res[i][j] + random.uniform(0,1) * (ubounds[j] - res[i][j])
-
-            for j in range(len(formulaBounds), len(res[i])):
-                res[i][j] = lbounds[j] + random.uniform(0,1) * (ubounds[j] - lbounds[j])
-
-        return res
-
-    def sampleVars(self, n, params):#takes list of params
-        pass
-        #return new double [0][]
-
-
-    def sampleParams(self, lowerbound, upperbound):
-        return random.uniform(lowerbound, upperbound)
-
-#returns list of new optimized params
-    # def computeAverageMultiTrajectory(self, time, positiveTrainSet, negativeTrainSet, variables, atTime, varDict, paramDict, formula):
-    #     formulaVars = formula.getAllVars() #get vars in formula
-    #     formulaBounds = formula.getAllTimebounds() #get all timebounds in formula
-    #     timeLB = [float(b.lowerBound) for b in formulaBounds]
-    #     timeUB = [float(b.upperBound) for b in formulaBounds]
-    #     varLB = []
-    #     varUB =  []
-    #     for x in formulaVars:
-    #         b = varDict.get(x.toString())
-    #         varLB.append(float(b[0]))
-    #         varUB.append(float(b[1]))
-    #
-    #     #make list  of all  lower bounds and all upper bounds
-    #     lb = []
-    #     lb.extend(timeLB)
-    #     lb.extend(varLB)
-    #     ub = []
-    #     ub.extend(timeUB)
-    #     ub.extend(varUB)
-    #
-    #     print(lb, ub)
-    #
-    #     #update private variables
-    #     self.time = time
-    #     self.positiveTrainSet = positiveTrainSet
-    #     self.negativeTrainSet = negativeTrainSet
-    #     self.formula = formula
-    #     self.variables= variables
-    #     self.atTime = atTime
-    #     self.lb = lb
-    #     self.ub = ub
-    #     self.paramDict = paramDict
-    #
-    #
-    #     #TODO - complete param optimization part here

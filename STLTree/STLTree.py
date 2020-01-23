@@ -50,10 +50,15 @@ class STLTree(treelib.Tree):
                 obj.value = newParams[count]
                 count += 1
             elif obj.type == ExprEnum.timeBound:
-                obj.lowerBound = newParams[count]
-                count += 1
-                obj.upperBound  = newParams[count]
-                count += 1
+                if newParams[count] > newParams[count+1]: #switch if ub > lb
+                    lb = newParams[count+1]
+                    ub = newParams[count]
+                else:
+                    lb = newParams[count]
+                    ub = newParams[count+1]
+                obj.lowerBound = lb
+                obj.upperBound  = ub
+                count += 2
             else:
                 pass
 
