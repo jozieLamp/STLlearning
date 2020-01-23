@@ -35,10 +35,21 @@ class GeneticPopulation:
 
         return GeneticPopulation(halfFormulas, halfParams, halfScores)
 
+    def geneticOperations(self, pop): #takes formula population
+
+        cumulativeScore = self.getCumulativeScore() #ave score of all formulas
+        print("Cumltv Score", cumulativeScore)
 
 
 
+    def getCumulativeScore(self):
+        scores = []
+        for x in self.rankScore:
+            scores.append(x.classDif)
 
+        aveScores = sum(scores) / len(scores)
+
+        return aveScores
 
 #Class that holds all score values
 class Score:

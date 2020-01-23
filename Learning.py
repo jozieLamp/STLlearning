@@ -88,21 +88,26 @@ class Learning:
 
         for k in range(numGen):
             logging.info("GENERATION #: " + '%s' % (k))
-            logging.info("> OPTIMIZING POPULATION PARAMETERS")
+            logging.info("> OPTIMIZING POPULATION PARAMETERS\n")
             #Todo - fix optimization to not be so slow here
             generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
                 positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
                             negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps)
 
             generation.sortPopulation()
-            logging.info("-----------------------------------------------------------")
             logging.info("FORMULA GENERATION")
+            logging.info("--------------------------------------------------------------------------------------")
             generation.logRankFormulas()
-            logging.info("-----------------------------------------------------------\n")
+            logging.info("--------------------------------------------------------------------------------------\n")
 
             logging.info("> GETTING BEST HALF OF FORMULAS")
+            logging.info("--------------------------------------------------------------------------------------")
             bestHalf = generation.getBestHalf()
             bestHalf.logRankFormulas()
+            logging.info("--------------------------------------------------------------------------------------\n")
+
+            logging.info("> APPLYING GENETIC OPERATIONS: OFFSPRING FORMULA GENERATION")
+            bestHalf.geneticOperations(pop)
 
             #TODO stopped here
 
