@@ -3,6 +3,10 @@ from SignalTemporalLogic.STLFactory import STLFactory
 import random
 #from scikit import BayesianOptimization as BO
 import numpy as np
+#from skopt import gp_minimize
+# import GPy
+# import GPyOpt
+# from GPyOpt.methods import BayesianOptimization
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from bayes_opt import BayesianOptimization
@@ -55,7 +59,7 @@ class GeneticGenerator:
             classDif = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
             s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
 
-            print(formula.toString(), s.toString())
+            #print(formula.toString(), s.toString())
 
             #add values to genetic pop lists
             rankFormulae.append(formula)
@@ -125,9 +129,9 @@ class GeneticGenerator:
 
         newParams = list(optimizer.max["params"].values())
         classDifference = optimizer.max["target"]
-
         # print(newParams)
         # print(classDifference)
+
 
         return newParams
 

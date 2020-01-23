@@ -1,3 +1,4 @@
+import logging
 
 #New class to store genetic population information, uses Genetic Generator to
 class GeneticPopulation:
@@ -5,6 +6,11 @@ class GeneticPopulation:
         self.rankFormulae = rankFormulae #list of formulas
         self.rankParameters = rankParameters #list of double param values
         self.rankScore = rankScore #list of score objects
+
+    def logRankFormulas(self):
+        for i in range(len(self.rankFormulae)):
+            st = self.rankFormulae[i].toString() + " [Discrimination Score: " + str(format(self.rankScore[i].classDif, '.3f') + "]")
+            logging.info(st)
 
     #Order formula by best score
     def sortPopulation(self):
@@ -21,6 +27,13 @@ class GeneticPopulation:
         # for i in range(len(sortedFormula)):
         #     print(sortedFormula[i].toString(), self.rankScore[i].classDif)
 
+    def getBestHalf(self):
+        half = round(len(self.rankFormulae) / 2)
+        halfFormulas = self.rankFormulae[:half]
+        halfParams = self.rankParameters[:half]
+        halfScores = self.rankScore[:half]
+
+        return GeneticPopulation(halfFormulas, halfParams, halfScores)
 
 
 
@@ -37,5 +50,5 @@ class Score:
         self.classDif = classDif #discrimination function value, absolute dif of rob btw classes
 
     def toString(self):
-        return "Discrimination Val: " + str(format(self.classDif, '.3f')) + " Robustness + : " + str(format(self.aveRobPos, '.3f')) \
+        return "Discrimination Score: " + str(format(self.classDif, '.3f')) + " Robustness + : " + str(format(self.aveRobPos, '.3f')) \
                + " Robustness - :" + str(format(self.aveRobNeg, '.3f'))

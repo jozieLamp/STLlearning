@@ -95,6 +95,15 @@ class Learning:
                             negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps)
 
             generation.sortPopulation()
+            logging.info("-----------------------------------------------------------")
+            logging.info("FORMULA GENERATION")
+            generation.logRankFormulas()
+            logging.info("-----------------------------------------------------------\n")
+
+            logging.info("> GETTING BEST HALF OF FORMULAS")
+            bestHalf = generation.getBestHalf()
+            bestHalf.logRankFormulas()
+
             #TODO stopped here
 
 
