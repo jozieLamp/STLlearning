@@ -112,6 +112,10 @@ class Learning:
             #TODO stopped here
 
 
+        #TODO at end of everything add my extra calculation of scores and which classes formulas belong to
+
+
+
 
 
     #Make positive and negative training and validation sets

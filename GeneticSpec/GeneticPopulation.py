@@ -1,4 +1,5 @@
 import logging
+import random
 
 #New class to store genetic population information, uses Genetic Generator to
 class GeneticPopulation:
@@ -37,19 +38,80 @@ class GeneticPopulation:
 
     def geneticOperations(self, pop): #takes formula population
 
-        cumulativeScore = self.getCumulativeScore() #ave score of all formulas
-        print("Cumltv Score", cumulativeScore)
+        scoreParents = self.rankScore
+        formulaParents = self.rankFormulae
+
+        difScores = self.getAllClassScores(scoreParents)
+
+        #calculate cumulative score array
+        cmlScores = self.cumulativeScore(difScores)
+
+        #parent A
+        indexA = self.extract(cmlScores)
+        #parent B
+        indexB = indexA
+
+        while indexB == indexA:
+            indexB = self.extract(cmlScores)
+
+        r = random.uniform(0,1)
+        r = 0.6
+        if r > 0.3:
+
+            formulaA = formulaParents[indexA]
+            formulaB  = formulaParents[indexB]
+            print("Formula A", formulaA.toString())
+            print("FOrmula B", formulaB.toString())
+
+            #crossover/recombination operator, modify both new A and new B
+            f = pop.crossoverNewGen(formulaA, formulaB) #TODO
+
+            #pop.population.append(f)
+
+        elif r > 0.0:
+            newIndexA = pop.addNewFormula(formulaParents[indexA])  # TODO complete  tthis
+            newIndexB = pop.addNewFormula(formulaParents[indexB])
+
+            #mutation operator
+            pop.mutateNewGen(newIndexB) #TODO
+            pop.mutateNewGen(newIndexA)
+
+        else:
+            newIndexA = pop.addNewFormula(formulaParents[indexA])  # TODO complete  tthis
+            newIndexB = pop.addNewFormula(formulaParents[indexB])
+
+            #union formula sets
+            pop.unionNewGen(newIndexA, newIndexB) #TODO
 
 
 
-    def getCumulativeScore(self):
-        scores = []
-        for x in self.rankScore:
-            scores.append(x.classDif)
 
-        aveScores = sum(scores) / len(scores)
+    def extract(self, cmlScores):
+        r = random.uniform(0,1)
+        for i in range(len(cmlScores)):
+            if cmlScores[i] > r:
+                return i - 1
 
-        return aveScores
+        return len(cmlScores)-1
+
+
+    def cumulativeScore(self, scores):
+        res = [0] * len(scores)
+        for i in range(1,len(scores)):
+            res[i] = res[i-1] + scores[i-1]
+
+        for i in range(len(scores)):
+            res[i] = res[i] / res[len(scores)-1]
+
+        return res
+
+    #Return class diff scores from score object
+    def getAllClassScores(self, scores):
+        c = []
+        for sc in scores:
+            c.append(sc.classDif)
+
+        return c
 
 #Class that holds all score values
 class Score:

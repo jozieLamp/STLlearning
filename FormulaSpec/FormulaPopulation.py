@@ -57,3 +57,18 @@ class FormulaPopulation:
         for f in pop:
             logging.info('%s' % (f.toString()))
         #logging.info("---------------------------------------------------\n")
+
+
+
+    #TODO here
+    def crossoverNewGen(self, formulaA, formulaB):
+
+        pass
+
+    #TODO here
+    def mutateNewGen(self, index):
+        pass
+
+    #TODO
+    def unionNewGen(self, indexA, indexB):
+        pass
