@@ -1,6 +1,8 @@
 from SymbolArray import SymbolArray
 import FormulaSpec.FormulaGenerator as FG
 import logging
+import treelib
+from SignalTemporalLogic.STLFactory import STLFactory
 
 #Class to hold populations of formulas, uses Formula Generator class to generate formulas themselves
 class FormulaPopulation:
@@ -59,11 +61,20 @@ class FormulaPopulation:
         #logging.info("---------------------------------------------------\n")
 
 
-
-    #TODO here
+    #swap two internal nodes between formulas
     def crossoverNewGen(self, formulaA, formulaB):
+        nodeA = formulaA.randomInternalNode()
+        nodeB = formulaB.randomInternalNode()
 
-        pass
+        stringA = formulaA.toString().replace(nodeA.toString(), nodeB.toString())
+        stringB = formulaB.toString().replace(nodeB.toString(), nodeA.toString())
+
+        stlFac = STLFactory()
+        f1 = stlFac.constructFormulaTree(stringA + "\n")
+        f2 = stlFac.constructFormulaTree(stringB + "\n")
+
+        return f1, f2
+
 
     #TODO here
     def mutateNewGen(self, index):

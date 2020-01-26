@@ -3,6 +3,8 @@ from treelib.exceptions import*
 from STLTree.STLExpr import ExprEnum
 from STLTree.Atomic import AtomicEnum
 from STLTree.STLExpr import ExprEnum
+from STLTree.Operator import OperatorEnum
+import random
 
 class STLTree(treelib.Tree):
     def __init__(self):
@@ -93,6 +95,18 @@ class STLTree(treelib.Tree):
                 timeList.append(obj.upperBound)
 
         return timeList
+
+    #return random internal node from tree
+    def randomInternalNode(self):
+        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, OperatorEnum.F, OperatorEnum.G, OperatorEnum.U, AtomicEnum.Variable, AtomicEnum.Parameter]
+        internalNodes = []
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            if obj.type not in ignoreList:
+                    internalNodes.append(obj)
+
+        r = random.randint(0, len(internalNodes)-1)
+        return internalNodes[r]
 
 
     def show(self, nid=None, level=treelib.Tree.ROOT, idhidden=True, filter=None,

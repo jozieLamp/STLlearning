@@ -59,29 +59,34 @@ class GeneticPopulation:
         if r > 0.3:
 
             formulaA = formulaParents[indexA]
-            formulaB  = formulaParents[indexB]
-            print("Formula A", formulaA.toString())
-            print("FOrmula B", formulaB.toString())
+            formulaB = formulaParents[indexB]
 
             #crossover/recombination operator, modify both new A and new B
-            f = pop.crossoverNewGen(formulaA, formulaB) #TODO
+            f1, f2 = pop.crossoverNewGen(formulaA, formulaB)
 
-            #pop.population.append(f)
+            # print("Formula A", formulaA.toString())
+            # print("Formula B", formulaB.toString())
+            # print("New A", f1.toString())
+            # print("New b", f2.toString())
 
-        elif r > 0.0:
-            newIndexA = pop.addNewFormula(formulaParents[indexA])  # TODO complete  tthis
-            newIndexB = pop.addNewFormula(formulaParents[indexB])
+            #add two new formulas to population
+            pop.population.append(f1)
+            pop.population.append(f2)
 
-            #mutation operator
-            pop.mutateNewGen(newIndexB) #TODO
-            pop.mutateNewGen(newIndexA)
-
-        else:
-            newIndexA = pop.addNewFormula(formulaParents[indexA])  # TODO complete  tthis
-            newIndexB = pop.addNewFormula(formulaParents[indexB])
-
-            #union formula sets
-            pop.unionNewGen(newIndexA, newIndexB) #TODO
+        # elif r > 0.0:
+        #     newIndexA = pop.addNewFormula(formulaParents[indexA])  # TODO complete this
+        #     newIndexB = pop.addNewFormula(formulaParents[indexB])
+        #
+        #     #mutation operator
+        #     pop.mutateNewGen(newIndexB) #TODO
+        #     pop.mutateNewGen(newIndexA)
+        #
+        # else:
+        #     newIndexA = pop.addNewFormula(formulaParents[indexA])  # TODO complete this
+        #     newIndexB = pop.addNewFormula(formulaParents[indexB])
+        #
+        #     #union formula sets
+        #     pop.unionNewGen(newIndexA, newIndexB) #TODO
 
 
 
