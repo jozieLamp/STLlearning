@@ -84,9 +84,9 @@ class FormulaPopulation:
         p = 0
 
         if genOps.mutate__one_node:
-            nodeN = formula.randomNode() #TODO - may need to add some tracking to know which node has been found to be mutated, then send this to mutate node
-            print(nodeN.toString())
-            nodeList.append(nodeN)
+            node, nodeString = formula.randomNode() #TODO - may need to not allow leaf nodes - params + vars
+            #print(nodeN.toString())
+            nodeList.append([node, nodeString])
             p = genOps.mutate__mutation_probability_one_node
         else:
             nodeList = formula.getAllNodes()
@@ -95,7 +95,8 @@ class FormulaPopulation:
 
         for n in nodeList:
             if random.uniform(0,1) < p:
-                m = self.formulaGen.mutateNode(n)
+                m = self.formulaGen.mutateNode(node=n[0], nodeString=n[1], formula=formula, genOps=genOps)
+                print("Result Mutate Node", m)
 
         #return new formula
 

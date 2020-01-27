@@ -1,6 +1,8 @@
 
 from  SignalTemporalLogic.STLFactory import STLFactory
 import itertools
+from STLTree.Operator import OperatorEnum
+from STLTree.Atomic import AtomicEnum
 from scipy.stats import geom
 import random
 
@@ -216,15 +218,7 @@ class FormulaGenerator:
             x = [l1, l2, l3, l4, l5, l6, l7, l8, l9]
 
             #sample from x
-            c = -1
-            xSum = sum(x)
-            p = random.uniform(0,1) * xSum
-            s = 0
-            for i in range(0, len(x)):
-                s += x[i]
-                if p <= s:
-                    c = i
-                    break
+            c = self.sample(x)
 
             if len(nodes) > 0 and (c==0 or c==1 or c==2 or c==6):
                 j = random.randint(0, len(nodes)-1)
@@ -291,5 +285,80 @@ class FormulaGenerator:
 
 
     #TODO
-    def mutateNode(self, node):
-        pass
+    #mutates node from formula, returns a string node
+    def mutateNode(self, node, nodeString, formula, genOps):
+
+        print("Mutate Node", node.type, node.toString(), nodeString)
+
+        #needs actual node data
+        x = [genOps.mutate__insert__weight,
+             genOps.mutate__delete__weight * (1 if (formula.isInternalNode(node)) else 0),
+             genOps.mutate__replace__weight,
+             genOps.mutate__change__weight * (1 if (node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U) else 0)]
+
+        if sum(x) == 0:
+            return None
+
+        choice = self.sample(x)
+        choice = 0
+
+
+        if choice == 0: #insertion before node
+            xIns = [genOps.mutate__insert__eventually_weight * (0 if (node.type == OperatorEnum.F) else 1),
+                    genOps.mutate__insert__globally_weight * (0 if (node.type == OperatorEnum.G) else 1),
+                    genOps.mutate__insert__negation_weight * (0 if (node.type == AtomicEnum.BooleanAtomic and node.notExpr != None) else 1)]
+
+            if sum(xIns) == 0:
+                return None
+
+            cIns = self.sample(xIns)
+
+            if cIns == 0: #ev
+                tl = genOps.min_time_bound
+                tu = genOps.max_time_bound
+                if tu > tl:
+                    temp = tu
+                    tu = tl
+                    tl = temp
+                newNode = "F[" + str(tl) + "," + str(tu) + "](" + nodeString + ")"
+
+            elif cIns == 1: #G
+                tl = genOps.min_time_bound
+                tu = genOps.max_time_bound
+                if tu > tl:
+                    temp = tu
+                    tu = tl
+                    tl = temp
+                newNode = "G[" + str(tl) + "," + str(tu) + "](" + nodeString + ")"
+
+            else: #cIns == 2 #Not
+                newNode = "!("+ nodeString + ")"
+
+            return newNode
+
+        elif choice == 1:
+            pass
+        elif choice == 2:
+            pass
+        elif choice == 3:
+            pass
+        else:
+            return None
+
+
+
+
+    #sample from distribution
+    def sample(self, x):
+        # sample from x
+        c = -1
+        xSum = sum(x)
+        p = random.uniform(0, 1) * xSum
+        s = 0
+        for i in range(0, len(x)):
+            s += x[i]
+            if p <= s:
+                c = i
+                break
+
+        return c

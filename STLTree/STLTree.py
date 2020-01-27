@@ -110,7 +110,7 @@ class STLTree(treelib.Tree):
 
     #return any random node from tree
     def randomNode(self):
-        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList]
+        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound]
         internalNodes = []
         for node in self.expand_tree(mode=treelib.Tree.DEPTH, sorting=False):
             obj = self[node].data
@@ -118,7 +118,16 @@ class STLTree(treelib.Tree):
                 internalNodes.append(obj)
 
         r = random.randint(0, len(internalNodes) - 1)
-        return internalNodes[r]
+
+        node = internalNodes[r]
+        nodeString = node.toString()
+
+        #add timebound with operator
+        if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U:
+            parent = node.parent
+            nodeString = parent.tempOperator.toString() + self.timebound.toString()
+
+        return internalNodes[r], nodeString
 
     def getAllNodes(self):
         nList=[]
@@ -127,6 +136,15 @@ class STLTree(treelib.Tree):
             nList.append(obj)
 
         return nList
+
+    def isInternalNode(self, node):
+        list = [AtomicEnum.Variable, AtomicEnum.Parameter]
+        if node.type in list:
+            return False
+        else:
+            return True
+
+
 
     def show(self, nid=None, level=treelib.Tree.ROOT, idhidden=True, filter=None,
              key=None, reverse=False, line_type='ascii-ex', data_property=None):
