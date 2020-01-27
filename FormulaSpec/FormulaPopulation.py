@@ -80,6 +80,20 @@ class FormulaPopulation:
     def mutateNewGen(self, index):
         pass
 
-    #TODO
-    def unionNewGen(self, indexA, indexB):
-        pass
+
+    #combine two formulas with boolean operators
+    def unionNewGen(self, formulaA, formulaB):
+        stringA = formulaA.toString()
+        stringB = formulaB.toString()
+
+        newAnd = stringA + " & " + stringB + "\n"
+        newOr = stringA + " | " + stringB + "\n"
+        newImplies = stringA + " -> " + stringB + "\n"
+
+        stlFac = STLFactory()
+        f1 = stlFac.constructFormulaTree(newAnd)
+        f2 = stlFac.constructFormulaTree(newOr)
+        f3 = stlFac.constructFormulaTree(newImplies)
+
+        return f1, f2, f3
+

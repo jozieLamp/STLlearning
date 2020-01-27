@@ -55,7 +55,7 @@ class GeneticPopulation:
             indexB = self.extract(cmlScores)
 
         r = random.uniform(0,1)
-        r = 0.6
+        r = 0
         if r > 0.3:
 
             formulaA = formulaParents[indexA]
@@ -73,20 +73,30 @@ class GeneticPopulation:
             pop.population.append(f1)
             pop.population.append(f2)
 
-        # elif r > 0.0:
-        #     newIndexA = pop.addNewFormula(formulaParents[indexA])  # TODO complete this
-        #     newIndexB = pop.addNewFormula(formulaParents[indexB])
-        #
-        #     #mutation operator
-        #     pop.mutateNewGen(newIndexB) #TODO
-        #     pop.mutateNewGen(newIndexA)
-        #
-        # else:
-        #     newIndexA = pop.addNewFormula(formulaParents[indexA])  # TODO complete this
-        #     newIndexB = pop.addNewFormula(formulaParents[indexB])
-        #
-        #     #union formula sets
-        #     pop.unionNewGen(newIndexA, newIndexB) #TODO
+        elif r > 0.0:
+            formulaA = formulaParents[indexA]
+            formulaB = formulaParents[indexB]
+
+            #mutation operator
+            pop.mutateNewGen(formulaB) #TODO
+            pop.mutateNewGen(formulaA)
+
+        else:
+            formulaA = formulaParents[indexA]
+            formulaB = formulaParents[indexB]
+
+            #Union operator, combine two formulas with and / or
+            f1, f2, f3 = pop.unionNewGen(formulaA, formulaB)
+
+            pop.population.append(f1)
+            pop.population.append(f2)
+            pop.population.append(f3)
+
+            # print("A ", formulaA.toString())
+            # print("B ", formulaB.toString())
+            # print(f1.toString())
+            # print(f2.toString())
+            # print(f3.toString())
 
 
 

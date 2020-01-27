@@ -1,21 +1,20 @@
 
 from SignalTemporalLogic.STLFactory import STLFactory
 import random
-#from scikit import BayesianOptimization as BO
 import numpy as np
-#from skopt import gp_minimize
-# import GPy
-# import GPyOpt
-# from GPyOpt.methods import BayesianOptimization
-import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from bayes_opt import BayesianOptimization
-from bayes_opt import UtilityFunction
 from GeneticOptions import GeneticOptions
 from GeneticSpec.Trajectory import Trajectory
 from GeneticSpec.GeneticPopulation import GeneticPopulation
 from GeneticSpec.GeneticPopulation import Score
 import logging
+
+#from skopt import gp_minimize
+# import GPy
+# import GPyOpt
+# from GPyOpt.methods import BayesianOptimization
+
+from bayes_opt import BayesianOptimization
+from bayes_opt import UtilityFunction
 
 #Generates different genetic population sets, mainly used for Genetic Population
 class GeneticGenerator:
