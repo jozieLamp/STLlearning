@@ -2,6 +2,7 @@ from SymbolArray import SymbolArray
 import FormulaSpec.FormulaGenerator as FG
 import logging
 import treelib
+import random
 from SignalTemporalLogic.STLFactory import STLFactory
 
 #Class to hold populations of formulas, uses Formula Generator class to generate formulas themselves
@@ -77,8 +78,27 @@ class FormulaPopulation:
 
 
     #TODO here
-    def mutateNewGen(self, index):
-        pass
+    #mutate a formula
+    def mutateNewGen(self, formula, genOps):
+        nodeList = []
+        p = 0
+
+        if genOps.mutate__one_node:
+            nodeN = formula.randomNode() #TODO - may need to add some tracking to know which node has been found to be mutated, then send this to mutate node
+            print(nodeN.toString())
+            nodeList.append(nodeN)
+            p = genOps.mutate__mutation_probability_one_node
+        else:
+            nodeList = formula.getAllNodes()
+            p = genOps.mutate__mutation_probability_per_node
+
+
+        for n in nodeList:
+            if random.uniform(0,1) < p:
+                m = self.formulaGen.mutateNode(n)
+
+        #return new formula
+
 
 
     #combine two formulas with boolean operators

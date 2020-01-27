@@ -108,6 +108,25 @@ class STLTree(treelib.Tree):
         r = random.randint(0, len(internalNodes)-1)
         return internalNodes[r]
 
+    #return any random node from tree
+    def randomNode(self):
+        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList]
+        internalNodes = []
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH, sorting=False):
+            obj = self[node].data
+            if obj.type not in ignoreList:
+                internalNodes.append(obj)
+
+        r = random.randint(0, len(internalNodes) - 1)
+        return internalNodes[r]
+
+    def getAllNodes(self):
+        nList=[]
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            nList.append(obj)
+
+        return nList
 
     def show(self, nid=None, level=treelib.Tree.ROOT, idhidden=True, filter=None,
              key=None, reverse=False, line_type='ascii-ex', data_property=None):

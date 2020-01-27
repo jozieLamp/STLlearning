@@ -288,3 +288,8 @@ class FormulaGenerator:
             t2 = temp
 
         return t1, t2
+
+
+    #TODO
+    def mutateNode(self, node):
+        pass

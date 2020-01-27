@@ -36,7 +36,7 @@ class GeneticPopulation:
 
         return GeneticPopulation(halfFormulas, halfParams, halfScores)
 
-    def geneticOperations(self, pop): #takes formula population
+    def geneticOperations(self, pop, genOps): #takes formula population
 
         scoreParents = self.rankScore
         formulaParents = self.rankFormulae
@@ -55,7 +55,7 @@ class GeneticPopulation:
             indexB = self.extract(cmlScores)
 
         r = random.uniform(0,1)
-        r = 0
+        r = 0.1
         if r > 0.3:
 
             formulaA = formulaParents[indexA]
@@ -78,8 +78,8 @@ class GeneticPopulation:
             formulaB = formulaParents[indexB]
 
             #mutation operator
-            pop.mutateNewGen(formulaB) #TODO
-            pop.mutateNewGen(formulaA)
+            pop.mutateNewGen(formulaB, genOps) #TODO
+            pop.mutateNewGen(formulaA, genOps)
 
         else:
             formulaA = formulaParents[indexA]
