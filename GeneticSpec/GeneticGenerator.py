@@ -35,7 +35,7 @@ class GeneticGenerator:
         rankScores = []
 
         #for loop to go through  all formulas in pop
-        for i in range(10):#len(pop.population)):
+        for i in range(20):#len(pop.population)):
             formula = pop.population[i]
 
             # update private variables

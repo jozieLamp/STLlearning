@@ -107,7 +107,7 @@ class Learning:
             logging.info("--------------------------------------------------------------------------------------\n")
 
             logging.info("> APPLYING GENETIC OPERATIONS: OFFSPRING FORMULA GENERATION")
-            bestHalf.geneticOperations(pop, self.genOps)
+            pop = bestHalf.geneticOperations(pop, self.genOps) #update formula pop with gen ops on formulas
 
             #TODO stopped here
 

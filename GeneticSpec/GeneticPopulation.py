@@ -36,7 +36,11 @@ class GeneticPopulation:
 
         return GeneticPopulation(halfFormulas, halfParams, halfScores)
 
+
     def geneticOperations(self, pop, genOps): #takes formula population
+
+        #initalize new population
+        pop.population = []
 
         scoreParents = self.rankScore
         formulaParents = self.rankFormulae
@@ -46,57 +50,68 @@ class GeneticPopulation:
         #calculate cumulative score array
         cmlScores = self.cumulativeScore(difScores)
 
-        #parent A
-        indexA = self.extract(cmlScores)
-        #parent B
-        indexB = indexA
 
-        while indexB == indexA:
-            indexB = self.extract(cmlScores)
+        for i in range(len(formulaParents)):
+            #parent A
+            indexA = self.extract(cmlScores)
+            #parent B
+            indexB = indexA
 
-        r = random.uniform(0,1)
-        r = 0.1
-        if r > 0.3:
+            while indexB == indexA:
+                indexB = self.extract(cmlScores)
 
-            formulaA = formulaParents[indexA]
-            formulaB = formulaParents[indexB]
+            r = random.uniform(0,1)
+            r = 0.1
+            if r > 0.3:
 
-            #crossover/recombination operator, modify both new A and new B
-            f1, f2 = pop.crossoverNewGen(formulaA, formulaB)
+                formulaA = formulaParents[indexA]
+                formulaB = formulaParents[indexB]
 
-            # print("Formula A", formulaA.toString())
-            # print("Formula B", formulaB.toString())
-            # print("New A", f1.toString())
-            # print("New b", f2.toString())
+                #crossover/recombination operator, modify both new A and new B
+                f1, f2 = pop.crossoverNewGen(formulaA, formulaB)
 
-            #add two new formulas to population
-            pop.population.append(f1)
-            pop.population.append(f2)
+                # print("Formula A", formulaA.toString())
+                # print("Formula B", formulaB.toString())
+                # print("New A", f1.toString())
+                # print("New b", f2.toString())
 
-        elif r > 0.0:
-            formulaA = formulaParents[indexA]
-            formulaB = formulaParents[indexB]
+                #add two new formulas to population
+                pop.population.append(f1)
+                pop.population.append(f2)
 
-            #mutation operator
-            pop.mutateNewGen(formulaB, genOps) #TODO
-            pop.mutateNewGen(formulaA, genOps)
+            elif r > 0.0:
+                formulaA = formulaParents[indexA]
+                formulaB = formulaParents[indexB]
 
-        else:
-            formulaA = formulaParents[indexA]
-            formulaB = formulaParents[indexB]
+                #mutation operator
+                f1 = pop.mutateNewGen(formulaB, genOps, pop.variables, pop.varDict) #returns list of formulas
+                f2 = pop.mutateNewGen(formulaA, genOps, pop.variables, pop.varDict)
 
-            #Union operator, combine two formulas with and / or
-            f1, f2, f3 = pop.unionNewGen(formulaA, formulaB)
+                print("\nRETURNED Formula Set")
+                fs = f1 + f2
+                for f in fs:
+                    print(f.toString())
+                    pop.population.append(f)
 
-            pop.population.append(f1)
-            pop.population.append(f2)
-            pop.population.append(f3)
 
-            # print("A ", formulaA.toString())
-            # print("B ", formulaB.toString())
-            # print(f1.toString())
-            # print(f2.toString())
-            # print(f3.toString())
+            else:
+                formulaA = formulaParents[indexA]
+                formulaB = formulaParents[indexB]
+
+                #Union operator, combine two formulas with and / or
+                f1, f2, f3 = pop.unionNewGen(formulaA, formulaB)
+
+                pop.population.append(f1)
+                pop.population.append(f2)
+                pop.population.append(f3)
+
+                # print("A ", formulaA.toString())
+                # print("B ", formulaB.toString())
+                # print(f1.toString())
+                # print(f2.toString())
+                # print(f3.toString())
+
+        return pop
 
 
 

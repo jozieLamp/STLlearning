@@ -2,7 +2,9 @@
 from  SignalTemporalLogic.STLFactory import STLFactory
 import itertools
 from STLTree.Operator import OperatorEnum
+from STLTree.Operator import RelationalOperator
 from STLTree.Atomic import AtomicEnum
+from STLTree.STLExpr import ExprEnum
 from scipy.stats import geom
 import random
 
@@ -262,13 +264,16 @@ class FormulaGenerator:
         return fTree
 
 
-    def newAtomicNode(self, variables, varDict):
+    def newAtomicNode(self, variables, varDict, retParams=False):
         relopList = [">=", "<=", ">", "<"]
         relop = random.choice(relopList)
 
         var = random.choice(variables)
         vBounds = varDict[var]
-        param = "theta_" + var #random.uniform(vBounds[0], vBounds[1])
+        if retParams == False:
+            param = "theta_" + var
+        else:
+            param = random.uniform(vBounds[0], vBounds[1])
 
         exp = var + " " + relop + " " + str(param)
         return exp
@@ -286,66 +291,326 @@ class FormulaGenerator:
 
     #TODO
     #mutates node from formula, returns a string node
-    def mutateNode(self, node, nodeString, formula, genOps):
+    def mutateNode(self, node, nodeString, formula, genOps, variables, varDict):
 
-        print("Mutate Node", node.type, node.toString(), nodeString)
+        print("Mutate Node", node.type, "Node:", nodeString, "Formula", formula.toString())
+        newNode = None
+        newFormula = None
 
         #needs actual node data
         x = [genOps.mutate__insert__weight,
-             genOps.mutate__delete__weight * (1 if (formula.isInternalNode(node)) else 0),
+             genOps.mutate__delete__weight * (1 if (formula.canDeleteNode(node)) else 0),
              genOps.mutate__replace__weight,
              genOps.mutate__change__weight * (1 if (node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U) else 0)]
 
-        if sum(x) == 0:
-            return None
-
         choice = self.sample(x)
-        choice = 0
 
 
-        if choice == 0: #insertion before node
+        if choice == 0: #INSERTION before node
+            print("INSERTION")
             xIns = [genOps.mutate__insert__eventually_weight * (0 if (node.type == OperatorEnum.F) else 1),
                     genOps.mutate__insert__globally_weight * (0 if (node.type == OperatorEnum.G) else 1),
                     genOps.mutate__insert__negation_weight * (0 if (node.type == AtomicEnum.BooleanAtomic and node.notExpr != None) else 1)]
 
-            if sum(xIns) == 0:
-                return None
-
             cIns = self.sample(xIns)
 
             if cIns == 0: #ev
-                tl = genOps.min_time_bound
-                tu = genOps.max_time_bound
-                if tu > tl:
+                tl = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                tu = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                if tu < tl:
                     temp = tu
                     tu = tl
                     tl = temp
-                newNode = "F[" + str(tl) + "," + str(tu) + "](" + nodeString + ")"
+
+                newNode = "F[" + str(tl) + "," + str(tu) + "](" + formula.toString() + ")"
+                newFormula = newNode
+
+                # if node.type == OperatorEnum.G or node.type == OperatorEnum.F:
+                #     newNode = "F[" + str(tl) + "," + str(tu) + "](" + formula.toString() + ")"
+                #     newFormula = newNode
+                # elif node.type == OperatorEnum.U:
+                #     newNode = "F[" + str(tl) + "," + str(tu) + "](" + formula.toString() + ")"
+                #     newFormula = newNode
+                # else:
+                #     newNode = "F[" + str(tl) + "," + str(tu) + "](" + nodeString + ")"
+                #     newFormula = formula.toString().replace(nodeString, newNode)
 
             elif cIns == 1: #G
-                tl = genOps.min_time_bound
-                tu = genOps.max_time_bound
-                if tu > tl:
+                tl = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                tu = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                if tu < tl:
                     temp = tu
                     tu = tl
                     tl = temp
-                newNode = "G[" + str(tl) + "," + str(tu) + "](" + nodeString + ")"
+
+                newNode = "G[" + str(tl) + "," + str(tu) + "](" + formula.toString() + ")"
+                newFormula = newNode
+
+                # if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U:
+                #     newNode = "G[" + str(tl) + "," + str(tu) + "](" + formula.toString() + ")"
+                #     newFormula = newNode
+                # elif node.type == OperatorEnum.U:
+                #     newNode = "G[" + str(tl) + "," + str(tu) + "](" + formula.toString() + ")"
+                #     newFormula = newNode
+                # else:
+                #     newNode = "G[" + str(tl) + "," + str(tu) + "](" + nodeString + ")"
+                #     newFormula = formula.toString().replace(nodeString, newNode)
+
 
             else: #cIns == 2 #Not
-                newNode = "!("+ nodeString + ")"
+                if node.type != OperatorEnum.IMPLIES and node.type != OperatorEnum.AND and node.type != OperatorEnum.OR and node.type != OperatorEnum.G and node.type != OperatorEnum.F and node.type != OperatorEnum.U:
+                    newNode = "!("+ nodeString + ")"
+                else:
+                    newNode = nodeString + " !"
 
-            return newNode
+                newFormula = formula.toString().replace(nodeString, newNode)
 
-        elif choice == 1:
-            pass
-        elif choice == 2:
-            pass
-        elif choice == 3:
-            pass
+
+        elif choice == 1: #DELETION of node
+            print("DELETION")
+            newFormula = formula.toString().replace(nodeString, "")
+            newNode = None
+
+        elif choice == 2: #REPLACE node
+            if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U: #temporal op
+                print("REPLACE TEMP OPERATOR")
+                xMod = [genOps.mutate__replace__modal_to_modal_weight,genOps.mutate__replace__modal_to_bool_weight]
+
+                cMod = self.sample(xMod)
+
+                if cMod == 0: #replace with other temporal op
+                    xMod0 = [genOps.mutate__replace__eventually_weight * (0 if (node.type == OperatorEnum.F) else 1),
+                             genOps.mutate__replace__globally_weight * (0 if (node.type == OperatorEnum.G) else 1),
+                             genOps.mutate__replace__until_weight * (0 if (node.type == OperatorEnum.U) else 1)]
+
+                    cMod0 = self.sample(xMod0)
+
+                    if cMod0 == 0: #ev
+                        tl = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        tu = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        if tu < tl:
+                            temp = tu
+                            tu = tl
+                            tl = temp
+                        newNode = "F[" + str(tl) + "," + str(tu) + "]"
+
+                        #adjust for replacement of until op
+                        if node.type == OperatorEnum.U:
+                            newFormula  = newNode + formula.toString().replace(nodeString, " & ")
+                        else:
+                            newFormula = formula.toString().replace(nodeString, newNode)
+
+                    elif cMod0  == 1: #G
+                        tl = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        tu = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        if tu < tl:
+                            temp = tu
+                            tu = tl
+                            tl = temp
+                        newNode = "G[" + str(tl) + "," + str(tu) + "]"
+
+                        # adjust for replacement of until op
+                        if node.type == OperatorEnum.U:
+                            newFormula = newNode + formula.toString().replace(nodeString, " & ")
+                        else:
+                            newFormula = formula.toString().replace(nodeString, newNode)
+
+                    elif cMod0 == 2: #until with new second node
+                        tl = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        tu = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        if tu < tl:
+                            temp = tu
+                            tu = tl
+                            tl = temp
+
+                        atomicOrig = formula.toString().replace(nodeString, "")
+                        atomicNode = self.newAtomicNode(variables, varDict, True)
+
+                        newNode = "((" + atomicOrig + ") U[" + str(tl) + "," + str(tu) + "] (" + atomicNode + "))"
+                        newFormula = newNode
+
+                elif cMod == 1: #replace with bool op
+                    xMod1 = [genOps.mutate__replace__and_weight, genOps.mutate__replace__or_weight,
+                             genOps.mutate__replace__imply_weight, genOps.mutate__replace__not_weight]
+
+                    cMod1 = self.sample(xMod1)
+
+                    if cMod1 == 0: #and
+                        atomicNode = self.newAtomicNode(variables, varDict, True)
+
+                        if node.type == OperatorEnum.U:
+                            newNode = formula.toString().replace(nodeString, " & ") + " & " + atomicNode
+                        else:
+                            atomicOrig = formula.toString().replace(nodeString, "")
+                            newNode = atomicOrig + " & " + atomicNode
+
+                        newFormula = newNode
+
+                    elif cMod1 == 1: #or
+                        atomicNode = self.newAtomicNode(variables, varDict, True)
+
+                        if node.type == OperatorEnum.U:
+                            newNode = formula.toString().replace(nodeString, " & ") + " | " + atomicNode
+                        else:
+                            atomicOrig = formula.toString().replace(nodeString, "")
+                            newNode = atomicOrig + " | " + atomicNode
+
+                        newFormula = newNode
+
+                    elif cMod1 == 2:  #imply
+                        atomicNode = self.newAtomicNode(variables, varDict, True)
+
+                        if node.type == OperatorEnum.U:
+                            newNode = formula.toString().replace(nodeString, " & ") + " -> " + atomicNode
+                        else:
+                            atomicOrig = formula.toString().replace(nodeString, "")
+                            newNode = atomicOrig + " -> " + atomicNode
+
+                        newFormula = newNode
+
+                    elif cMod1 == 3: #not
+                        newNode = "!(" + formula.toString() + ")"
+                        newFormula = newNode
+
+            elif node.type == OperatorEnum.AND or node.type == OperatorEnum.OR or node.type == OperatorEnum.IMPLIES: #boolean op
+                print("REPLACE BOOL OPERATOR")
+
+                xMod = [genOps.mutate__replace__bool_to_modal_weight, genOps.mutate__replace__bool_to_bool_weight]
+
+                fString = formula.toString().strip(')').strip('(')
+
+                cMod = self.sample(xMod)
+
+                if cMod == 0:#replace with temp op
+                    xMod0 = [genOps.mutate__replace__eventually_weight,
+                             genOps.mutate__replace__globally_weight,
+                             genOps.mutate__replace__until_weight]
+
+                    cMod0 = self.sample(xMod0)
+
+                    if cMod0 == 0: #ev
+                        tl = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        tu = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        if tu < tl:
+                            temp = tu
+                            tu = tl
+                            tl = temp
+
+                        r = random.uniform(0,1)
+                        if r < genOps.mutate__replace__keep_left_node: #keep right node
+                            newNode = "F[" + str(tl) + "," + str(tu) + "]" + fString.partition(node.symbol)[2]
+                        else: #keep left node
+                            newNode = "F[" + str(tl) + "," + str(tu) + "]" + fString.partition(node.symbol)[0]
+
+                        newFormula = newNode
+
+                    elif cMod0 == 1: #G
+                        tl = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        tu = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        if tu < tl:
+                            temp = tu
+                            tu = tl
+                            tl = temp
+
+                        r = random.uniform(0, 1)
+                        if r < genOps.mutate__replace__keep_left_node:  # keep right node
+                            newNode = "G[" + str(tl) + "," + str(tu) + "]" + fString.partition(node.symbol)[2]
+
+                        else:  # keep left node
+                            newNode = "G[" + str(tl) + "," + str(tu) + "]" + fString.partition(node.symbol)[0]
+
+                        newFormula = newNode
+
+                    elif cMod0 == 2: #U
+                        tl = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        tu = round(random.uniform(genOps.min_time_bound, genOps.max_time_bound))
+                        if tu < tl:
+                            temp = tu
+                            tu = tl
+                            tl = temp
+
+                        newNode = fString.partition(node.symbol)[0] + "U[" + str(tl) + "," + str(tu) + "]" + \
+                                  fString.partition(node.symbol)[2]
+
+                        newFormula = newNode
+
+                elif cMod == 1: #replace with dif bool op
+                    xMod1 = [genOps.mutate__replace__and_weight * (0 if node.type == OperatorEnum.AND else 1),
+                             genOps.mutate__replace__or_weight * (0 if node.type == OperatorEnum.OR else 1),
+                             genOps.mutate__replace__imply_weight * (0 if node.type == OperatorEnum.IMPLIES else 1)]
+
+                    cMod1 = self.sample(xMod1)
+
+                    if random.uniform(0,1) < genOps.mutate__replace__new_left_node_for_boolean:
+                        atomicNode = fString.partition(node.symbol)[0]
+                    else:
+                        atomicNode = self.newAtomicNode(variables, varDict, True)
+
+                    if cMod1 == 0: #and
+                        newNode = atomicNode + " & " + fString.partition(node.symbol)[2]
+
+                    elif cMod1 == 1: #or
+                        newNode = atomicNode + " | " + fString.partition(node.symbol)[2]
+
+                    elif cMod1 == 2: #imply
+                        newNode = atomicNode + " -> " + fString.partition(node.symbol)[2]
+
+                    elif cMod1 == 3: #not
+                        newNode = "!(" + formula.toString + ")"
+
+                    newFormula = newNode
+
+            elif isinstance(node, RelationalOperator): #atomic
+                print("REPLACE REL EXPR ATOMIC")
+                newNode = self.newAtomicNode(variables, varDict, True)
+                newFormula = formula.toString().replace(nodeString, newNode)
+
+
+        elif choice == 3: #change param bounds
+            print("CHOICE 3")
+            if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U: #temporal op
+                delta = (genOps.max_time_bound - genOps.min_time_bound) * genOps.mutate__change__proportion_of_variation
+                fString = formula.toString().strip(node.symbol).strip('[').strip(']')
+                vl = float(fString.partition(',')[0])
+                vu = float(fString.partition(',')[2])
+
+                if random.uniform(0,1) < genOps.mutate__change__prob_lower_bound: #change lower bound
+                    u = min(vl + delta / 2, vu)
+                    l = max(vl - delta / 2, genOps.min_time_bound)
+                    newNode = node.symbol + "[" + str(round(random.uniform(l, u))) + "," + str(vu) + "]"
+                    newFormula = newNode
+                else:
+                    u = min(vu + delta / 2, genOps.max_time_bound)
+                    l = max(vu - delta / 2, vl)
+                    newNode = node.symbol + "[" + str(vl) + "," + str(round(random.uniform(l, u))) + "]"
+                    newFormula = newNode
+
+            elif isinstance(node, RelationalOperator): #new Params
+                varName = node.atomic1
+                v = float(node.atomic2)
+                l = varDict[varName][0]
+                u = varDict[varName][1]
+
+                delta = (u - l) * genOps.mutate__change__proportion_of_variation
+                up = min(v + delta / 2, u)
+                lw = max(v - delta / 2, l)
+
+                val = random.uniform(lw, up)
+
+                newNode = node.atomic1.toString() + " " + node.symbol + " " + str(val)
+                newFormula = newNode
+
+            else:
+                newNode = None
+                newFormula = None
+
         else:
-            return None
+            print("ELSE")
+            newNode = None
+            newFormula = None
 
 
+        return newNode, newFormula
 
 
     #sample from distribution

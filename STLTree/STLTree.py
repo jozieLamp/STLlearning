@@ -108,26 +108,31 @@ class STLTree(treelib.Tree):
         r = random.randint(0, len(internalNodes)-1)
         return internalNodes[r]
 
-    #return any random node from tree
+
+    #return random main node from tree
     def randomNode(self):
-        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound]
+        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, ExprEnum.boolExpr, ExprEnum.stlTerm, AtomicEnum.BooleanAtomic, AtomicEnum.Variable, AtomicEnum.Parameter]
         internalNodes = []
+        parentNodes =  []
         for node in self.expand_tree(mode=treelib.Tree.DEPTH, sorting=False):
             obj = self[node].data
             if obj.type not in ignoreList:
                 internalNodes.append(obj)
+                parentNodes.append(self.parent(node).data)
 
         r = random.randint(0, len(internalNodes) - 1)
 
-        node = internalNodes[r]
-        nodeString = node.toString()
+        nd = internalNodes[r]
+        nodeString = nd.toString()
 
         #add timebound with operator
-        if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U:
-            parent = node.parent
-            nodeString = parent.tempOperator.toString() + self.timebound.toString()
+        if nd.type == OperatorEnum.G or nd.type == OperatorEnum.F or nd.type == OperatorEnum.U:
+            parent = parentNodes[r]
+            nodeString = parent.tempOperator.toString() + parent.timebound.toString()
 
-        return internalNodes[r], nodeString
+        return nd, nodeString
+
+
 
     def getAllNodes(self):
         nList=[]
@@ -138,11 +143,18 @@ class STLTree(treelib.Tree):
         return nList
 
     def isInternalNode(self, node):
-        list = [AtomicEnum.Variable, AtomicEnum.Parameter]
+        list = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, OperatorEnum.F, OperatorEnum.G, OperatorEnum.U, AtomicEnum.Variable, AtomicEnum.Parameter]
         if node.type in list:
             return False
         else:
             return True
+
+    def canDeleteNode(self, node):
+        list = [ExprEnum.stlTerm, ExprEnum.boolExpr]
+        if node.type in list:
+            return True
+        else:
+            return False
 
 
 
