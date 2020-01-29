@@ -68,9 +68,10 @@ class GeneticPopulation:
                 indexB = self.extract(cmlScores)
 
             r = random.uniform(0,1)
-            r = 0.1
 
             if r > 0.3:
+
+                print("\nCROSSOVER")
 
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
@@ -88,6 +89,7 @@ class GeneticPopulation:
                 pop.population.append(f2)
 
             elif r > 0.0:
+                print("\nMUTATE")
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
 
@@ -103,6 +105,8 @@ class GeneticPopulation:
                 pop.population.append(f2)
 
             else:
+                print("\nUNION")
+
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
 
@@ -119,10 +123,33 @@ class GeneticPopulation:
                 # print(f2.toString())
                 # print(f3.toString())
 
-
+        logging.info("--------------------------------------------------------------------------------------")
         self.logFormulas(pop.population, "Genetically Modified")
+        logging.info("--------------------------------------------------------------------------------------\n")
 
         return pop
+
+    #combine child generation with self
+    def combinePopulations(self, childGen):
+        for i in range(len(childGen.rankFormulae)):
+            if childGen.rankFormulae[i].toString not in self.rankFormulae:
+                self.rankFormulae.append(childGen.rankFormulae[i])
+                self.rankParameters.append(childGen.rankParameters[i])
+                self.rankScore.append(childGen.rankScore[i])
+
+    def removeDuplicates(self):
+        formulas = []
+        params = []
+        scores = []
+        for i in range(len(self.rankFormulae)):
+            if self.rankFormulae[i] not in formulas:
+                formulas.append(self.rankFormulae[i])
+                params.append(self.rankParameters[i])
+                scores.append(self.rankScore[i])
+
+        self.rankFormulae = formulas
+        self.rankParameters = params
+        self.rankScore = scores
 
 
     def extract(self, cmlScores):

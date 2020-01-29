@@ -289,7 +289,6 @@ class FormulaGenerator:
         return t1, t2
 
 
-    #TODO
     #mutates node from formula, returns a string node
     def mutateNode(self, node, parentNode, formula, genOps, variables, varDict):
 
@@ -306,7 +305,6 @@ class FormulaGenerator:
              genOps.mutate__change__weight * (1 if (formula.canChangeParamsNode(node)) else 0)]
 
         choice = self.sample(x)
-        choice = 1
         print("Choice is ", choice)
 
         if choice == 0: #INSERTION before node
@@ -376,8 +374,12 @@ class FormulaGenerator:
 
 
         elif choice == 2: #REPLACE node
-            if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U:  # temporal op
+            if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U or (node.type == ExprEnum.stlTerm and node.tempOperator != None):  # temporal op
                 print("REPLACE TEMP OPERATOR")
+                if node.type == ExprEnum.stlTerm and node.tempOperator != None:
+                    parentNode = node
+                    node = parentNode.tempOperator
+
                 xMod = [genOps.mutate__replace__modal_to_modal_weight, genOps.mutate__replace__modal_to_bool_weight]
 
                 cMod = self.sample(xMod)
@@ -401,7 +403,7 @@ class FormulaGenerator:
 
                             # adjust for replacement of until op
                             if node.type == OperatorEnum.U:
-                                newNode = "F[" + str(tl) + "," + str(tu) + "](" + parentNode.boolAtomic1.toString() + " & " +  parentNode.boolAtomic2 + ")"
+                                newNode = "F[" + str(tl) + "," + str(tu) + "](" + parentNode.boolAtomic1.toString() + " & " +  parentNode.boolAtomic2.toString() + ")"
                                 newFormula = formula.toString().replace(parentNode.toString(), newNode)
                             else:
                                 newNode = "F[" + str(tl) + "," + str(tu) + "](" + parentNode.boolAtomic1.toString() + ")"
@@ -416,7 +418,7 @@ class FormulaGenerator:
                                 tl = temp
 
                             if node.type == OperatorEnum.U:
-                                newNode = "G[" + str(tl) + "," + str(tu) + "](" + parentNode.boolAtomic1.toString() + " & " +  parentNode.boolAtomic2 + ")"
+                                newNode = "G[" + str(tl) + "," + str(tu) + "](" + parentNode.boolAtomic1.toString() + " & " +  parentNode.boolAtomic2.toString() + ")"
                                 newFormula = formula.toString().replace(parentNode.toString(), newNode)
                             else:
                                 newNode = "G[" + str(tl) + "," + str(tu) + "](" + parentNode.boolAtomic1.toString() + ")"
@@ -446,10 +448,10 @@ class FormulaGenerator:
                         atomicNode = self.newAtomicNode(variables, varDict, True)
 
                         if node.type == OperatorEnum.U:
-                            newNode  = parentNode.boolAtomic1 + " & " + parentNode.boolAtomic2
+                            newNode  = "(" + parentNode.boolAtomic1.toString() + " & " + parentNode.boolAtomic2.toString() + ")"
                             newFormula = parentNode.toString().replace(parentNode.toString(), newNode)
                         else:
-                            newNode = parentNode.boolAtomic1 + " & " + atomicNode
+                            newNode = "(" + parentNode.boolAtomic1.toString() + " & " + atomicNode + ")"
                             newFormula = parentNode.toString().replace(parentNode.toString(), newNode)
 
 
@@ -457,20 +459,20 @@ class FormulaGenerator:
                         atomicNode = self.newAtomicNode(variables, varDict, True)
 
                         if node.type == OperatorEnum.U:
-                            newNode  = parentNode.boolAtomic1 + " | " + parentNode.boolAtomic2
+                            newNode  = "(" + parentNode.boolAtomic1.toString() + " | " + parentNode.boolAtomic2.toString() + ")"
                             newFormula = parentNode.toString().replace(parentNode.toString(), newNode)
                         else:
-                            newNode = parentNode.boolAtomic1 + " | " + atomicNode
+                            newNode = "(" + parentNode.boolAtomic1.toString() + " | " + atomicNode + ")"
                             newFormula = parentNode.toString().replace(parentNode.toString(), newNode)
 
                     elif cMod1 == 2:  # imply
                         atomicNode = self.newAtomicNode(variables, varDict, True)
 
                         if node.type == OperatorEnum.U:
-                            newNode  = parentNode.boolAtomic1 + " -> " + parentNode.boolAtomic2
+                            newNode  = "(" + parentNode.boolAtomic1.toString() + " -> " + parentNode.boolAtomic2.toString() + ")"
                             newFormula = parentNode.toString().replace(parentNode.toString(), newNode)
                         else:
-                            newNode = parentNode.boolAtomic1 + " -> " + atomicNode
+                            newNode = "(" + parentNode.boolAtomic1.toString() + " -> " + atomicNode + ")"
                             newFormula = parentNode.toString().replace(parentNode.toString(), newNode)
 
                     elif cMod1 == 3:  # not
@@ -568,7 +570,6 @@ class FormulaGenerator:
                 newFormula = formula.toString().replace(node.toString(), newNode)
 
 
-        #TODO here
         elif choice == 3: #change param bounds
             print("CHANGE PARAM BOUNDS")
             if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U: #temporal op

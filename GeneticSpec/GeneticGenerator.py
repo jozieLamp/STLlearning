@@ -81,7 +81,7 @@ class GeneticGenerator:
                 v = varDict[params[i]]
                 pbounds["p" + str(i)] = (v[0], v[1])
 
-        print("PBOUNDS ", len(pbounds))
+        #print("PBOUNDS ", len(pbounds))
 
         #call bayes opt based on number of params in objective function
         newParams = []

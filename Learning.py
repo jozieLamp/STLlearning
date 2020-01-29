@@ -95,12 +95,13 @@ class Learning:
                             negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps)
 
             generation.sortPopulation()
-            logging.info("FORMULA GENERATION")
+            logging.info("Formula Generation")
             logging.info("--------------------------------------------------------------------------------------")
             generation.logRankFormulas()
             logging.info("--------------------------------------------------------------------------------------\n")
 
             logging.info("> GETTING BEST HALF OF FORMULAS")
+            logging.info("Best Half of Formulas")
             logging.info("--------------------------------------------------------------------------------------")
             bestHalf = generation.getBestHalf()
             bestHalf.logRankFormulas()
@@ -120,16 +121,16 @@ class Learning:
             bestHalfGeneration = bestHalfGeneration.getBestHalf()
 
             logging.info("> COMBINING PARENTS + CHILDREN")
-            generation.rankFormulae.extend(bestHalfGeneration.rankFormulae)
-            generation.rankParameters.extend(bestHalfGeneration.rankParameters)
-            generation.rankScore.extend(bestHalfGeneration.rankScore)
+            generation.combinePopulations(bestHalfGeneration)
+            generation.removeDuplicates()
+
 
         generation.sortPopulation()
-        logging.info("GENETIC ALGORITHM - END")
         logging.info("LAST FORMULA GENERATION")
-        #generation.logRankFormulas()
+        logging.info("GENETIC ALGORITHM - END\n")
 
         logging.info("BEST FORMULAS")
+        #TODO - test this part
         #genGenerator.calculateClassPredictions(generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
         generation.logFinalFormulas(numFormulas=20)
 
