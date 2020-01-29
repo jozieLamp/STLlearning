@@ -33,6 +33,9 @@ class Parameter(Atomic):
     def evaluateRobustness(self, traj, timeIndex):
         return self.value
 
+    def evaluateValue(self, traj, timeIndex):
+        return self.value
+
 #defined var
 class Variable(Atomic):
     def __init__(self, value, type = AtomicEnum.Variable):
@@ -43,6 +46,15 @@ class Variable(Atomic):
         return self.value
 
     def evaluateRobustness(self, traj, timeIndex):
+        index = 0
+        for i in range(0,len(traj.variables)):
+            if traj.variables[i] == self.value:
+                index = i
+                break
+
+        return traj.values[index]
+
+    def evaluateValue(self, traj, timeIndex):
         index = 0
         for i in range(0,len(traj.variables)):
             if traj.variables[i] == self.value:
@@ -98,3 +110,24 @@ class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
             elif self.boolExpr != None:
                 return self.boolExpr.evaluateRobustness(traj, timeIndex)
 
+
+    def evaluateValue(self, traj, timeIndex):
+        index = timeIndexAfter_efficient(traj.time, timeIndex, self.prevIndex)
+        self.prevIndex = index
+
+        for i in range(0,len(traj.variables)):
+            x = traj.trajectories[i]
+            xVal = x[index]
+            traj.values[i] = xVal
+
+
+        if self.notExpr != None:
+            if self.relExpr != None:
+                return not self.relExpr.evaluateValue(traj, timeIndex)
+            elif self.boolExpr != None:
+                return not self.boolExpr.evaluateValue(traj, timeIndex)
+        else:
+            if self.relExpr != None:
+                return self.relExpr.evaluateValue(traj, timeIndex)
+            elif self.boolExpr != None:
+                return self.boolExpr.evaluateValue(traj, timeIndex)

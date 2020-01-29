@@ -11,3 +11,4 @@ In Formula Generator,  STL Factory is used to create the formula and return an S
 
 Genetic Population uses Genetic Generator to generate the actual genetic populations stored in the genetic population class.
 
+In STL Tree part, evaluateRobustness calculates robustness, evaluateValue returns boolean value

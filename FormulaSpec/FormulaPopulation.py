@@ -77,34 +77,21 @@ class FormulaPopulation:
         return f1, f2
 
 
-    #TODO here
+
     #mutate a formula
     def mutateNewGen(self, formula, genOps, variables, varDict):
-        nodeList = []
-        finalFormulas = []
-        p = 0
 
-        if genOps.mutate__one_node:
-            node, nodeString = formula.randomNode()
-            #print(nodeN.toString())
-            nodeList.append([node, nodeString])
-            p = genOps.mutate__mutation_probability_one_node
-        else:
-            nodeList = formula.getAllNodes()
-            p = genOps.mutate__mutation_probability_per_node
+        node, parentNode = formula.getNodeToMutate()
 
         stlFac = STLFactory()
+        newNode, newFormula = self.formulaGen.mutateNode(node=node, parentNode=parentNode, formula=formula, genOps=genOps, variables=variables, varDict=varDict)
+        print("Mutated Formula", newFormula)
 
-        for n in nodeList:
-            if random.uniform(0,1) < p:
-                newNode, newFormula = self.formulaGen.mutateNode(node=n[0], nodeString=n[1], formula=formula, genOps=genOps, variables=variables, varDict=varDict)
-                print("Mutated Formula", newFormula)
+        if newFormula != None:
+            finalFormula = stlFac.constructFormulaTree(newFormula + "\n")
 
-                if newFormula != None:
-                    f1 = stlFac.constructFormulaTree(newFormula + "\n")
-                    finalFormulas.append(f1)
 
-        return finalFormulas
+        return finalFormula
 
 
     #combine two formulas with boolean operators

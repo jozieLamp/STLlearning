@@ -109,11 +109,10 @@ class STLTree(treelib.Tree):
         return internalNodes[r]
 
 
-    #return random main node from tree
-    def randomNode(self):
-        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, ExprEnum.boolExpr, ExprEnum.stlTerm, AtomicEnum.BooleanAtomic, AtomicEnum.Variable, AtomicEnum.Parameter]
+    def getNodeToMutate(self):
+        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, ExprEnum.boolExpr, AtomicEnum.Variable, AtomicEnum.Parameter]
         internalNodes = []
-        parentNodes =  []
+        parentNodes = []
         for node in self.expand_tree(mode=treelib.Tree.DEPTH, sorting=False):
             obj = self[node].data
             if obj.type not in ignoreList:
@@ -122,16 +121,7 @@ class STLTree(treelib.Tree):
 
         r = random.randint(0, len(internalNodes) - 1)
 
-        nd = internalNodes[r]
-        nodeString = nd.toString()
-
-        #add timebound with operator
-        if nd.type == OperatorEnum.G or nd.type == OperatorEnum.F or nd.type == OperatorEnum.U:
-            parent = parentNodes[r]
-            nodeString = parent.tempOperator.toString() + parent.timebound.toString()
-
-        return nd, nodeString
-
+        return internalNodes[r], parentNodes[r]
 
 
     def getAllNodes(self):
@@ -141,20 +131,28 @@ class STLTree(treelib.Tree):
             nList.append(obj)
 
         return nList
+    #
+    # def isInternalNode(self, node):
+    #     list = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, OperatorEnum.F, OperatorEnum.G, OperatorEnum.U, AtomicEnum.Variable, AtomicEnum.Parameter]
+    #     if node.type in list:
+    #         return False
+    #     else:
+    #         return True
 
-    def isInternalNode(self, node):
-        list = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, OperatorEnum.F, OperatorEnum.G, OperatorEnum.U, AtomicEnum.Variable, AtomicEnum.Parameter]
-        if node.type in list:
-            return False
-        else:
+    def canDeleteNode(self, node, parentNode):
+        list = [OperatorEnum.F, OperatorEnum.G, OperatorEnum.U, OperatorEnum.AND, OperatorEnum.OR, OperatorEnum.IMPLIES]
+        if (node.type == ExprEnum.stlTerm and parentNode.boolOperator != None) or (node.type in list):
             return True
+        else:
+            return False
 
-    def canDeleteNode(self, node):
-        list = [ExprEnum.stlTerm, ExprEnum.boolExpr]
-        if node.type in list:
+    def canChangeParamsNode(self, node):
+        list = [OperatorEnum.F, OperatorEnum.G, OperatorEnum.U]
+        if (node.type == AtomicEnum.BooleanAtomic and node.relExpr != None) or (node.type in list):
             return True
         else:
             return False
+
 
 
 

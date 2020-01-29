@@ -13,6 +13,12 @@ class GeneticPopulation:
             st = self.rankFormulae[i].toString() + " [Discrimination Score: " + str(format(self.rankScore[i].classDif, '.3f') + "]")
             logging.info(st)
 
+    def logFinalFormulas(self, numFormulas):
+        for i in range(numFormulas-1, 0, -1):
+            st = self.rankFormulae[i].toString() + " [" + self.rankScore[i].toStringFull() + "]"
+            logging.info(st)
+
+
     #Order formula by best score
     def sortPopulation(self):
 
@@ -27,6 +33,7 @@ class GeneticPopulation:
         # print("\nSorted")
         # for i in range(len(sortedFormula)):
         #     print(sortedFormula[i].toString(), self.rankScore[i].classDif)
+
 
     def getBestHalf(self):
         half = round(len(self.rankFormulae) / 2)
@@ -61,6 +68,7 @@ class GeneticPopulation:
                 indexB = self.extract(cmlScores)
 
             r = random.uniform(0,1)
+            r = 0.1
 
             if r > 0.3:
 
@@ -88,10 +96,11 @@ class GeneticPopulation:
                 f2 = pop.mutateNewGen(formulaA, genOps, pop.variables, pop.varDict)
 
                 print("\nRETURNED Formula Set")
-                fs = f1 + f2
-                for f in fs:
-                    print(f.toString())
-                    pop.population.append(f)
+                print(f1.toString())
+                print(f2.toString())
+
+                pop.population.append(f1)
+                pop.population.append(f2)
 
             else:
                 formulaA = formulaParents[indexA]
@@ -153,13 +162,20 @@ class GeneticPopulation:
 
 #Class that holds all score values
 class Score:
-    def __init__(self, aveRobPos, varRobPos, aveRobNeg, varRobNeg, classDif ):
+    def __init__(self, aveRobPos, varRobPos, aveRobNeg, varRobNeg, classDif, posClassPctg=0, negClassPctg=0):
         self.aveRobPos = aveRobPos #ave pos robustness val
         self.varRobPos = varRobPos #ave pos robustness variance
         self.aveRobNeg  = aveRobNeg #ave neg robustness
         self.varRobNeg = varRobNeg #ave neg robustness variance
         self.classDif = classDif #discrimination function value, absolute dif of rob btw classes
+        self.posClassPctg = posClassPctg #percent of pos class predicting
+        self.negClassPctg = negClassPctg #percent of neg class predicting
 
     def toString(self):
         return "Discrimination Score: " + str(format(self.classDif, '.3f')) + " Robustness + : " + str(format(self.aveRobPos, '.3f')) \
                + " Robustness - :" + str(format(self.aveRobNeg, '.3f'))
+
+    def toStringFull(self):
+        return "Discrimination Score: " + str(format(self.classDif, '.3f')) + "; Robustness + : " + str(format(self.aveRobPos, '.3f')) \
+               + "; Robustness - :" + str(format(self.aveRobNeg, '.3f')) + "; Percent Class + :" + str(format(self.posClassPctg, '.3f')) \
+               + "; Percent Class - :" + str(format(self.negClassPctg, '.3f'))

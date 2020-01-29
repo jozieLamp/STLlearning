@@ -98,6 +98,27 @@ class RelationalOperator(Operator):
         else:
             return -val
 
+    def evaluateValue(self, traj, timeIndex):
+        value1 = float(self.atomic1.evaluateRobustness(traj, timeIndex))
+        value2 = float(self.atomic2.evaluateRobustness(traj, timeIndex))  # send variable name
+
+        if self.type == OperatorEnum.LT:
+            truthVal = value1 < value2
+        elif self.type == OperatorEnum.LE:
+            truthVal = value1 <= value2
+        elif self.type == OperatorEnum.GT:
+            truthVal = value1 > value2
+        elif self.type == OperatorEnum.GE:
+            truthVal = value1 >= value2
+        elif self.type == OperatorEnum.EQ:
+            truthVal = value1 == value2
+        elif self.type == OperatorEnum.NEQ:
+            truthVal = value1 != value2
+        else:
+            truthVal = False
+
+        return truthVal
+
 class Operator_LT(RelationalOperator):
     def __init__(self, atomic1=None, atomic2=None, type=OperatorEnum.LT, symbol="<"):
         super(Operator_LT, self).__init__(atomic1, atomic2, type)

@@ -127,26 +127,13 @@ class Learning:
         generation.sortPopulation()
         logging.info("GENETIC ALGORITHM - END")
         logging.info("LAST FORMULA GENERATION")
-        generation.logRankFormulas()
+        #generation.logRankFormulas()
 
-        self.calculateFinalScores(genGenerator, generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
+        logging.info("BEST FORMULAS")
+        #genGenerator.calculateClassPredictions(generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
+        generation.logFinalFormulas(numFormulas=20)
 
 
-
-
-    #TODO at end of everything add my extra calculation of scores and which classes formulas belong to
-    def calculateFinalScores(self, genGenerator, generation,labels, positiveTestSet, negativeTestSet, time, variables, paramDict):
-        #count pos and neg trajs
-        positiveTrajectories = []
-        negativeTrajectories = []
-        for i in range(len(labels)):
-            if labels[i] == -1:
-                negativeTrajectories.append(i)
-            else:
-                positiveTrajectories.append(i)
-
-        for f in generation.population:
-            posSum = genGenerator.calculateClassPredictions(positiveTestSet, f, time, variables, paramDict)
 
 
 

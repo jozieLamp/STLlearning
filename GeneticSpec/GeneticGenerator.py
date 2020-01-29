@@ -81,9 +81,15 @@ class GeneticGenerator:
                 v = varDict[params[i]]
                 pbounds["p" + str(i)] = (v[0], v[1])
 
+        print("PBOUNDS ", len(pbounds))
+
         #call bayes opt based on number of params in objective function
         newParams = []
-        if len(pbounds) == 3:
+        if len(pbounds) == 1:
+            newParams = self.optimize(pbounds, self.objectiveFunction1)
+        elif len(pbounds) == 2:
+            newParams = self.optimize(pbounds, self.objectiveFunction2)
+        elif len(pbounds) == 3:
             newParams = self.optimize(pbounds, self.objectiveFunction3)
         elif len(pbounds) == 4:
             newParams = self.optimize(pbounds, self.objectiveFunction4)
@@ -95,6 +101,10 @@ class GeneticGenerator:
             newParams = self.optimize(pbounds, self.objectiveFunction7)
         elif len(pbounds) == 8:
             newParams = self.optimize(pbounds, self.objectiveFunction8)
+        elif len(pbounds) == 9:
+            newParams = self.optimize(pbounds, self.objectiveFunction9)
+        elif len(pbounds) == 10:
+            newParams = self.optimize(pbounds, self.objectiveFunction10)
         else:
             logging.error("TOO MANY PARAMETERS IN OPTIMIZATION")
 
@@ -137,6 +147,30 @@ class GeneticGenerator:
 
 
     #Defining objective functions with different number of params
+    def objectiveFunction1(self, p0):
+        #first construct formula with new bounds
+        params = [p0]
+        self.formula.updateParams(params)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
+
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        return abs
+
+    def objectiveFunction2(self, p0, p1):
+        #first construct formula with new bounds
+        params = [p0, p1]
+        self.formula.updateParams(params)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
+
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        return abs
+
     def objectiveFunction3(self, p0, p1, p2):
         #first construct formula with new bounds
         params = [p0, p1, p2]
@@ -209,6 +243,30 @@ class GeneticGenerator:
 
         return abs
 
+    def objectiveFunction9(self, p0, p1, p2, p3, p4, p5, p6, p7, p8):
+        #first construct formula with new bounds
+        params = [p0, p1, p2, p3, p4, p5, p6, p7, p8]
+        self.formula.updateParams(params)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
+
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        return abs
+
+    def objectiveFunction10(self, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9):
+        #first construct formula with new bounds
+        params = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9]
+        self.formula.updateParams(params)
+
+        val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, self.formula)
+        val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet,self.formula)
+
+        abs = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+
+        return abs
+
     # More robust when value higher
     def computeRobustness(self, trainSet, formula):
 
@@ -242,13 +300,33 @@ class GeneticGenerator:
             return num
 
 
-    #TODO finish here
     # Calculate class + and - predictions
-    def calculateClassPredictions(self, testSet, formula, time, variables, paramDict):
+    def calculateClassPredictions(self, generation,labels, positiveTestSet, negativeTestSet, time, variables, paramDict):
+        testSet = positiveTestSet + negativeTestSet
+
+        #count pos and neg trajs
+        positiveTrajectories = []
+        negativeTrajectories = []
+        totalTrajectories = len(labels)
+        for i in range(len(labels)):
+            if labels[i] == -1:
+                negativeTrajectories.append(i)
+            else:
+                positiveTrajectories.append(i)
+
+        for i in range(len(generation)):
+            f = generation.rankFormulae[i]
+            posSum = self.calculateFinalScores(testSet, f, time, variables, paramDict)
+            generation.rankScore[i].posClassPctg = posSum / totalTrajectories
+            generation.rankScore[i].negClassPctg = (totalTrajectories - posSum) / totalTrajectories
+
+
+
+    def calculateFinalScores(self, testSet, formula, time, variables, paramDict):
         posClassified = []
         for i in testSet:
             traj = Trajectory(trajectories=i, time=self.time, variables=self.variables, paramDict=self.paramDict, values=[0,0,0,0])
-            if formula.evaluateRobustness(traj, self.atTime) == True:
+            if formula.evaluateValue(traj, self.atTime):
                 posClassified.append(1)
             else:
                 posClassified.append(0)

@@ -36,6 +36,12 @@ class Statement(STLExpr):
         else:
             return self.boolExpr.toString()
 
+    def evaluateValue(self, traj, timeIndex):
+        if self.declaration != None:
+            return None
+        else:
+            return self.boolExpr.evaluateValue(traj, timeIndex)
+
     def evaluateRobustness(self, traj, timeIndex):
         if self.declaration != None:
             return None
@@ -84,6 +90,22 @@ class BoolExpr(STLExpr):
 
         else:
             return self.stlTerm1.evaluateRobustness(traj, timeIndex)
+
+    def evaluateValue(self, traj, timeIndex):
+        if self.boolOperator != None:
+            if self.boolOperator.type == OperatorEnum.AND:
+                return self.stlTerm1.evaluateValue(traj, timeIndex) and self.stlTerm2.evaluateValue(traj, timeIndex)
+            elif self.boolOperator.type == OperatorEnum.OR:
+                return self.stlTerm1.evaluateValue(traj, timeIndex) or self.stlTerm2.evaluateValue(traj, timeIndex)
+            elif self.boolOperator.type == OperatorEnum.IMPLIES:
+                return (not self.stlTerm1.evaluateValue(traj, timeIndex)) or self.stlTerm2.evaluateValue(traj, timeIndex)
+
+
+        elif self.stlTerm2 != None:
+            return self.stlTerm2.evaluateValue(traj, timeIndex)
+
+        else:
+            return self.stlTerm1.evaluateValue(traj, timeIndex)
 
 
 
@@ -168,6 +190,65 @@ class STLTerm(STLExpr):
                 return maxVal
         else:
             return self.boolAtomic1.evaluateRobustness(traj, timeIndex)
+
+
+    def evaluateValue(self, traj, timeIndex):
+        if self.tempOperator != None:
+            if self.tempOperator.type == OperatorEnum.G:
+                t1 = float(self.timebound.lowerBound) + timeIndex
+                t2 = float(self.timebound.upperBound) + timeIndex
+
+                index1 = timeIndexAfter(traj.time, t1)
+                index2 = timeIndexUntil(traj.time, t2)
+
+                for i in range(index1, index2):
+                    if not self.boolAtomic1.evaluateValue(traj, traj.time[i]):
+                        return False
+
+                return True
+
+            elif self.tempOperator.type == OperatorEnum.F:
+                t1 = float(self.timebound.lowerBound) + timeIndex
+                t2 = float(self.timebound.upperBound) + timeIndex
+
+                index1 = timeIndexAfter(traj.time, t1)
+                index2 = timeIndexUntil(traj.time, t2)
+
+                for i in range(index1, index2):
+                    if self.boolAtomic1.evaluateValue(traj, traj.time[i]):
+                        return True
+
+                return False
+
+            elif self.tempOperator.type == OperatorEnum.U:
+                t1 = float(self.timebound.lowerBound) + timeIndex
+                t2 = float(self.timebound.upperBound) + timeIndex
+                f2true =  False
+                tprime = 0
+
+                index1 = timeIndexAfter(traj.time, t1)
+                index2 = timeIndexUntil(traj.time, t2)
+
+                for i in range(index1,index2):
+                    if self.boolAtomic2.evaluateValue(traj, traj.time[i]):
+                        f2true = True
+                        tprime = traj.time[i]
+                        break
+
+                if not f2true:
+                    return False
+
+                index1 = timeIndexAfter(traj.time, timeIndex)
+                index2 = timeIndexAfter(traj.time, tprime)
+
+                for i in range(index1, index2):
+                    if not self.boolAtomic1.evaluateValue(traj, traj.time[i]):
+                        return False
+
+                return True
+
+        else:
+            return self.boolAtomic1.evaluateValue(traj, timeIndex)
 
 
 
