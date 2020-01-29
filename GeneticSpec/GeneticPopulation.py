@@ -61,7 +61,7 @@ class GeneticPopulation:
                 indexB = self.extract(cmlScores)
 
             r = random.uniform(0,1)
-            r = 0.1
+
             if r > 0.3:
 
                 formulaA = formulaParents[indexA]
@@ -93,7 +93,6 @@ class GeneticPopulation:
                     print(f.toString())
                     pop.population.append(f)
 
-
             else:
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
@@ -111,9 +110,10 @@ class GeneticPopulation:
                 # print(f2.toString())
                 # print(f3.toString())
 
+
+        self.logFormulas(pop.population, "Genetically Modified")
+
         return pop
-
-
 
 
     def extract(self, cmlScores):
@@ -142,6 +142,14 @@ class GeneticPopulation:
             c.append(sc.classDif)
 
         return c
+
+    def logFormulas(self, pop, type):
+        logging.info(type + " Formula Population:")
+
+        for f in pop:
+            logging.info('%s' % (f.toString()))
+        #logging.info("---------------------------------------------------\n")
+
 
 #Class that holds all score values
 class Score:

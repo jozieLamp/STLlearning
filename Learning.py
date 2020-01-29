@@ -109,12 +109,44 @@ class Learning:
             logging.info("> APPLYING GENETIC OPERATIONS: OFFSPRING FORMULA GENERATION")
             pop = bestHalf.geneticOperations(pop, self.genOps) #update formula pop with gen ops on formulas
 
-            #TODO stopped here
+            logging.info("> OPTIMIZING OFFSPRING FORMULA PARAMETER")
+            bestHalfGeneration = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
+                                                                   positiveTrainSet=positiveTrainSet,
+                                                                   negativeTrainSet=negativeTrainSet,
+                                                                   positiveTestSet=positiveTestSet,
+                                                                   negativeTestSet=negativeTestSet, atTime=min(time),
+                                                                   genOps=self.genOps)
+            bestHalfGeneration.sortPopulation()
+            bestHalfGeneration = bestHalfGeneration.getBestHalf()
+
+            logging.info("> COMBINING PARENTS + CHILDREN")
+            generation.rankFormulae.extend(bestHalfGeneration.rankFormulae)
+            generation.rankParameters.extend(bestHalfGeneration.rankParameters)
+            generation.rankScore.extend(bestHalfGeneration.rankScore)
+
+        generation.sortPopulation()
+        logging.info("GENETIC ALGORITHM - END")
+        logging.info("LAST FORMULA GENERATION")
+        generation.logRankFormulas()
+
+        self.calculateFinalScores(genGenerator, generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
 
 
-        #TODO at end of everything add my extra calculation of scores and which classes formulas belong to
 
 
+    #TODO at end of everything add my extra calculation of scores and which classes formulas belong to
+    def calculateFinalScores(self, genGenerator, generation,labels, positiveTestSet, negativeTestSet, time, variables, paramDict):
+        #count pos and neg trajs
+        positiveTrajectories = []
+        negativeTrajectories = []
+        for i in range(len(labels)):
+            if labels[i] == -1:
+                negativeTrajectories.append(i)
+            else:
+                positiveTrajectories.append(i)
+
+        for f in generation.population:
+            posSum = genGenerator.calculateClassPredictions(positiveTestSet, f, time, variables, paramDict)
 
 
 

@@ -240,3 +240,20 @@ class GeneticGenerator:
             return 0
         else:
             return num
+
+
+    #TODO finish here
+    # Calculate class + and - predictions
+    def calculateClassPredictions(self, testSet, formula, time, variables, paramDict):
+        posClassified = []
+        for i in testSet:
+            traj = Trajectory(trajectories=i, time=self.time, variables=self.variables, paramDict=self.paramDict, values=[0,0,0,0])
+            if formula.evaluateRobustness(traj, self.atTime) == True:
+                posClassified.append(1)
+            else:
+                posClassified.append(0)
+
+        posSum = sum(posClassified)
+        return posSum
+
+
