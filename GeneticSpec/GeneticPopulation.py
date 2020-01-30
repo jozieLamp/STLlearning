@@ -70,7 +70,7 @@ class GeneticPopulation:
             r = random.uniform(0,1)
 
             if r < 0.5:
-                logging.info("\nCROSSOVER")
+                #logging.info("\nCROSSOVER")
 
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
@@ -90,7 +90,7 @@ class GeneticPopulation:
                     pop.population.append(f2)
 
             elif r < 0.95:
-                logging.info("\nMUTATE")
+                #logging.info("\nMUTATE")
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
 
@@ -108,7 +108,7 @@ class GeneticPopulation:
                     pop.population.append(f2)
 
             else:
-                logging.info("\nUNION")
+                #logging.info("\nUNION")
 
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]

@@ -296,7 +296,7 @@ class FormulaGenerator:
         operatorList = [OperatorEnum.IMPLIES, OperatorEnum.AND, OperatorEnum.OR, OperatorEnum.G, OperatorEnum.F, OperatorEnum.U]
 
         # print("\nMutate Node", node.type, "Node:", node.toString(), "Formula", formula.toString())
-        logging.info("Node:" + '%s' % (node.toString()) + "Formula" + '%s' % (formula.toString()))
+        #logging.info("Node:" + '%s' % (node.toString()) + "Formula" + '%s' % (formula.toString()))
 
 
         newNode = None
