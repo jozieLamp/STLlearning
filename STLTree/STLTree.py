@@ -30,6 +30,13 @@ class STLTree(treelib.Tree):
             if obj.type == ExprEnum.statement:
                 return obj.evaluateRobustness(traj, timeIndex)
 
+    def evaluateValue(self, traj, timeIndex):
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+            obj = self[node].data
+            #print(node)
+            if obj.type == ExprEnum.statement:
+                return obj.evaluateValue(traj, timeIndex)
+
     def getAllParams(self):
         pList = []
         for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
@@ -147,7 +154,9 @@ class STLTree(treelib.Tree):
             return False
 
     def canChangeParamsNode(self, node):
-        list = [OperatorEnum.F, OperatorEnum.G, OperatorEnum.U]
+        list = [OperatorEnum.F, OperatorEnum.G, OperatorEnum.U, OperatorEnum.LT, OperatorEnum.LE, OperatorEnum.GT,
+                OperatorEnum.GE,  OperatorEnum.EQ, OperatorEnum.NEQ, OperatorEnum.RELOP]
+
         if (node.type == AtomicEnum.BooleanAtomic and node.relExpr != None) or (node.type in list):
             return True
         else:

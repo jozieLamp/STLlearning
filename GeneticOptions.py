@@ -42,7 +42,7 @@ class GeneticOptions:
         self.mutate__insert__weight = 2
         self.mutate__delete__weight = 2
         self.mutate__replace__weight = 4
-        self.mutate__change__weight = 0
+        self.mutate__change__weight = 1
 
         self.mutate__delete__keep_left_node = 0.5
 

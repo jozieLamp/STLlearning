@@ -85,7 +85,7 @@ class FormulaPopulation:
 
         stlFac = STLFactory()
         newNode, newFormula = self.formulaGen.mutateNode(node=node, parentNode=parentNode, formula=formula, genOps=genOps, variables=variables, varDict=varDict)
-        print("Mutated Formula", newFormula)
+        #print("Mutated Formula", newFormula)
 
         if newFormula != None:
             finalFormula = stlFac.constructFormulaTree(newFormula + "\n")
@@ -99,14 +99,19 @@ class FormulaPopulation:
         stringA = formulaA.toString()
         stringB = formulaB.toString()
 
-        newAnd = stringA + " & " + stringB + "\n"
-        newOr = stringA + " | " + stringB + "\n"
-        newImplies = stringA + " -> " + stringB + "\n"
+        if stringA != None and stringB != None:
 
-        stlFac = STLFactory()
-        f1 = stlFac.constructFormulaTree(newAnd)
-        f2 = stlFac.constructFormulaTree(newOr)
-        f3 = stlFac.constructFormulaTree(newImplies)
+            newAnd = "(" + stringA + " & " + stringB + ")\n"
+            newOr = "(" + stringA + " | " + stringB + ")\n"
+            newImplies = "(" + stringA + " -> " + stringB + ")\n"
 
-        return f1, f2, f3
+            stlFac = STLFactory()
+            f1 = stlFac.constructFormulaTree(newAnd)
+            f2 = stlFac.constructFormulaTree(newOr)
+            f3 = stlFac.constructFormulaTree(newImplies)
+            return f1, f2, f3
+        else:
+            return None, None, None
+
+
 

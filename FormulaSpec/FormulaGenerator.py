@@ -7,6 +7,7 @@ from STLTree.Atomic import AtomicEnum
 from STLTree.STLExpr import ExprEnum
 from scipy.stats import geom
 import random
+import logging
 
 #Generates different formula sets, mainly used for Formula Population
 class FormulaGenerator:
@@ -289,12 +290,15 @@ class FormulaGenerator:
         return t1, t2
 
 
-    #mutates node from formula, returns a string node
+    #mutates node from formula, returns a string node and string formula
     def mutateNode(self, node, parentNode, formula, genOps, variables, varDict):
 
         operatorList = [OperatorEnum.IMPLIES, OperatorEnum.AND, OperatorEnum.OR, OperatorEnum.G, OperatorEnum.F, OperatorEnum.U]
 
-        print("\nMutate Node", node.type, "Node:", node.toString(), "Formula", formula.toString())
+        # print("\nMutate Node", node.type, "Node:", node.toString(), "Formula", formula.toString())
+        logging.info("Node:" + '%s' % (node.toString()) + "Formula" + '%s' % (formula.toString()))
+
+
         newNode = None
         newFormula = None
 
@@ -305,10 +309,8 @@ class FormulaGenerator:
              genOps.mutate__change__weight * (1 if (formula.canChangeParamsNode(node)) else 0)]
 
         choice = self.sample(x)
-        print("Choice is ", choice)
 
         if choice == 0: #INSERTION before node
-            print("INSERTION")
             xIns = [genOps.mutate__insert__eventually_weight * (0 if (node.type == OperatorEnum.F) else 1),
                     genOps.mutate__insert__globally_weight * (0 if (node.type == OperatorEnum.G) else 1),
                     genOps.mutate__insert__negation_weight * (0 if (node.type == AtomicEnum.BooleanAtomic and node.notExpr != None) else 1)]
@@ -356,8 +358,6 @@ class FormulaGenerator:
 
 
         elif choice == 1: #DELETION of node
-            print("DELETION")
-
             if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U:
                 newNode = parentNode.boolAtomic1.toString()
                 newFormula = formula.toString().replace(parentNode.toString(), newNode)
@@ -375,7 +375,6 @@ class FormulaGenerator:
 
         elif choice == 2: #REPLACE node
             if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U or (node.type == ExprEnum.stlTerm and node.tempOperator != None):  # temporal op
-                print("REPLACE TEMP OPERATOR")
                 if node.type == ExprEnum.stlTerm and node.tempOperator != None:
                     parentNode = node
                     node = parentNode.tempOperator
@@ -480,8 +479,6 @@ class FormulaGenerator:
                         newFormula = parentNode.toString().replace(parentNode.toString(), newNode)
 
             elif node.type == OperatorEnum.AND or node.type == OperatorEnum.OR or node.type == OperatorEnum.IMPLIES:  # boolean op
-                print("REPLACE BOOL OPERATOR")
-
                 xMod = [genOps.mutate__replace__bool_to_modal_weight, genOps.mutate__replace__bool_to_bool_weight]
 
                 cMod = self.sample(xMod)
@@ -565,33 +562,45 @@ class FormulaGenerator:
                     newFormula = parentNode.toString().replace(parentNode.toString(), newNode)
 
             else: # isinstance(node, RelationalOperator):
-                print("REPLACE REL EXPR ATOMIC")
                 newNode = self.newAtomicNode(variables, varDict, True)
                 newFormula = formula.toString().replace(node.toString(), newNode)
 
 
         elif choice == 3: #change param bounds
-            print("CHANGE PARAM BOUNDS")
+            opList  = [OperatorEnum.LT, OperatorEnum.LE, OperatorEnum.GT,
+                OperatorEnum.GE,  OperatorEnum.EQ, OperatorEnum.NEQ, OperatorEnum.RELOP]
+
             if node.type == OperatorEnum.G or node.type == OperatorEnum.F or node.type == OperatorEnum.U: #temporal op
                 delta = (genOps.max_time_bound - genOps.min_time_bound) * genOps.mutate__change__proportion_of_variation
-                fString = formula.toString().strip(node.symbol).strip('[').strip(']')
-                vl = float(fString.partition(',')[0])
-                vu = float(fString.partition(',')[2])
+                vl = parentNode.timebound.lowerBound
+                vu = parentNode.timebound.upperBound
 
                 if random.uniform(0,1) < genOps.mutate__change__prob_lower_bound: #change lower bound
                     u = min(vl + delta / 2, vu)
                     l = max(vl - delta / 2, genOps.min_time_bound)
-                    newNode = node.symbol + "[" + str(round(random.uniform(l, u))) + "," + str(vu) + "]"
-                    newFormula = newNode
+
+                    if node.type == OperatorEnum.U:
+                        newNode = parentNode.boolAtomic1.toString() + node.symbol + "[" + str(round(random.uniform(l, u))) + "," + str(
+                            vu) + "]" + parentNode.boolAtomic2.toString()
+                        newFormula = formula.toString().replace(parentNode.toString(), newNode)
+                    else:
+                        newNode = node.symbol + "[" + str(round(random.uniform(l, u))) + "," + str(vu) + "]" + parentNode.boolAtomic1.toString()
+                        newFormula = formula.toString().replace(parentNode.toString(), newNode)
                 else:
                     u = min(vu + delta / 2, genOps.max_time_bound)
                     l = max(vu - delta / 2, vl)
-                    newNode = node.symbol + "[" + str(vl) + "," + str(round(random.uniform(l, u))) + "]"
-                    newFormula = newNode
 
-            elif isinstance(node, RelationalOperator): #new Params
-                varName = node.atomic1
-                v = float(node.atomic2)
+                    if node.type == OperatorEnum.U:
+                        newNode = parentNode.boolAtomic1.toString() + node.symbol + "[" + str(vl) + "," + str(round(random.uniform(l, u))) + "]"\
+                                  + parentNode.boolAtomic2.toString()
+                        newFormula = formula.toString().replace(parentNode.toString(), newNode)
+                    else:
+                        newNode = node.symbol + "[" + str(vl) + "," + str(round(random.uniform(l, u))) + "]" + parentNode.boolAtomic1.toString()
+                        newFormula = formula.toString().replace(parentNode.toString(), newNode)
+
+            elif node.type in opList: #new Params
+                varName = node.atomic1.value
+                v = float(node.atomic2.value)
                 l = varDict[varName][0]
                 u = varDict[varName][1]
 
@@ -604,12 +613,24 @@ class FormulaGenerator:
                 newNode = node.atomic1.toString() + " " + node.symbol + " " + str(val)
                 newFormula = newNode
 
-            else:
-                newNode = None
-                newFormula = None
+            else: #bool Atomic
+                node = node.relExpr
+
+                varName = node.atomic1.value
+                v = float(node.atomic2.value)
+                l = varDict[varName][0]
+                u = varDict[varName][1]
+
+                delta = (u - l) * genOps.mutate__change__proportion_of_variation
+                up = min(v + delta / 2, u)
+                lw = max(v - delta / 2, l)
+
+                val = random.uniform(lw, up)
+
+                newNode = node.atomic1.toString() + " " + node.symbol + " " + str(val)
+                newFormula = newNode
 
         else:
-            print("ELSE")
             newNode = None
             newFormula = None
 

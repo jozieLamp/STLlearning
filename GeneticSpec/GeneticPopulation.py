@@ -69,9 +69,8 @@ class GeneticPopulation:
 
             r = random.uniform(0,1)
 
-            if r > 0.3:
-
-                print("\nCROSSOVER")
+            if r < 0.5:
+                logging.info("\nCROSSOVER")
 
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
@@ -85,11 +84,13 @@ class GeneticPopulation:
                 # print("New b", f2.toString())
 
                 #add two new formulas to population
-                pop.population.append(f1)
-                pop.population.append(f2)
+                if f1 != None:
+                    pop.population.append(f1)
+                if f2 != None:
+                    pop.population.append(f2)
 
-            elif r > 0.0:
-                print("\nMUTATE")
+            elif r < 0.95:
+                logging.info("\nMUTATE")
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
 
@@ -97,15 +98,17 @@ class GeneticPopulation:
                 f1 = pop.mutateNewGen(formulaB, genOps, pop.variables, pop.varDict) #returns list of formulas
                 f2 = pop.mutateNewGen(formulaA, genOps, pop.variables, pop.varDict)
 
-                print("\nRETURNED Formula Set")
-                print(f1.toString())
-                print(f2.toString())
+                # print("\nRETURNED Formula Set")
+                # print(f1.toString())
+                # print(f2.toString())
 
-                pop.population.append(f1)
-                pop.population.append(f2)
+                if f1 != None:
+                    pop.population.append(f1)
+                if f2 !=  None:
+                    pop.population.append(f2)
 
             else:
-                print("\nUNION")
+                logging.info("\nUNION")
 
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
@@ -113,9 +116,12 @@ class GeneticPopulation:
                 #Union operator, combine two formulas with and / or
                 f1, f2, f3 = pop.unionNewGen(formulaA, formulaB)
 
-                pop.population.append(f1)
-                pop.population.append(f2)
-                pop.population.append(f3)
+                if f1 != None:
+                    pop.population.append(f1)
+                if f2 !=  None:
+                    pop.population.append(f2)
+                if f3 != None:
+                    pop.population.append(f3)
 
                 # print("A ", formulaA.toString())
                 # print("B ", formulaB.toString())
@@ -132,18 +138,21 @@ class GeneticPopulation:
     #combine child generation with self
     def combinePopulations(self, childGen):
         for i in range(len(childGen.rankFormulae)):
-            if childGen.rankFormulae[i].toString not in self.rankFormulae:
+            if childGen.rankFormulae[i] not in self.rankFormulae:
                 self.rankFormulae.append(childGen.rankFormulae[i])
                 self.rankParameters.append(childGen.rankParameters[i])
                 self.rankScore.append(childGen.rankScore[i])
 
+
     def removeDuplicates(self):
+        fStrings = []
         formulas = []
         params = []
         scores = []
         for i in range(len(self.rankFormulae)):
-            if self.rankFormulae[i] not in formulas:
+            if self.rankFormulae[i].toString() not in fStrings:
                 formulas.append(self.rankFormulae[i])
+                fStrings.append(self.rankFormulae[i].toString())
                 params.append(self.rankParameters[i])
                 scores.append(self.rankScore[i])
 
@@ -183,7 +192,10 @@ class GeneticPopulation:
         logging.info(type + " Formula Population:")
 
         for f in pop:
-            logging.info('%s' % (f.toString()))
+            if f == None:
+                logging.info('%s' % ("None"))
+            else:
+                logging.info('%s' % (f.toString()))
         #logging.info("---------------------------------------------------\n")
 
 

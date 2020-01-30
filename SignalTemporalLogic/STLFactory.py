@@ -6,6 +6,7 @@ from SignalTemporalLogic.SignalTemporalLogicLexer import SignalTemporalLogicLexe
 from SignalTemporalLogic.STLExtendedVisitor import STLExtendedVisitor
 from STLTree.STLTree import STLTree
 import treelib as treelib
+import logging
 
 class STLFactory:
     def __init__(self):
@@ -17,12 +18,15 @@ class STLFactory:
         parser = SignalTemporalLogicParser(tokens)
         tree = parser.evl()
 
-
-        result, formulaTree = STLExtendedVisitor().visit(tree)
-        # formulaTree.show()
-        # formulaTree.printTree()
-
-        return formulaTree
+        try:
+            result, formulaTree = STLExtendedVisitor().visit(tree)
+            # formulaTree.show()
+            # formulaTree.printTree()
+            return formulaTree
+        except:
+            logging.error("ERROR parsing tree, improper formula supplied")
+            logging.error("Rule supplied was: ", str(rule))
+            return None
 
 
 

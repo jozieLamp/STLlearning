@@ -82,7 +82,7 @@ class Learning:
         #Begin genetic algorithm learning part
         generation = GeneticPopulation()
         genGenerator = GeneticGenerator()
-        numGen = 1#self.genOps.number_generations
+        numGen = 3#self.genOps.number_generations
         logging.info("NUMBER OF GENERATIONS: " + '%s' % (numGen))
         logging.info("GENETIC ALGORITHM - START")
 
@@ -120,18 +120,16 @@ class Learning:
             bestHalfGeneration.sortPopulation()
             bestHalfGeneration = bestHalfGeneration.getBestHalf()
 
-            logging.info("> COMBINING PARENTS + CHILDREN")
+            logging.info("> COMBINING PARENTS + CHILDREN\n")
             generation.combinePopulations(bestHalfGeneration)
             generation.removeDuplicates()
 
 
         generation.sortPopulation()
-        logging.info("LAST FORMULA GENERATION")
         logging.info("GENETIC ALGORITHM - END\n")
 
         logging.info("BEST FORMULAS")
-        #TODO - test this part
-        #genGenerator.calculateClassPredictions(generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
+        genGenerator.calculateClassPredictions(generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
         generation.logFinalFormulas(numFormulas=20)
 
 

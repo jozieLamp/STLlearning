@@ -89,6 +89,7 @@ class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
             else:
                 return ""
 
+
     def evaluateRobustness(self, traj, timeIndex):
         index = timeIndexAfter_efficient(traj.time, timeIndex, self.prevIndex)
         self.prevIndex = index

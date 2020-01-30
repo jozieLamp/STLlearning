@@ -302,19 +302,19 @@ class GeneticGenerator:
 
     # Calculate class + and - predictions
     def calculateClassPredictions(self, generation,labels, positiveTestSet, negativeTestSet, time, variables, paramDict):
-        testSet = positiveTestSet + negativeTestSet
 
-        #count pos and neg trajs
-        positiveTrajectories = []
-        negativeTrajectories = []
+        testSet =  np.zeros((positiveTestSet.shape[0]+negativeTestSet.shape[0], positiveTestSet.shape[1], positiveTestSet.shape[2]))
+
+        for i in range(positiveTestSet.shape[0]):
+            testSet[i, :, :] = positiveTestSet[i, :, :]
+
+        posSz = positiveTestSet.shape[0]
+        for i in range(negativeTestSet.shape[0]):
+            testSet[posSz + i, :, :] = negativeTestSet[i, :, :]
+
         totalTrajectories = len(labels)
-        for i in range(len(labels)):
-            if labels[i] == -1:
-                negativeTrajectories.append(i)
-            else:
-                positiveTrajectories.append(i)
 
-        for i in range(len(generation)):
+        for i in range(len(generation.rankFormulae)):
             f = generation.rankFormulae[i]
             posSum = self.calculateFinalScores(testSet, f, time, variables, paramDict)
             generation.rankScore[i].posClassPctg = posSum / totalTrajectories
