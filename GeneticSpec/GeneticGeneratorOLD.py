@@ -1,11 +1,5 @@
-import logging
 import random
 #from scikit import BayesianOptimization as BO
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from bayes_opt import BayesianOptimization
-from GeneticOptions import GeneticOptions
 
 #Generates different genetic population sets, mainly used for Genetic Population
 class GeneticGenerator:

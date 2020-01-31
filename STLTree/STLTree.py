@@ -103,18 +103,20 @@ class STLTree(treelib.Tree):
 
         return timeList
 
-    #return random internal node from tree
-    def randomInternalNode(self):
-        ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, OperatorEnum.F, OperatorEnum.G, OperatorEnum.U, AtomicEnum.Variable, AtomicEnum.Parameter]
+
+    def getNodeToCrossover(self):
+        useList = [AtomicEnum.BooleanAtomic, OperatorEnum.LT, OperatorEnum.LE, OperatorEnum.GT, OperatorEnum.GE,  OperatorEnum.EQ, OperatorEnum.NEQ,
+                   OperatorEnum.RELOP, ExprEnum.stlTerm, ExprEnum.boolExpr]
         internalNodes = []
-        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+
+        for node in self.expand_tree(mode=treelib.Tree.DEPTH, sorting=False):
             obj = self[node].data
-            if obj.type not in ignoreList:
-                    internalNodes.append(obj)
+            if obj.type in useList:
+                internalNodes.append(obj)
 
-        r = random.randint(0, len(internalNodes)-1)
+        r = random.randint(0, len(internalNodes) - 1)
+
         return internalNodes[r]
-
 
     def getNodeToMutate(self):
         ignoreList = [ExprEnum.evl, ExprEnum.statement, ExprEnum.statementList, ExprEnum.timeBound, ExprEnum.boolExpr, AtomicEnum.Variable, AtomicEnum.Parameter]

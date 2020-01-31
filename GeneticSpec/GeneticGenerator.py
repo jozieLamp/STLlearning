@@ -1,8 +1,4 @@
-
-from SignalTemporalLogic.STLFactory import STLFactory
-import random
 import numpy as np
-from GeneticOptions import GeneticOptions
 from GeneticSpec.Trajectory import Trajectory
 from GeneticSpec.GeneticPopulation import GeneticPopulation
 from GeneticSpec.GeneticPopulation import Score
@@ -14,7 +10,7 @@ import logging
 # from GPyOpt.methods import BayesianOptimization
 
 from bayes_opt import BayesianOptimization
-from bayes_opt import UtilityFunction
+
 
 #Generates different genetic population sets, mainly used for Genetic Population
 class GeneticGenerator:
@@ -81,8 +77,6 @@ class GeneticGenerator:
                 v = varDict[params[i]]
                 pbounds["p" + str(i)] = (v[0], v[1])
 
-        #print("PBOUNDS ", len(pbounds))
-
         #call bayes opt based on number of params in objective function
         newParams = []
         if len(pbounds) == 1:
@@ -106,7 +100,7 @@ class GeneticGenerator:
         elif len(pbounds) == 10:
             newParams = self.optimize(pbounds, self.objectiveFunction10)
         else:
-            logging.error("TOO MANY PARAMETERS IN OPTIMIZATION")
+            logging.error("TOO MANY PARAMETERS IN OPTIMIZATION : " + '%s' + str(len(pbounds)))
 
         #fix ordering of time params
         for i in range(len(params)):

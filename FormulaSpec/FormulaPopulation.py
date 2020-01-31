@@ -64,8 +64,11 @@ class FormulaPopulation:
 
     #swap two internal nodes between formulas
     def crossoverNewGen(self, formulaA, formulaB):
-        nodeA = formulaA.randomInternalNode()
-        nodeB = formulaB.randomInternalNode()
+        nodeA = formulaA.getNodeToCrossover()
+        nodeB = formulaB.getNodeToCrossover()
+
+        # print(nodeA.toString())
+        # print(nodeB.toString())
 
         stringA = formulaA.toString().replace(nodeA.toString(), nodeB.toString())
         stringB = formulaB.toString().replace(nodeB.toString(), nodeA.toString())
@@ -89,6 +92,8 @@ class FormulaPopulation:
 
         if newFormula != None:
             finalFormula = stlFac.constructFormulaTree(newFormula + "\n")
+        else:
+            finalFormula = None
 
 
         return finalFormula

@@ -2,9 +2,10 @@ import logging
 import numpy as np
 import random
 from FormulaSpec.FormulaPopulation import FormulaPopulation
-from GeneticOptions import GeneticOptions
+from GeneticSpec.GeneticOptions import GeneticOptions
 from GeneticSpec.GeneticPopulation import GeneticPopulation
 from GeneticSpec.GeneticGenerator import GeneticGenerator
+from ParamOptimization import ParamOptimization
 
 #
 # Learning for single client
@@ -82,7 +83,7 @@ class Learning:
         #Begin genetic algorithm learning part
         generation = GeneticPopulation()
         genGenerator = GeneticGenerator()
-        numGen = 3#self.genOps.number_generations
+        numGen = 1#self.genOps.number_generations
         logging.info("NUMBER OF GENERATIONS: " + '%s' % (numGen))
         logging.info("GENETIC ALGORITHM - START")
 
@@ -90,47 +91,55 @@ class Learning:
             logging.info("GENERATION #: " + '%s' % (k))
             logging.info("> OPTIMIZING POPULATION PARAMETERS\n")
             #Todo - fix optimization to not be so slow here
+            po = ParamOptimization()
             generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
-                positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
-                            negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps)
-
-            generation.sortPopulation()
-            logging.info("Formula Generation")
-            logging.info("--------------------------------------------------------------------------------------")
-            generation.logRankFormulas()
-            logging.info("--------------------------------------------------------------------------------------\n")
-
-            logging.info("> GETTING BEST HALF OF FORMULAS")
-            logging.info("Best Half of Formulas")
-            logging.info("--------------------------------------------------------------------------------------")
-            bestHalf = generation.getBestHalf()
-            bestHalf.logRankFormulas()
-            logging.info("--------------------------------------------------------------------------------------\n")
-
-            logging.info("> APPLYING GENETIC OPERATIONS: OFFSPRING FORMULA GENERATION")
-            pop = bestHalf.geneticOperations(pop, self.genOps) #update formula pop with gen ops on formulas
-
-            logging.info("> OPTIMIZING OFFSPRING FORMULA PARAMETER")
-            bestHalfGeneration = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
-                                                                   positiveTrainSet=positiveTrainSet,
-                                                                   negativeTrainSet=negativeTrainSet,
-                                                                   positiveTestSet=positiveTestSet,
-                                                                   negativeTestSet=negativeTestSet, atTime=min(time),
-                                                                   genOps=self.genOps)
-            bestHalfGeneration.sortPopulation()
-            bestHalfGeneration = bestHalfGeneration.getBestHalf()
-
-            logging.info("> COMBINING PARENTS + CHILDREN\n")
-            generation.combinePopulations(bestHalfGeneration)
-            generation.removeDuplicates()
+                    positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
+                                negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps)
 
 
-        generation.sortPopulation()
-        logging.info("GENETIC ALGORITHM - END\n")
-
-        logging.info("BEST FORMULAS")
-        genGenerator.calculateClassPredictions(generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
-        generation.logFinalFormulas(numFormulas=20)
+        #     generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
+        #         positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
+        #                     negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps)
+        #
+        #     generation.sortPopulation()
+        #     logging.info("Formula Generation")
+        #     logging.info("--------------------------------------------------------------------------------------")
+        #     generation.logRankFormulas()
+        #     logging.info("--------------------------------------------------------------------------------------\n")
+        #
+        #     logging.info("> GETTING BEST HALF OF FORMULAS")
+        #     logging.info("Best Half of Formulas")
+        #     logging.info("--------------------------------------------------------------------------------------")
+        #     bestHalf = generation.getBestHalf()
+        #     bestHalf.logRankFormulas()
+        #     logging.info("--------------------------------------------------------------------------------------\n")
+        #
+        #     logging.info("> APPLYING GENETIC OPERATIONS: OFFSPRING FORMULA GENERATION")
+        #     pop = bestHalf.geneticOperations(pop, self.genOps) #update formula pop with gen ops on formulas
+        #
+        #     logging.info("> OPTIMIZING OFFSPRING FORMULA PARAMETER")
+        #     bestHalfGeneration = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
+        #                                                            positiveTrainSet=positiveTrainSet,
+        #                                                            negativeTrainSet=negativeTrainSet,
+        #                                                            positiveTestSet=positiveTestSet,
+        #                                                            negativeTestSet=negativeTestSet, atTime=min(time),
+        #                                                            genOps=self.genOps)
+        #     bestHalfGeneration.sortPopulation()
+        #     bestHalfGeneration = bestHalfGeneration.getBestHalf()
+        #
+        #     logging.info("> COMBINING PARENTS + CHILDREN\n")
+        #     generation.combinePopulations(bestHalfGeneration)
+        #     generation.removeDuplicates()
+        #
+        #
+        # generation.sortPopulation()
+        # logging.info("GENETIC ALGORITHM - END\n")
+        #
+        # logging.info("BEST FORMULAS")
+        # # genGenerator.calculateClassPredictions(generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
+        # genGenerator.calculateClassPredictions(generation, labels, positiveTrainSet, negativeTrainSet, time, variables, pd)
+        #
+        # generation.logFinalFormulas(numFormulas=20)
 
 
 
