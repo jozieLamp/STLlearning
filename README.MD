@@ -1,5 +1,5 @@
 
-#Preliminaries:
+##Preliminaries:
 
 The tool requires 3 text files: Data, Labels and Times
 
