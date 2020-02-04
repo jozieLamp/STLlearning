@@ -83,7 +83,7 @@ class Learning:
         #Begin genetic algorithm learning part
         generation = GeneticPopulation()
         genGenerator = GeneticGenerator()
-        numGen = 1#self.genOps.number_generations
+        numGen = self.genOps.number_generations
         logging.info("NUMBER OF GENERATIONS: " + '%s' % (numGen))
         logging.info("GENETIC ALGORITHM - START")
 
@@ -97,7 +97,7 @@ class Learning:
             generation.sortPopulation()
             logging.info("Formula Generation")
             logging.info("--------------------------------------------------------------------------------------")
-            generation.logRankFormulas()
+            #generation.logRankFormulas()
             logging.info("--------------------------------------------------------------------------------------\n")
 
             logging.info("> GETTING BEST HALF OF FORMULAS")
@@ -116,7 +116,7 @@ class Learning:
                                                                    negativeTrainSet=negativeTrainSet,
                                                                    positiveTestSet=positiveTestSet,
                                                                    negativeTestSet=negativeTestSet, atTime=min(time),
-                                                                   genOps=self.genOps)
+                                                                   genOps=self.genOps, showGraphs=True)
             bestHalfGeneration.sortPopulation()
             bestHalfGeneration = bestHalfGeneration.getBestHalf()
 

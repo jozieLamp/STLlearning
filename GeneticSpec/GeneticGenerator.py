@@ -23,6 +23,7 @@ class GeneticGenerator:
 
     #returns Genetic Population
     def optimizeGenerationParameters(self, pop, variables, time, positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet, atTime, genOps, showGraphs=False):
+
         rankFormulae = []
         rankParams = []
         rankScores = []

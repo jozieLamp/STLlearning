@@ -106,14 +106,15 @@ class FormulaPopulation:
         newNode, newFormula = self.formulaGen.mutateNode(node=node, parentNode=parentNode, formula=formula, genOps=genOps, variables=variables, varDict=varDict)
         #print("Mutated Formula", newFormula)
 
-        boolCount = newFormula.count("&")
-        boolCount += newFormula.count("|")
-        boolCount += newFormula.count("->")
-
-        if boolCount >= 2:
-            newFormula = self.fixBoolExpr(newFormula)
 
         if newFormula != None:
+            boolCount = newFormula.count("&")
+            boolCount += newFormula.count("|")
+            boolCount += newFormula.count("->")
+
+            if boolCount >= 2:
+                newFormula = self.fixBoolExpr(newFormula)
+
             finalFormula = stlFac.constructFormulaTree(newFormula + "\n")
         else:
             finalFormula = None
@@ -142,6 +143,8 @@ class FormulaPopulation:
 
 
     def fixBoolExpr(self, text):
+        logging.info("IN FIX BOOL EXPR, "+ text)
+
         numParen = text.count("(")
         symbols = re.findall('\||&|->', text)
         lastSymbol = symbols[len(symbols) - 1]

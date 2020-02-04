@@ -42,15 +42,5 @@ def main():
     factory.constructFormulaTree(rule)
 
 
-    #Need to figure out how to show  this in order
-    # tree = STLTree()
-    # tree.create_node("root", "root", parent=None)
-    # tree.create_node("one", "one", parent="root")
-    # tree.create_node("two", "two", parent="root")
-    # tree.create_node("three", "three", parent="root")
-    # tree.create_node("four", "four", parent="root")
-    # tree.show()
-
-
 if __name__ == '__main__':
     main()
