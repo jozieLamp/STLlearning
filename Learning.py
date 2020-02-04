@@ -131,6 +131,7 @@ class Learning:
 
         generation.logFinalFormulas(numFormulas=100)
 
+        return generation
 
 
 

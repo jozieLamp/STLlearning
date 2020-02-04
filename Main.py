@@ -1,5 +1,6 @@
 import logging
 from Learning import Learning
+from GeneticSpec.GeneticPopulation import GeneticPopulation
 
 
 #make learning object
@@ -11,4 +12,4 @@ l = Learning(logging.INFO, "Data/values", "Data/labels", "Data/times", variables
 
 
 #start learning
-l.run()
+generation = l.run()
