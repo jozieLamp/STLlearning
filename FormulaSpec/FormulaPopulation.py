@@ -1,4 +1,3 @@
-from SymbolArray import SymbolArray
 import FormulaSpec.FormulaGenerator as FG
 import logging
 import treelib

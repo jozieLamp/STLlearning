@@ -5,7 +5,6 @@ from FormulaSpec.FormulaPopulation import FormulaPopulation
 from GeneticSpec.GeneticOptions import GeneticOptions
 from GeneticSpec.GeneticPopulation import GeneticPopulation
 from GeneticSpec.GeneticGenerator import GeneticGenerator
-from ParamOptimization import ParamOptimization
 
 #
 # Learning for single client
