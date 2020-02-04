@@ -37,7 +37,6 @@ These can be easily installed into a Python environment such as by using PyCharm
 - GPy	1.9.9
 - GPyOpt	1.2.5
 - antlr4-python3-runtime	4.7.2
-- bayesian-optimization	1.0.1
 - matplotlib	3.1.2	3.1.2
 - numpy	1.17.2
 - pandas	0.25.2

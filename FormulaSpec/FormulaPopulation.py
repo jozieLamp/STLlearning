@@ -4,6 +4,7 @@ import logging
 import treelib
 import random
 from SignalTemporalLogic.STLFactory import STLFactory
+import re
 
 #Class to hold populations of formulas, uses Formula Generator class to generate formulas themselves
 class FormulaPopulation:
@@ -73,6 +74,21 @@ class FormulaPopulation:
         stringA = formulaA.toString().replace(nodeA.toString(), nodeB.toString())
         stringB = formulaB.toString().replace(nodeB.toString(), nodeA.toString())
 
+        boolCount = stringA.count("&")
+        boolCount += stringA.count("|")
+        boolCount += stringA.count("->")
+
+        if boolCount >= 2:
+            stringA = self.fixBoolExpr(stringA)
+
+        boolCount = stringB.count("&")
+        boolCount += stringB.count("|")
+        boolCount += stringB.count("->")
+
+        if boolCount >= 2:
+            stringB = self.fixBoolExpr(stringB)
+
+
         stlFac = STLFactory()
         f1 = stlFac.constructFormulaTree(stringA + "\n")
         f2 = stlFac.constructFormulaTree(stringB + "\n")
@@ -90,11 +106,17 @@ class FormulaPopulation:
         newNode, newFormula = self.formulaGen.mutateNode(node=node, parentNode=parentNode, formula=formula, genOps=genOps, variables=variables, varDict=varDict)
         #print("Mutated Formula", newFormula)
 
+        boolCount = newFormula.count("&")
+        boolCount += newFormula.count("|")
+        boolCount += newFormula.count("->")
+
+        if boolCount >= 2:
+            newFormula = self.fixBoolExpr(newFormula)
+
         if newFormula != None:
             finalFormula = stlFac.constructFormulaTree(newFormula + "\n")
         else:
             finalFormula = None
-
 
         return finalFormula
 
@@ -118,5 +140,14 @@ class FormulaPopulation:
         else:
             return None, None, None
 
+
+    def fixBoolExpr(self, text):
+        numParen = text.count("(")
+        symbols = re.findall('\||&|->', text)
+        lastSymbol = symbols[len(symbols) - 1]
+        res = text.rpartition(lastSymbol)
+        parens = ")" * numParen
+        end = res[2].replace(")","")
+        return "(" + res[0] + parens + " " + res[1] + " " + end + ")"
 
 

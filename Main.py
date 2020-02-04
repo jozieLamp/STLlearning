@@ -2,7 +2,6 @@ import logging
 from Learning import Learning
 
 
-
 #make learning object
 variables = ["x", "y", "v", "z"]
 lower = [0, 0, 0, 0] #lowerbound
@@ -13,4 +12,3 @@ l = Learning(logging.INFO, "Data/values", "Data/labels", "Data/times", variables
 
 #start learning
 l.run()
-

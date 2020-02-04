@@ -1,5 +1,6 @@
 import logging
 import random
+import re
 
 #New class to store genetic population information, uses Genetic Generator to
 class GeneticPopulation:
@@ -70,7 +71,8 @@ class GeneticPopulation:
             r = random.uniform(0,1)
 
             if r < 0.5:
-                # logging.info("\nCROSSOVER")
+                #logging.info("\nCROSSOVER")
+
 
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
@@ -90,12 +92,13 @@ class GeneticPopulation:
                     pop.population.append(f2)
 
             elif r < 1:
-                # logging.info("\nMUTATE")
+                #logging.info("\nMUTATE")
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
 
+
                 #mutation operator
-                f1 = pop.mutateNewGen(formulaB, genOps, pop.variables, pop.varDict) #returns list of formulas
+                f1 = pop.mutateNewGen(formulaB, genOps, pop.variables, pop.varDict)
                 f2 = pop.mutateNewGen(formulaA, genOps, pop.variables, pop.varDict)
 
                 # print("\nRETURNED Formula Set")
@@ -108,7 +111,7 @@ class GeneticPopulation:
                     pop.population.append(f2)
 
             else:  #Note- this has problems
-                # logging.info("\nUNION")
+                #logging.info("\nUNION")
 
                 formulaA = formulaParents[indexA]
                 formulaB = formulaParents[indexB]
@@ -134,6 +137,7 @@ class GeneticPopulation:
         logging.info("--------------------------------------------------------------------------------------\n")
 
         return pop
+
 
     #combine child generation with self
     def combinePopulations(self, childGen):
@@ -215,9 +219,9 @@ class Score:
 
     def toString(self):
         return "Discrimination Score: " + str(format(self.classDif, '.3f')) + " Robustness + : " + str(format(self.aveRobPos, '.3f')) \
-               + " Robustness - :" + str(format(self.aveRobNeg, '.3f'))
+               + " Robustness - : " + str(format(self.aveRobNeg, '.3f'))
 
     def toStringFull(self):
         return "Discrimination Score: " + str(format(self.classDif, '.3f')) + "; Robustness + : " + str(format(self.aveRobPos, '.3f')) \
-               + "; Robustness - :" + str(format(self.aveRobNeg, '.3f')) + "; Percent Class + :" + str(format(self.posClassPctg, '.3f')) \
-               + "; Percent Class - :" + str(format(self.negClassPctg, '.3f'))
+               + "; Robustness - : " + str(format(self.aveRobNeg, '.3f')) + "; Percent Class + : " + str(format(self.posClassPctg, '.3f')) \
+               + "; Percent Class - : " + str(format(self.negClassPctg, '.3f'))
