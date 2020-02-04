@@ -1,5 +1,5 @@
 
-##Preliminaries:
+## Preliminaries:
 
 The tool requires 3 text files: Data, Labels and Times
 
@@ -32,7 +32,7 @@ Assumes input CSV data file is like follows:
     tn
 
 
-##Required Libraries:
+## Required Libraries:
 These can be easily installed into a Python environment such as by using PyCharm.
 - GPy	1.9.9
 - GPyOpt	1.2.5
@@ -46,7 +46,7 @@ These can be easily installed into a Python environment such as by using PyCharm
 - scipy	1.3.3
 - treelib	1.5.5
 
-##Running Code:
+## Running Code:
 To run follow the code provided in Main.py:
   1. Define variables:
 
@@ -65,7 +65,7 @@ To run follow the code provided in Main.py:
          l.run()
 
 
-##Breakdown of Code Folders:
+## Breakdown of Code Folders:
 
 Data
 - Simulation data to play with
@@ -90,7 +90,7 @@ STL Tree
 - In STL Tree part, evaluateRobustness calculates robustness, evaluateValue returns boolean truth value
 
 
-##Workflow Notes
+## Workflow Notes
     To generate a formula:
         Write formula in plain text --> send to STL factory --> STL factory builds parser and visitor --> visitor reads string and returns an abstract syntax tree -->
         AST is converted to an STL  tree that  stores each part of the formula as an object type --> formula  tree is returned.
