@@ -134,7 +134,8 @@ class GeneticPopulation:
 
         logging.info("--------------------------------------------------------------------------------------")
         self.logFormulas(pop.population, "Genetically Modified")
-        logging.info("--------------------------------------------------------------------------------------\n")
+        logging.info("--------------------------------------------------------------------------------------")
+        logging.info("Developed " + '%s' % len(pop.population) + " new formulas.\n")
 
         return pop
 

@@ -92,7 +92,7 @@ class Learning:
             logging.info("> OPTIMIZING POPULATION PARAMETERS\n")
             generation = genGenerator.optimizeGenerationParameters(pop=pop, variables=variables, time=time,
                 positiveTrainSet=positiveTrainSet, negativeTrainSet=negativeTrainSet, positiveTestSet=positiveTestSet,
-                            negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps, showGraphs=True)
+                            negativeTestSet=negativeTestSet, atTime=min(time), genOps=self.genOps, showGraphs=False)
 
             generation.sortPopulation()
             logging.info("Formula Generation")
@@ -116,7 +116,7 @@ class Learning:
                                                                    negativeTrainSet=negativeTrainSet,
                                                                    positiveTestSet=positiveTestSet,
                                                                    negativeTestSet=negativeTestSet, atTime=min(time),
-                                                                   genOps=self.genOps, showGraphs=True)
+                                                                   genOps=self.genOps, showGraphs=False)
             bestHalfGeneration.sortPopulation()
             bestHalfGeneration = bestHalfGeneration.getBestHalf()
 

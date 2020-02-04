@@ -101,8 +101,8 @@ class GeneticGenerator:
                                                        acquisition_type='EI',  # EI, LCB or MPI
                                                        maximize=True,
                                                        exact_feval=False)  # True evaluations, no sample noise
-        #TODO - make longer iterations?
-        bayesOpt.run_optimization(max_iter=5, eps=0)
+
+        bayesOpt.run_optimization(max_iter=5, max_time=10,eps=0)#max time is in seconds
         bestParams = (bayesOpt.x_opt).tolist()
         bestScore = min(bayesOpt.Y_best)
         if showGraphs == True:

@@ -151,6 +151,19 @@ class FormulaPopulation:
         res = text.rpartition(lastSymbol)
         parens = ")" * numParen
         end = res[2].replace(")","")
-        return "(" + res[0] + parens + " " + res[1] + " " + end + ")"
 
+        finalRet = "(" + res[0] + parens + " " + res[1] + " " + end + ")"
+        #Check for mismatched parens
+        fP = finalRet.count("(")
+        bP = finalRet.count(")")
+        if bP > fP:
+            difParen = bP - fP
+            for i in range(difParen):
+                # finalRet = finalRet[:-1] #remove last paren
+                res = finalRet.rpartition(")")
+                finalRet = res[0] + res[2]
+
+            return finalRet
+        else:
+            return finalRet
 
