@@ -1,4 +1,4 @@
-#STL Learning Tool
+# STL Learning Tool
 Developed by Josie Lamp
 
 ## Tool Description
@@ -109,5 +109,5 @@ STL Tree
 
 
 
-
+## License Details in LICENSE.txt
 
