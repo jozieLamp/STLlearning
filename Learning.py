@@ -106,7 +106,6 @@ class Learning:
             bestHalf = generation.getBestHalf()
             #bestHalf.logRankFormulas()
             logging.info("--------------------------------------------------------------------------------------\n")
-
             logging.info("> APPLYING GENETIC OPERATIONS: OFFSPRING FORMULA GENERATION")
             pop = bestHalf.geneticOperations(pop, self.genOps) #update formula pop with gen ops on formulas
 
@@ -129,10 +128,9 @@ class Learning:
         logging.info("GENETIC ALGORITHM - END\n")
 
         logging.info("BEST FORMULAS")
-        # genGenerator.calculateClassPredictions(generation, labels, positiveTestSet, negativeTestSet, time, variables, pd)
         genGenerator.calculateClassPredictions(generation, labels, positiveTrainSet, negativeTrainSet, time, variables, pd)
 
-        generation.logFinalFormulas(numFormulas=20)
+        generation.logFinalFormulas(numFormulas=100)
 
 
 

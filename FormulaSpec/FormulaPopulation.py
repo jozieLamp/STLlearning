@@ -15,20 +15,9 @@ class FormulaPopulation:
         self.formulaGen = FG.FormulaGenerator() #class to generate formula sets
 
         self.population = [] #arrayList of formulas
-        self.fitness = None
-        self.model1 = None
-        self.model2 = None
         self.lowerBound = {} #hashmap of key value pairs string, double
         self.upperBound = {} #hashmap of key value pairs string, double
-
-        self.parameters = SymbolArray()
-        #store = new FastStore();
-
         self.variables = [] #arrayList of strings
-
-        #operators = new FormulaGenOps(this, parameters);
-        #bestSolutions = new TreeSet < Solution > ();
-        #setFitness(GeneticOptions.fitness_type);
 
     #Add variables to formula pop store
     def addVariable(self, v, lower, upper):
@@ -143,8 +132,6 @@ class FormulaPopulation:
 
 
     def fixBoolExpr(self, text):
-        logging.info("IN FIX BOOL EXPR, "+ text)
-
         numParen = text.count("(")
         symbols = re.findall('\||&|->', text)
         lastSymbol = symbols[len(symbols) - 1]

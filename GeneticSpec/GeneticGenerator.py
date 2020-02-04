@@ -43,23 +43,26 @@ class GeneticGenerator:
             self.varDict = pop.varDict
 
             #array of best params for formula
-            bestParams = self.GPOptimize(formula, variables, time, positiveTrainSet, negativeTrainSet, atTime, genOps, showGraphs)
+            try:
+                bestParams = self.GPOptimize(formula, variables, time, positiveTrainSet, negativeTrainSet, atTime, genOps, showGraphs)
 
-            #update formula params
-            formula.updateParams(bestParams)
+                #update formula params
+                formula.updateParams(bestParams)
 
-            #get score, make score variable
-            val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, formula)
-            val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, formula)
-            classDif = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
-            s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
+                #get score, make score variable
+                val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, formula)
+                val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, formula)
+                classDif = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+                s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
 
-            # print(formula.toString(), s.toString())
+                # print(formula.toString(), s.toString())
 
-            #add values to genetic pop lists
-            rankFormulae.append(formula)
-            rankParams.append(bestParams)
-            rankScores.append(s)
+                #add values to genetic pop lists
+                rankFormulae.append(formula)
+                rankParams.append(bestParams)
+                rankScores.append(s)
+            except:
+                logging.ERROR("Problem with parameter optimization, skipping this formula: " + '%s' % formula.toString())
 
         return GeneticPopulation(rankFormulae, rankParams, rankScores)
 
@@ -102,7 +105,7 @@ class GeneticGenerator:
                                                        maximize=True,
                                                        exact_feval=False)  # True evaluations, no sample noise
 
-        bayesOpt.run_optimization(max_iter=5, max_time=10,eps=0)#max time is in seconds
+        bayesOpt.run_optimization(max_iter=5, max_time=3,eps=0)#max time is in seconds
         bestParams = (bayesOpt.x_opt).tolist()
         bestScore = min(bayesOpt.Y_best)
         if showGraphs == True:

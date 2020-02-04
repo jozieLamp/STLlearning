@@ -1,3 +1,15 @@
+#STL Learning Tool
+Developed by Josie Lamp
+
+## Tool Description
+This tool learns Signal Temporal Logic formulas from raw data signals collected over time. 
+This tool is based off of the following paper, and all algorithms developed in this tool come from their work:
+
+    Nenzi, Laura, Simone Silvetti, Ezio Bartocci, and Luca Bortolussi. 
+    "A robust genetic algorithm for learning temporal specifications from data." 
+    In International Conference on Quantitative Evaluation of Systems, pp. 323-338. 
+    Springer, Cham, 2018.
+
 
 ## Preliminaries:
 
