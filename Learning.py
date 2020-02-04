@@ -37,7 +37,12 @@ class Learning:
 
 
         #Run learning
-        self.learn(0.8, data, labels, time, self.variables, self.lowerBounds, self.upperBounds)
+        generation = self.learn(0.8, data, labels, time, self.variables, self.lowerBounds, self.upperBounds)
+
+        generation.logFinalFormulas(numFormulas=100)
+
+        return generation
+
 
 
     def learn(self, trainPercentage, data, labels, time, variables, lower, upper):
@@ -128,8 +133,6 @@ class Learning:
 
         logging.info("BEST FORMULAS")
         genGenerator.calculateClassPredictions(generation, labels, positiveTrainSet, negativeTrainSet, time, variables, pd)
-
-        generation.logFinalFormulas(numFormulas=100)
 
         return generation
 
