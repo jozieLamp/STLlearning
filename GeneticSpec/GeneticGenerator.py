@@ -62,7 +62,7 @@ class GeneticGenerator:
                 rankParams.append(bestParams)
                 rankScores.append(s)
             except:
-                logging.ERROR("Problem with parameter optimization, skipping this formula: " + '%s' % formula.toString())
+                logging.error("Problem with parameter optimization, skipping this formula: " + '%s' % formula.toString())
 
         return GeneticPopulation(rankFormulae, rankParams, rankScores)
 

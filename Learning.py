@@ -78,9 +78,11 @@ class Learning:
         self.genOps.max_time_bound = max(time)
         #self.genOps.use_or = False
 
+        logging.info("Adding genetic init formula")
         #adding initial Formulae (atomic + G + F + U ), using number of variables
         pop.addGeneticInitFormula(self.genOps)
 
+        logging.info("Adding random initial formula")
         #Add random formulas
         pop.addRandomInitFormula(self.genOps)
 
