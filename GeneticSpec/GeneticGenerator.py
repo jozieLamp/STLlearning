@@ -43,26 +43,26 @@ class GeneticGenerator:
             self.varDict = pop.varDict
 
             #array of best params for formula
-            try:
-                bestParams = self.GPOptimize(formula, variables, time, positiveTrainSet, negativeTrainSet, atTime, genOps, showGraphs)
+            # try:
+            bestParams = self.GPOptimize(formula, variables, time, positiveTrainSet, negativeTrainSet, atTime, genOps, showGraphs)
 
-                #update formula params
-                formula.updateParams(bestParams)
+            #update formula params
+            formula.updateParams(bestParams)
 
-                #get score, make score variable
-                val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, formula)
-                val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, formula)
-                classDif = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
-                s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
+            #get score, make score variable
+            val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, formula)
+            val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, formula)
+            classDif = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+            s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
 
-                # print(formula.toString(), s.toString())
+            # print(formula.toString(), s.toString())
 
-                #add values to genetic pop lists
-                rankFormulae.append(formula)
-                rankParams.append(bestParams)
-                rankScores.append(s)
-            except:
-                logging.error("Problem with parameter optimization, skipping this formula: " + '%s' % formula.toString())
+            #add values to genetic pop lists
+            rankFormulae.append(formula)
+            rankParams.append(bestParams)
+            rankScores.append(s)
+            # except:
+            #     logging.error("Problem with parameter optimization, skipping this formula: " + '%s' % formula.toString())
 
         return GeneticPopulation(rankFormulae, rankParams, rankScores)
 
@@ -121,7 +121,10 @@ class GeneticGenerator:
         #loop through train set and calculate robustness for each variable
         for i in trainSet:  # i is 2d array of values for each var
             #print(i)
-            traj = Trajectory(trajectories=i, time=self.time, variables=self.variables, paramDict=self.paramDict, values=[0,0,0,0])
+            values = []
+            for v in self.variables:
+                values.append(0)
+            traj = Trajectory(trajectories=i, time=self.time, variables=self.variables, paramDict=self.paramDict, values=values)
             rVals.append(formula.evaluateRobustness(traj, self.atTime))
 
         mean = sum(rVals) / len(rVals)
@@ -217,8 +220,11 @@ class ObjectiveFunction():
         # loop through train set and calculate robustness for each variable
         for i in trainSet:  # i is 2d array of values for each var
             # print(i)
+            values = []
+            for v in self.variables:
+                values.append(0)
             traj = Trajectory(trajectories=i, time=self.time, variables=self.variables, paramDict=self.paramDict,
-                              values=[0, 0, 0, 0])
+                              values=values)
             rVals.append(formula.evaluateRobustness(traj, self.atTime))
 
         mean = sum(rVals) / len(rVals)
