@@ -46,7 +46,7 @@ upper = [1.22000000e+02, 1.04000000e+02, 1.00000000e+00, 4.00000000e+00,
        1.69365926e-02, 1.69365926e-02, 6.05001092e-01, 2.22452357e+00,
        8.51720869e-01, 4.49814800e+00, 1.00000000e+00, 1.00000000e+00] # upperbound
 
-l = Learning(logging.INFO, "Data/ICUData/1.txt", "Data/ICUData/1labels.txt", "Data/ICUData/time.txt", variables, lower, upper)
+l = Learning(logging.INFO, "Data/ICUData/133.txt", "Data/ICUData/133labels.txt", "Data/ICUData/time.txt", variables, lower, upper)
 
 
 #start learning

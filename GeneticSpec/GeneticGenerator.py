@@ -43,26 +43,27 @@ class GeneticGenerator:
             self.varDict = pop.varDict
 
             #array of best params for formula
-            # try:
-            bestParams = self.GPOptimize(formula, variables, time, positiveTrainSet, negativeTrainSet, atTime, genOps, showGraphs)
+            try:
+                bestParams = self.GPOptimize(formula, variables, time, positiveTrainSet, negativeTrainSet, atTime, genOps, showGraphs)
 
-            #update formula params
-            formula.updateParams(bestParams)
+                #update formula params
+                formula.updateParams(bestParams)
 
-            #get score, make score variable
-            val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, formula)
-            val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, formula)
-            classDif = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
-            s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
+                #get score, make score variable
+                val1Mean, val1Var = self.computeRobustness(self.positiveTrainSet, formula)
+                val2Mean, val2Var = self.computeRobustness(self.negativeTrainSet, formula)
+                classDif = self.discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+                s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
 
-            # print(formula.toString(), s.toString())
+                # print(formula.toString(), s.toString())
 
-            #add values to genetic pop lists
-            rankFormulae.append(formula)
-            rankParams.append(bestParams)
-            rankScores.append(s)
-            # except:
-            #     logging.error("Problem with parameter optimization, skipping this formula: " + '%s' % formula.toString())
+                #add values to genetic pop lists
+                rankFormulae.append(formula)
+                rankParams.append(bestParams)
+                rankScores.append(s)
+            except:
+                logging.error("Problem with parameter optimization, skipping this formula: ")# + '%s' % formula.toString())
+                print(formula)
 
         return GeneticPopulation(rankFormulae, rankParams, rankScores)
 
