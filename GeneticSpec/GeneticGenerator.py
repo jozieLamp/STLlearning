@@ -24,6 +24,10 @@ class GeneticGenerator:
     #returns Genetic Population
     def optimizeGenerationParameters(self, pop, variables, time, positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet, atTime, genOps, showGraphs=False):
 
+        #fix added loggers
+        logger = logging.getLogger('GP')
+        logger.propagate = False
+
         rankFormulae = []
         rankParams = []
         rankScores = []
