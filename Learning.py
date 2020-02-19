@@ -103,14 +103,14 @@ class Learning:
             generation.sortPopulation()
             logging.info("Formula Generation")
             logging.info("--------------------------------------------------------------------------------------")
-            generation.logRankFormulas()
+            #generation.logRankFormulas()
             logging.info("--------------------------------------------------------------------------------------\n")
 
             logging.info("> GETTING BEST HALF OF FORMULAS")
             logging.info("Best Half of Formulas")
             logging.info("--------------------------------------------------------------------------------------")
             bestHalf = generation.getBestHalf()
-            bestHalf.logRankFormulas()
+            #bestHalf.logRankFormulas()
             logging.info("--------------------------------------------------------------------------------------\n")
             logging.info("> APPLYING GENETIC OPERATIONS: OFFSPRING FORMULA GENERATION")
             pop = bestHalf.geneticOperations(pop, self.genOps) #update formula pop with gen ops on formulas
@@ -125,10 +125,14 @@ class Learning:
             bestHalfGeneration.sortPopulation()
             bestHalfGeneration = bestHalfGeneration.getBestHalf()
 
-            logging.info("> COMBINING PARENTS + CHILDREN\n")
+            logging.info("> COMBINING PARENTS + CHILDREN")
             generation.combinePopulations(bestHalfGeneration)
             generation.removeDuplicates()
+            logging.info("--------------------------------------------------------------------------------------")
+            generation.sortPopulation()
             generation.logRankFormulas()
+            logging.info("--------------------------------------------------------------------------------------\n")
+
 
 
         generation.sortPopulation()
