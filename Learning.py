@@ -39,8 +39,6 @@ class Learning:
         #Run learning
         generation = self.learn(0.8, data, labels, time, self.variables, self.lowerBounds, self.upperBounds)
 
-        generation.logFinalFormulas(numFormulas=100)
-
         return generation
 
 
@@ -134,10 +132,8 @@ class Learning:
             logging.info("--------------------------------------------------------------------------------------\n")
 
 
-
         generation.sortPopulation()
         logging.info("GENETIC ALGORITHM - END\n")
-
         logging.info("BEST FORMULAS")
         genGenerator.calculateClassPredictions(generation, labels, positiveTrainSet, negativeTrainSet, time, variables, pd)
         generation.logFinalFormulas(200)
