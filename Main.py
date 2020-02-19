@@ -13,3 +13,16 @@ l = Learning(logging.INFO, "Data/values", "Data/labels", "Data/times", variables
 
 #start learning
 generation = l.run()
+
+#save rules and scores to file
+ruleScores = generation.finalFormulaScoresToString(200)
+with open("testScores.txt", 'w') as filehandle:
+    for r in ruleScores:
+        filehandle.write('%s\n' % r)
+
+#save rules themselves
+rules = generation.finalFormulasToString(200)
+
+with open("testRules.txt", 'w') as filehandle:
+    for r in rules:
+        filehandle.write('%s\n' % r)

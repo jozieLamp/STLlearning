@@ -181,7 +181,10 @@ class GeneticGenerator:
     def calculateFinalScores(self, testSet, formula, time, variables, paramDict):
         posClassified = []
         for i in testSet:
-            traj = Trajectory(trajectories=i, time=self.time, variables=self.variables, paramDict=self.paramDict, values=[0,0,0,0])
+            values = []
+            for v in self.variables:
+                values.append(0)
+            traj = Trajectory(trajectories=i, time=self.time, variables=self.variables, paramDict=self.paramDict, values=values)
             if formula.evaluateValue(traj, self.atTime):
                 posClassified.append(1)
             else:
