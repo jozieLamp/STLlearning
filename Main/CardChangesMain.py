@@ -33,13 +33,13 @@ l = Learning(logging.INFO, "../Data/Card/cardDataChanges.txt", "../Data/Card/car
 generation = l.run()
 
 #save rules and scores to file
-ruleScores = generation.finalFormulaScoresToString(200)
+ruleScores = generation.finalFormulaScoresToString(500)
 with open("CardChangesRuleScores.txt", 'w') as filehandle:
     for r in ruleScores:
         filehandle.write('%s\n' % r)
 
 #save rules themselves
-rules = generation.finalFormulasToString(200)
+rules = generation.finalFormulasToString(500)
 
 with open("CardChangesRules.txt", 'w') as filehandle:
     for r in rules:

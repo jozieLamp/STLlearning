@@ -16,13 +16,19 @@ class GeneticPopulation:
         logging.info("Size of Rank Formulas is %s" % (len(self.rankFormulae)))
 
     def logFinalFormulas(self, numFormulas):
-        for i in range(numFormulas-1, 0, -1):
-            st = self.rankFormulae[i].toString() + " [" + self.rankScore[i].toStringFull() + "]"
-            logging.info(st)
+        if numFormulas >= len(self.rankFormulae):
+            for i in range(len(self.rankFormulae)-1, 0, -1):
+                st = self.rankFormulae[i].toString() + " [" + self.rankScore[i].toStringFull() + "]"
+                logging.info(st)
+        else:
+            for i in range(numFormulas-1, 0, -1):
+                st = self.rankFormulae[i].toString() + " [" + self.rankScore[i].toStringFull() + "]"
+                logging.info(st)
 
     def finalFormulaScoresToString(self, numFormulas):
         lst = []
-        for i in range(numFormulas - 1, 0, -1):
+        # for i in range(numFormulas - 1, 0, -1):
+        for i in range(numFormulas):
             st = self.rankFormulae[i].toString() + " [" + self.rankScore[i].toStringFull() + "]"
             lst.append(st)
 

@@ -19,7 +19,7 @@ upper = [9.900e+01, 8.370e+02, 5.330e+02, 1.300e+02, 1.480e+02, 8.000e+00,
        9.000e+01, 5.900e+01, 7.800e+01, 7.800e+01, 4.810e+00, 1.680e+02,
        1.250e+02, 1.280e+02] # upperbound
 
-l = Learning(logging.INFO, "Data/Card/cardData.txt", "Data/Card/cardRehospLabels.txt", "Data/Card/cardTime.txt", variables, lower, upper)
+l = Learning(logging.INFO, "../Data/Card/cardData.txt", "../Data/Card/cardRehospLabels.txt", "../Data/Card/cardTime.txt", variables, lower, upper)
 
 
 #start learning
