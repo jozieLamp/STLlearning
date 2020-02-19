@@ -24,8 +24,10 @@ class GeneticGenerator:
     #returns Genetic Population
     def optimizeGenerationParameters(self, pop, variables, time, positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet, atTime, genOps, showGraphs=False):
 
-        #fix added loggers
+        #fix added loggers from gp optimization
         logger = logging.getLogger('GP')
+        logger.propagate = False
+        logger = logging.getLogger('paramz.transformations')
         logger.propagate = False
 
         rankFormulae = []
@@ -110,7 +112,8 @@ class GeneticGenerator:
                                                        maximize=True,
                                                        exact_feval=False)  # True evaluations, no sample noise
 
-        bayesOpt.run_optimization(max_iter=5, max_time=3,eps=0)#max time is in seconds
+        # bayesOpt.run_optimization(max_iter=5, max_time=3,eps=0)#max time is in seconds
+        bayesOpt.run_optimization(max_iter=2, max_time=1,eps=0)#max time is in seconds
         bestParams = (bayesOpt.x_opt).tolist()
         bestScore = min(bayesOpt.Y_best)
         if showGraphs == True:

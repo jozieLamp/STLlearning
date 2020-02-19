@@ -13,6 +13,7 @@ class GeneticPopulation:
         for i in range(len(self.rankFormulae)):
             st = self.rankFormulae[i].toString() + " [Discrimination Score: " + str(format(self.rankScore[i].classDif, '.3f') + "]")
             logging.info(st)
+        logging.info("Size of Rank Formulas is %s" % (len(self.rankFormulae)))
 
     def logFinalFormulas(self, numFormulas):
         for i in range(numFormulas-1, 0, -1):

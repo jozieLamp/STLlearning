@@ -5,7 +5,7 @@ class GeneticOptions:
 
         self.initialPopSize = 50
         self.max_num_rand = 10
-        self.use_or = True
+        self.use_or = False
         self.number_generations = 3
 
         self.threshold_name = "Theta"

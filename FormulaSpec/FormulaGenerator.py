@@ -21,23 +21,23 @@ class FormulaGenerator:
         #Make formulas with only one variable for each in the set of vars
         for n in variables:
             th = "theta_" + n
-            #G (x <= $)
-            f = "G[0,0]" + n + " <= " + th + "\n"
-            fTree = stlFac.constructFormulaTree(f)
-            formulas.append(fTree)
-            #G (x >= $)
-            f = "G[0,0]" + n + " >= " + th + "\n"
-            fTree = stlFac.constructFormulaTree(f)
-            formulas.append(fTree)
-
-            #F (x <= $)
-            f = "F[0,0]" + n + " <= "+th+"\n"
-            fTree = stlFac.constructFormulaTree(f)
-            formulas.append(fTree)
-            #F (x >= $)
-            f = "F[0,0]" + n + " >= "+th+"\n"
-            fTree = stlFac.constructFormulaTree(f)
-            formulas.append(fTree)
+            # #G (x <= $)
+            # f = "G[0,0]" + n + " <= " + th + "\n"
+            # fTree = stlFac.constructFormulaTree(f)
+            # formulas.append(fTree)
+            # #G (x >= $)
+            # f = "G[0,0]" + n + " >= " + th + "\n"
+            # fTree = stlFac.constructFormulaTree(f)
+            # formulas.append(fTree)
+            #
+            # #F (x <= $)
+            # f = "F[0,0]" + n + " <= "+th+"\n"
+            # fTree = stlFac.constructFormulaTree(f)
+            # formulas.append(fTree)
+            # #F (x >= $)
+            # f = "F[0,0]" + n + " >= "+th+"\n"
+            # fTree = stlFac.constructFormulaTree(f)
+            # formulas.append(fTree)
 
             if genOps.use_or == True:
                 # G (x <= $ | x >= $)
@@ -58,18 +58,18 @@ class FormulaGenerator:
                 fTree = stlFac.constructFormulaTree(f)
                 formulas.append(fTree)
 
-            # (x >= $) Until (x <= $)
-            f = "(" + n + " >= "+th+") U[0,0] (" + n + " <= "+th+")\n"
-            fTree = stlFac.constructFormulaTree(f)
-            formulas.append(fTree)
-
-            # (x <= $) Until (x >= $)
-            f = "(" + n + " <= "+th+") U[0,0] (" + n + " >= "+th+")\n"
-            fTree = stlFac.constructFormulaTree(f)
-            formulas.append(fTree)
+            # # (x >= $) Until (x <= $)
+            # f = "(" + n + " >= "+th+") U[0,0] (" + n + " <= "+th+")\n"
+            # fTree = stlFac.constructFormulaTree(f)
+            # formulas.append(fTree)
+            #
+            # # (x <= $) Until (x >= $)
+            # f = "(" + n + " <= "+th+") U[0,0] (" + n + " >= "+th+")\n"
+            # fTree = stlFac.constructFormulaTree(f)
+            # formulas.append(fTree)
 
         #Make rules with combos of variables
-        combos = list(itertools.permutations(variables, 2))
+        combos = list(itertools.combinations(variables, 2))
         for c in combos:
             th0 = "theta_" + c[0]
             th1 = "theta_" + c[1]
@@ -141,6 +141,8 @@ class FormulaGenerator:
             fTree = stlFac.constructFormulaTree(f)
             formulas.append(fTree)
 
+        combos = list(itertools.permutations(variables, 2))
+        for c in combos:
             #UNTIL
             # all combos of (x >= $) Until (y >= $)
             f = "(" + c[0] + " >= "+th0+") U[0,0] (" + c[1] + " >= "+th1+")\n"
