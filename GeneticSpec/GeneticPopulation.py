@@ -17,17 +17,19 @@ class GeneticPopulation:
 
     def logFinalFormulas(self, numFormulas):
         if numFormulas >= len(self.rankFormulae):
-            for i in range(len(self.rankFormulae)-1, 0, -1):
+            for i in range(len(self.rankFormulae)-1, -1, -1):
                 st = self.rankFormulae[i].toString() + " [" + self.rankScore[i].toStringFull() + "]"
                 logging.info(st)
         else:
-            for i in range(numFormulas-1, 0, -1):
+            for i in range(numFormulas-1, -1, -1):
                 st = self.rankFormulae[i].toString() + " [" + self.rankScore[i].toStringFull() + "]"
                 logging.info(st)
 
     def finalFormulaScoresToString(self, numFormulas):
         lst = []
         # for i in range(numFormulas - 1, 0, -1):
+        if numFormulas > len(self.rankFormulae):
+            numFormulas = len(self.rankFormulae)
         for i in range(numFormulas):
             st = self.rankFormulae[i].toString() + " [" + self.rankScore[i].toStringFull() + "]"
             lst.append(st)
@@ -36,10 +38,11 @@ class GeneticPopulation:
 
     def finalFormulasToString(self, numFormulas):
         lst = []
-        for i in range(numFormulas - 1, 0, -1):
+        if numFormulas > len(self.rankFormulae):
+            numFormulas = len(self.rankFormulae)
+        for i in range(numFormulas - 1, -1, -1):
             st = self.rankFormulae[i].toString()
             lst.append(st)
-
         return lst
 
     #Order formula by best score
