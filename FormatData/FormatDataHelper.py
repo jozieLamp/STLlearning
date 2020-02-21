@@ -3,6 +3,8 @@ import pprint
 import pandas as pd
 import numpy as np
 
+from math import ceil
+
 #Load Data
 fullData = pd.read_csv("testData.csv", sep=",")
 fullData = fullData.fillna(0)
@@ -15,7 +17,7 @@ totalTime = len(time)
 
 numAttb = len(df.columns)
 numTime = 5
-numSlices = round(totalTime / numTime)
+numSlices = ceil(totalTime / numTime)
 
 print("Num Slices:", numSlices, "Num Time:", numTime, "Num Attributes:", numAttb)
 
@@ -29,7 +31,7 @@ for i in range(len(labels)):
     ct += 1
 
     if ct == numTime:
-        print("vaals", vals)
+        #print("vaals", vals)
         sumV = sum(vals)
         if sumV < 0:
             labelArray.append(-1)
@@ -37,6 +39,13 @@ for i in range(len(labels)):
             labelArray.append(1)
         vals = []
         ct = 0
+#If last slice not filled, still add last label
+if len(vals) != 0:
+    sumV = sum(vals)
+    if sumV < 0:
+        labelArray.append(-1)
+    else:
+        labelArray.append(1)
 
 print("Labels", labelArray)
 print(len(labelArray))
@@ -49,6 +58,7 @@ print("Time", timeArray)
 
 #make 3d array of zeros
 data = [[[0 for k in range(numAttb)] for j in range(numTime)] for i in range(numSlices)]
+print(len(data))
 #to access values in 3d array: data[slice][time][attributeNumber]
 
 # #print array dimensions
@@ -63,6 +73,9 @@ for s in range(numSlices):
         for a in range(numAttb):
             data[s][t][a] = df.iloc[dfRowCount, a]
         dfRowCount += 1
+        #Prevents out of bounds for case where last slice isn't full
+        if dfRowCount >= totalTime:
+            break
 
 #print 3d result
 # for x in range(len(data)):
