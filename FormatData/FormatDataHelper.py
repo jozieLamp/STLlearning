@@ -31,7 +31,7 @@ for i in range(len(labels)):
     ct += 1
 
     if ct == numTime:
-        #print("vaals", vals)
+        print("vaals", vals)
         sumV = sum(vals)
         if sumV < 0:
             labelArray.append(-1)
