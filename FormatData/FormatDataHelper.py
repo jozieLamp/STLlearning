@@ -3,7 +3,7 @@ import pprint
 import pandas as pd
 import numpy as np
 
-from math import ceil
+from math import floor
 
 #Load Data
 fullData = pd.read_csv("testData.csv", sep=",")
@@ -17,7 +17,7 @@ totalTime = len(time)
 
 numAttb = len(df.columns)
 numTime = 5
-numSlices = ceil(totalTime / numTime)
+numSlices = floor(totalTime / numTime)
 
 print("Num Slices:", numSlices, "Num Time:", numTime, "Num Attributes:", numAttb)
 
@@ -73,9 +73,6 @@ for s in range(numSlices):
         for a in range(numAttb):
             data[s][t][a] = df.iloc[dfRowCount, a]
         dfRowCount += 1
-        #Prevents out of bounds for case where last slice isn't full
-        if dfRowCount >= totalTime:
-            break
 
 #print 3d result
 # for x in range(len(data)):
