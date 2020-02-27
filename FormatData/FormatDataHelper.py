@@ -39,13 +39,6 @@ for i in range(len(labels)):
             labelArray.append(1)
         vals = []
         ct = 0
-#If last slice not filled, still add last label
-if len(vals) != 0:
-    sumV = sum(vals)
-    if sumV < 0:
-        labelArray.append(-1)
-    else:
-        labelArray.append(1)
 
 print("Labels", labelArray)
 print(len(labelArray))
