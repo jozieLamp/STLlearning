@@ -3,6 +3,8 @@ import pprint
 import pandas as pd
 import numpy as np
 
+from math import floor
+
 #Load Data
 fullData = pd.read_csv("testData.csv", sep=",")
 fullData = fullData.fillna(0)
@@ -15,7 +17,7 @@ totalTime = len(time)
 
 numAttb = len(df.columns)
 numTime = 5
-numSlices = round(totalTime / numTime)
+numSlices = floor(totalTime / numTime)
 
 print("Num Slices:", numSlices, "Num Time:", numTime, "Num Attributes:", numAttb)
 
