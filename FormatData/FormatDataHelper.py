@@ -51,7 +51,6 @@ print("Time", timeArray)
 
 #make 3d array of zeros
 data = [[[0 for k in range(numAttb)] for j in range(numTime)] for i in range(numSlices)]
-print(len(data))
 #to access values in 3d array: data[slice][time][attributeNumber]
 
 # #print array dimensions
