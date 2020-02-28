@@ -47,7 +47,8 @@ class FormulaPopulation:
         logging.info(type + " Formula Population:")
 
         for f in pop:
-            logging.info('%s' % (f.toString()))
+            if f  != None:
+                logging.info('%s' % (f.toString()))
         #logging.info("---------------------------------------------------\n")
 
 
