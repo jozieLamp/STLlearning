@@ -9,59 +9,49 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3!")
-        buf.write("\u0096\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\u0084\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3\2\3\2\3\3\7\3\32")
         buf.write("\n\3\f\3\16\3\35\13\3\3\3\6\3 \n\3\r\3\16\3!\3\4\3\4\6")
         buf.write("\4&\n\4\r\4\16\4\'\3\4\3\4\6\4,\n\4\r\4\16\4-\5\4\60\n")
         buf.write("\4\3\5\3\5\3\5\3\5\3\5\5\5\67\n\5\3\5\3\5\3\5\3\5\3\5")
         buf.write("\3\5\5\5?\n\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5G\n\5\3\5\5\5")
-        buf.write("J\n\5\3\6\3\6\3\6\7\6O\n\6\f\6\16\6R\13\6\3\6\3\6\3\6")
-        buf.write("\7\6W\n\6\f\6\16\6Z\13\6\3\6\3\6\3\6\7\6_\n\6\f\6\16\6")
-        buf.write("b\13\6\5\6d\n\6\3\7\3\7\3\7\3\7\3\7\5\7k\n\7\3\7\3\7\3")
-        buf.write("\7\3\7\3\7\3\7\3\7\3\7\5\7u\n\7\3\b\3\b\3\b\3\b\3\b\3")
-        buf.write("\b\3\b\3\b\3\b\5\b\u0080\n\b\3\t\5\t\u0083\n\t\3\t\3\t")
-        buf.write("\3\t\3\t\3\t\3\t\3\t\5\t\u008c\n\t\3\n\3\n\3\n\3\n\3\13")
-        buf.write("\3\13\5\13\u0094\n\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22")
-        buf.write("\24\2\5\3\2\34\35\3\2\20\21\3\2\26\33\2\u00a4\2\26\3\2")
-        buf.write("\2\2\4\33\3\2\2\2\6/\3\2\2\2\bI\3\2\2\2\nc\3\2\2\2\ft")
-        buf.write("\3\2\2\2\16\177\3\2\2\2\20\u0082\3\2\2\2\22\u008d\3\2")
-        buf.write("\2\2\24\u0093\3\2\2\2\26\27\5\4\3\2\27\3\3\2\2\2\30\32")
-        buf.write("\7\37\2\2\31\30\3\2\2\2\32\35\3\2\2\2\33\31\3\2\2\2\33")
-        buf.write("\34\3\2\2\2\34\37\3\2\2\2\35\33\3\2\2\2\36 \5\6\4\2\37")
-        buf.write("\36\3\2\2\2 !\3\2\2\2!\37\3\2\2\2!\"\3\2\2\2\"\5\3\2\2")
-        buf.write("\2#%\5\b\5\2$&\7\37\2\2%$\3\2\2\2&\'\3\2\2\2\'%\3\2\2")
-        buf.write("\2\'(\3\2\2\2(\60\3\2\2\2)+\5\n\6\2*,\7\37\2\2+*\3\2\2")
-        buf.write("\2,-\3\2\2\2-+\3\2\2\2-.\3\2\2\2.\60\3\2\2\2/#\3\2\2\2")
-        buf.write("/)\3\2\2\2\60\7\3\2\2\2\61\62\7\3\2\2\62\63\7\5\2\2\63")
-        buf.write("\66\7\36\2\2\64\65\7\26\2\2\65\67\t\2\2\2\66\64\3\2\2")
-        buf.write("\2\66\67\3\2\2\2\678\3\2\2\28J\7\b\2\29:\7\3\2\2:;\7\4")
-        buf.write("\2\2;>\7\36\2\2<=\7\26\2\2=?\7\34\2\2><\3\2\2\2>?\3\2")
-        buf.write("\2\2?@\3\2\2\2@J\7\b\2\2AB\7\3\2\2BC\7\6\2\2CF\7\36\2")
-        buf.write("\2DE\7\26\2\2EG\t\3\2\2FD\3\2\2\2FG\3\2\2\2GH\3\2\2\2")
-        buf.write("HJ\7\b\2\2I\61\3\2\2\2I9\3\2\2\2IA\3\2\2\2J\t\3\2\2\2")
-        buf.write("KP\5\f\7\2LM\7\23\2\2MO\5\f\7\2NL\3\2\2\2OR\3\2\2\2PN")
-        buf.write("\3\2\2\2PQ\3\2\2\2Qd\3\2\2\2RP\3\2\2\2SX\5\f\7\2TU\7\22")
-        buf.write("\2\2UW\5\f\7\2VT\3\2\2\2WZ\3\2\2\2XV\3\2\2\2XY\3\2\2\2")
-        buf.write("Yd\3\2\2\2ZX\3\2\2\2[`\5\f\7\2\\]\7\24\2\2]_\5\f\7\2^")
-        buf.write("\\\3\2\2\2_b\3\2\2\2`^\3\2\2\2`a\3\2\2\2ad\3\2\2\2b`\3")
-        buf.write("\2\2\2cK\3\2\2\2cS\3\2\2\2c[\3\2\2\2d\13\3\2\2\2ej\5\20")
-        buf.write("\t\2fg\7\r\2\2gh\5\16\b\2hi\5\20\t\2ik\3\2\2\2jf\3\2\2")
-        buf.write("\2jk\3\2\2\2ku\3\2\2\2lm\7\16\2\2mn\5\16\b\2no\5\20\t")
-        buf.write("\2ou\3\2\2\2pq\7\17\2\2qr\5\16\b\2rs\5\20\t\2su\3\2\2")
-        buf.write("\2te\3\2\2\2tl\3\2\2\2tp\3\2\2\2u\r\3\2\2\2vw\7\33\2\2")
-        buf.write("w\u0080\5\24\13\2xy\7\13\2\2yz\5\24\13\2z{\7\7\2\2{|\5")
-        buf.write("\24\13\2|}\7\f\2\2}\u0080\3\2\2\2~\u0080\5\24\13\2\177")
-        buf.write("v\3\2\2\2\177x\3\2\2\2\177~\3\2\2\2\u0080\17\3\2\2\2\u0081")
-        buf.write("\u0083\7\25\2\2\u0082\u0081\3\2\2\2\u0082\u0083\3\2\2")
-        buf.write("\2\u0083\u008b\3\2\2\2\u0084\u008c\5\22\n\2\u0085\u0086")
-        buf.write("\7\t\2\2\u0086\u0087\5\n\6\2\u0087\u0088\7\n\2\2\u0088")
-        buf.write("\u008c\3\2\2\2\u0089\u008c\7\20\2\2\u008a\u008c\7\21\2")
-        buf.write("\2\u008b\u0084\3\2\2\2\u008b\u0085\3\2\2\2\u008b\u0089")
-        buf.write("\3\2\2\2\u008b\u008a\3\2\2\2\u008c\21\3\2\2\2\u008d\u008e")
-        buf.write("\5\24\13\2\u008e\u008f\t\4\2\2\u008f\u0090\5\24\13\2\u0090")
-        buf.write("\23\3\2\2\2\u0091\u0094\t\2\2\2\u0092\u0094\7\36\2\2\u0093")
-        buf.write("\u0091\3\2\2\2\u0093\u0092\3\2\2\2\u0094\25\3\2\2\2\25")
-        buf.write("\33!\'-/\66>FIPX`cjt\177\u0082\u008b\u0093")
+        buf.write("J\n\5\3\6\3\6\3\6\7\6O\n\6\f\6\16\6R\13\6\3\7\3\7\3\7")
+        buf.write("\3\7\3\7\5\7Y\n\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\5\7")
+        buf.write("c\n\7\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\5\bn\n\b\3\t")
+        buf.write("\5\tq\n\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\tz\n\t\3\n\3\n")
+        buf.write("\3\n\3\n\3\13\3\13\5\13\u0082\n\13\3\13\2\2\f\2\4\6\b")
+        buf.write("\n\f\16\20\22\24\2\6\3\2\34\35\3\2\20\21\3\2\22\24\3\2")
+        buf.write("\26\33\2\u008e\2\26\3\2\2\2\4\33\3\2\2\2\6/\3\2\2\2\b")
+        buf.write("I\3\2\2\2\nK\3\2\2\2\fb\3\2\2\2\16m\3\2\2\2\20p\3\2\2")
+        buf.write("\2\22{\3\2\2\2\24\u0081\3\2\2\2\26\27\5\4\3\2\27\3\3\2")
+        buf.write("\2\2\30\32\7\37\2\2\31\30\3\2\2\2\32\35\3\2\2\2\33\31")
+        buf.write("\3\2\2\2\33\34\3\2\2\2\34\37\3\2\2\2\35\33\3\2\2\2\36")
+        buf.write(" \5\6\4\2\37\36\3\2\2\2 !\3\2\2\2!\37\3\2\2\2!\"\3\2\2")
+        buf.write("\2\"\5\3\2\2\2#%\5\b\5\2$&\7\37\2\2%$\3\2\2\2&\'\3\2\2")
+        buf.write("\2\'%\3\2\2\2\'(\3\2\2\2(\60\3\2\2\2)+\5\n\6\2*,\7\37")
+        buf.write("\2\2+*\3\2\2\2,-\3\2\2\2-+\3\2\2\2-.\3\2\2\2.\60\3\2\2")
+        buf.write("\2/#\3\2\2\2/)\3\2\2\2\60\7\3\2\2\2\61\62\7\3\2\2\62\63")
+        buf.write("\7\5\2\2\63\66\7\36\2\2\64\65\7\26\2\2\65\67\t\2\2\2\66")
+        buf.write("\64\3\2\2\2\66\67\3\2\2\2\678\3\2\2\28J\7\b\2\29:\7\3")
+        buf.write("\2\2:;\7\4\2\2;>\7\36\2\2<=\7\26\2\2=?\7\34\2\2><\3\2")
+        buf.write("\2\2>?\3\2\2\2?@\3\2\2\2@J\7\b\2\2AB\7\3\2\2BC\7\6\2\2")
+        buf.write("CF\7\36\2\2DE\7\26\2\2EG\t\3\2\2FD\3\2\2\2FG\3\2\2\2G")
+        buf.write("H\3\2\2\2HJ\7\b\2\2I\61\3\2\2\2I9\3\2\2\2IA\3\2\2\2J\t")
+        buf.write("\3\2\2\2KP\5\f\7\2LM\t\4\2\2MO\5\f\7\2NL\3\2\2\2OR\3\2")
+        buf.write("\2\2PN\3\2\2\2PQ\3\2\2\2Q\13\3\2\2\2RP\3\2\2\2SX\5\20")
+        buf.write("\t\2TU\7\r\2\2UV\5\16\b\2VW\5\20\t\2WY\3\2\2\2XT\3\2\2")
+        buf.write("\2XY\3\2\2\2Yc\3\2\2\2Z[\7\16\2\2[\\\5\16\b\2\\]\5\20")
+        buf.write("\t\2]c\3\2\2\2^_\7\17\2\2_`\5\16\b\2`a\5\20\t\2ac\3\2")
+        buf.write("\2\2bS\3\2\2\2bZ\3\2\2\2b^\3\2\2\2c\r\3\2\2\2de\7\33\2")
+        buf.write("\2en\5\24\13\2fg\7\13\2\2gh\5\24\13\2hi\7\7\2\2ij\5\24")
+        buf.write("\13\2jk\7\f\2\2kn\3\2\2\2ln\5\24\13\2md\3\2\2\2mf\3\2")
+        buf.write("\2\2ml\3\2\2\2n\17\3\2\2\2oq\7\25\2\2po\3\2\2\2pq\3\2")
+        buf.write("\2\2qy\3\2\2\2rz\5\22\n\2st\7\t\2\2tu\5\n\6\2uv\7\n\2")
+        buf.write("\2vz\3\2\2\2wz\7\20\2\2xz\7\21\2\2yr\3\2\2\2ys\3\2\2\2")
+        buf.write("yw\3\2\2\2yx\3\2\2\2z\21\3\2\2\2{|\5\24\13\2|}\t\5\2\2")
+        buf.write("}~\5\24\13\2~\23\3\2\2\2\177\u0082\t\2\2\2\u0080\u0082")
+        buf.write("\7\36\2\2\u0081\177\3\2\2\2\u0081\u0080\3\2\2\2\u0082")
+        buf.write("\25\3\2\2\2\22\33!\'-/\66>FIPXbmpy\u0081")
         return buf.getvalue()
 
 
@@ -139,6 +129,7 @@ class SignalTemporalLogicParser ( Parser ):
         self.checkVersion("4.7.2")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
+
 
 
 
@@ -245,13 +236,13 @@ class SignalTemporalLogicParser ( Parser ):
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 29
+            self.state = 29 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
                 self.state = 28
                 self.statement()
-                self.state = 31
+                self.state = 31 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << SignalTemporalLogicParser.CONST) | (1 << SignalTemporalLogicParser.LPAR) | (1 << SignalTemporalLogicParser.F) | (1 << SignalTemporalLogicParser.G) | (1 << SignalTemporalLogicParser.TRUE) | (1 << SignalTemporalLogicParser.FALSE) | (1 << SignalTemporalLogicParser.NOT) | (1 << SignalTemporalLogicParser.INTEGER) | (1 << SignalTemporalLogicParser.FLOAT) | (1 << SignalTemporalLogicParser.ID))) != 0)):
@@ -319,13 +310,13 @@ class SignalTemporalLogicParser ( Parser ):
                 self.enterOuterAlt(localctx, 1)
                 self.state = 33
                 self.declaration()
-                self.state = 35
+                self.state = 35 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while True:
                     self.state = 34
                     self.match(SignalTemporalLogicParser.NEWLINE)
-                    self.state = 37
+                    self.state = 37 
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if not (_la==SignalTemporalLogicParser.NEWLINE):
@@ -336,13 +327,13 @@ class SignalTemporalLogicParser ( Parser ):
                 self.enterOuterAlt(localctx, 2)
                 self.state = 39
                 self.boolExpr()
-                self.state = 41
+                self.state = 41 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while True:
                     self.state = 40
                     self.match(SignalTemporalLogicParser.NEWLINE)
-                    self.state = 43
+                    self.state = 43 
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if not (_la==SignalTemporalLogicParser.NEWLINE):
@@ -572,63 +563,25 @@ class SignalTemporalLogicParser ( Parser ):
         self.enterRule(localctx, 8, self.RULE_boolExpr)
         self._la = 0 # Token type
         try:
-            self.state = 97
+            self.enterOuterAlt(localctx, 1)
+            self.state = 73
+            self.stlTerm()
+            self.state = 78
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,12,self._ctx)
-            if la_ == 1:
-                self.enterOuterAlt(localctx, 1)
-                self.state = 73
+            _la = self._input.LA(1)
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << SignalTemporalLogicParser.AND) | (1 << SignalTemporalLogicParser.OR) | (1 << SignalTemporalLogicParser.IMPLIES))) != 0):
+                self.state = 74
+                _la = self._input.LA(1)
+                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << SignalTemporalLogicParser.AND) | (1 << SignalTemporalLogicParser.OR) | (1 << SignalTemporalLogicParser.IMPLIES))) != 0)):
+                    self._errHandler.recoverInline(self)
+                else:
+                    self._errHandler.reportMatch(self)
+                    self.consume()
+                self.state = 75
                 self.stlTerm()
-                self.state = 78
+                self.state = 80
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==SignalTemporalLogicParser.OR:
-                    self.state = 74
-                    self.match(SignalTemporalLogicParser.OR)
-                    self.state = 75
-                    self.stlTerm()
-                    self.state = 80
-                    self._errHandler.sync(self)
-                    _la = self._input.LA(1)
-
-                pass
-
-            elif la_ == 2:
-                self.enterOuterAlt(localctx, 2)
-                self.state = 81
-                self.stlTerm()
-                self.state = 86
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                while _la==SignalTemporalLogicParser.AND:
-                    self.state = 82
-                    self.match(SignalTemporalLogicParser.AND)
-                    self.state = 83
-                    self.stlTerm()
-                    self.state = 88
-                    self._errHandler.sync(self)
-                    _la = self._input.LA(1)
-
-                pass
-
-            elif la_ == 3:
-                self.enterOuterAlt(localctx, 3)
-                self.state = 89
-                self.stlTerm()
-                self.state = 94
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                while _la==SignalTemporalLogicParser.IMPLIES:
-                    self.state = 90
-                    self.match(SignalTemporalLogicParser.IMPLIES)
-                    self.state = 91
-                    self.stlTerm()
-                    self.state = 96
-                    self._errHandler.sync(self)
-                    _la = self._input.LA(1)
-
-                pass
-
 
         except RecognitionException as re:
             localctx.exception = re
@@ -691,42 +644,42 @@ class SignalTemporalLogicParser ( Parser ):
         self.enterRule(localctx, 10, self.RULE_stlTerm)
         self._la = 0 # Token type
         try:
-            self.state = 114
+            self.state = 96
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [SignalTemporalLogicParser.LPAR, SignalTemporalLogicParser.TRUE, SignalTemporalLogicParser.FALSE, SignalTemporalLogicParser.NOT, SignalTemporalLogicParser.INTEGER, SignalTemporalLogicParser.FLOAT, SignalTemporalLogicParser.ID]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 99
+                self.state = 81
                 self.booelanAtomic()
-                self.state = 104
+                self.state = 86
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==SignalTemporalLogicParser.U:
-                    self.state = 100
+                    self.state = 82
                     self.match(SignalTemporalLogicParser.U)
-                    self.state = 101
+                    self.state = 83
                     self.timeBound()
-                    self.state = 102
+                    self.state = 84
                     self.booelanAtomic()
 
 
                 pass
             elif token in [SignalTemporalLogicParser.F]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 106
+                self.state = 88
                 self.match(SignalTemporalLogicParser.F)
-                self.state = 107
+                self.state = 89
                 self.timeBound()
-                self.state = 108
+                self.state = 90
                 self.booelanAtomic()
                 pass
             elif token in [SignalTemporalLogicParser.G]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 110
+                self.state = 92
                 self.match(SignalTemporalLogicParser.G)
-                self.state = 111
+                self.state = 93
                 self.timeBound()
-                self.state = 112
+                self.state = 94
                 self.booelanAtomic()
                 pass
             else:
@@ -791,32 +744,32 @@ class SignalTemporalLogicParser ( Parser ):
         localctx = SignalTemporalLogicParser.TimeBoundContext(self, self._ctx, self.state)
         self.enterRule(localctx, 12, self.RULE_timeBound)
         try:
-            self.state = 125
+            self.state = 107
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [SignalTemporalLogicParser.LE]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 116
+                self.state = 98
                 self.match(SignalTemporalLogicParser.LE)
-                self.state = 117
+                self.state = 99
                 self.atomic()
                 pass
             elif token in [SignalTemporalLogicParser.LBRAT]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 118
+                self.state = 100
                 self.match(SignalTemporalLogicParser.LBRAT)
-                self.state = 119
+                self.state = 101
                 self.atomic()
-                self.state = 120
+                self.state = 102
                 self.match(SignalTemporalLogicParser.COMMA)
-                self.state = 121
+                self.state = 103
                 self.atomic()
-                self.state = 122
+                self.state = 104
                 self.match(SignalTemporalLogicParser.RBRAT)
                 pass
             elif token in [SignalTemporalLogicParser.INTEGER, SignalTemporalLogicParser.FLOAT, SignalTemporalLogicParser.ID]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 124
+                self.state = 106
                 self.atomic()
                 pass
             else:
@@ -875,7 +828,7 @@ class SignalTemporalLogicParser ( Parser ):
             if hasattr( visitor, "visitBooelanAtomic" ):
                 return visitor.visitBooelanAtomic(self, parentID)
             else:
-                return visitor.visitChildren(self, parentID)
+                return visitor.visitChildren(self,parentID)
 
 
 
@@ -887,35 +840,35 @@ class SignalTemporalLogicParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 128
+            self.state = 110
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==SignalTemporalLogicParser.NOT:
-                self.state = 127
+                self.state = 109
                 self.match(SignalTemporalLogicParser.NOT)
 
 
-            self.state = 137
+            self.state = 119
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [SignalTemporalLogicParser.INTEGER, SignalTemporalLogicParser.FLOAT, SignalTemporalLogicParser.ID]:
-                self.state = 130
+                self.state = 112
                 self.relationalExpr()
                 pass
             elif token in [SignalTemporalLogicParser.LPAR]:
-                self.state = 131
+                self.state = 113
                 self.match(SignalTemporalLogicParser.LPAR)
-                self.state = 132
+                self.state = 114
                 self.boolExpr()
-                self.state = 133
+                self.state = 115
                 self.match(SignalTemporalLogicParser.RPAR)
                 pass
             elif token in [SignalTemporalLogicParser.TRUE]:
-                self.state = 135
+                self.state = 117
                 self.match(SignalTemporalLogicParser.TRUE)
                 pass
             elif token in [SignalTemporalLogicParser.FALSE]:
-                self.state = 136
+                self.state = 118
                 self.match(SignalTemporalLogicParser.FALSE)
                 pass
             else:
@@ -988,16 +941,16 @@ class SignalTemporalLogicParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 139
+            self.state = 121
             self.atomic()
-            self.state = 140
+            self.state = 122
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << SignalTemporalLogicParser.EQ) | (1 << SignalTemporalLogicParser.NEQ) | (1 << SignalTemporalLogicParser.GT) | (1 << SignalTemporalLogicParser.GE) | (1 << SignalTemporalLogicParser.LT) | (1 << SignalTemporalLogicParser.LE))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 141
+            self.state = 123
             self.atomic()
         except RecognitionException as re:
             localctx.exception = re
@@ -1049,12 +1002,12 @@ class SignalTemporalLogicParser ( Parser ):
         self.enterRule(localctx, 18, self.RULE_atomic)
         self._la = 0 # Token type
         try:
-            self.state = 145
+            self.state = 127
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [SignalTemporalLogicParser.INTEGER, SignalTemporalLogicParser.FLOAT]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 143
+                self.state = 125
                 _la = self._input.LA(1)
                 if not(_la==SignalTemporalLogicParser.INTEGER or _la==SignalTemporalLogicParser.FLOAT):
                     self._errHandler.recoverInline(self)
@@ -1064,7 +1017,7 @@ class SignalTemporalLogicParser ( Parser ):
                 pass
             elif token in [SignalTemporalLogicParser.ID]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 144
+                self.state = 126
                 self.match(SignalTemporalLogicParser.ID)
                 pass
             else:
@@ -1077,4 +1030,8 @@ class SignalTemporalLogicParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
+
+
+
 

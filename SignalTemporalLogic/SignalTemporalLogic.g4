@@ -23,9 +23,7 @@ declaration
 
 // $<Boolean Expressions
 boolExpr
-    :   stlTerm (OR stlTerm)*
-    |   stlTerm (AND stlTerm)*
-    |   stlTerm (IMPLIES stlTerm)*
+    :   stlTerm ((OR | AND | IMPLIES) stlTerm)*
     ;
 
 
