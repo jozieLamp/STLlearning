@@ -180,11 +180,14 @@ class GeneticPopulation:
         params = []
         scores = []
         for i in range(len(self.rankFormulae)):
-            if self.rankFormulae[i].toString() not in fStrings:
-                formulas.append(self.rankFormulae[i])
-                fStrings.append(self.rankFormulae[i].toString())
-                params.append(self.rankParameters[i])
-                scores.append(self.rankScore[i])
+            try :
+                if self.rankFormulae[i].toString() not in fStrings:
+                    formulas.append(self.rankFormulae[i])
+                    fStrings.append(self.rankFormulae[i].toString())
+                    params.append(self.rankParameters[i])
+                    scores.append(self.rankScore[i])
+            except:
+                pass
 
         self.rankFormulae = formulas
         self.rankParameters = params
