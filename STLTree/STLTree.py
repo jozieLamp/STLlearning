@@ -39,10 +39,14 @@ class STLTree(treelib.Tree):
 
     #evaluate if rule is true for specific data
     def evaluateTruthValue(self, df):
-        for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
-            obj = self[node].data
-            if obj.type == ExprEnum.statement:
-                return obj.evaluateTruthValue(df, df)
+        try:
+            for node in self.expand_tree(mode=treelib.Tree.DEPTH,sorting=False):
+                obj = self[node].data
+                if obj.type == ExprEnum.statement:
+                    return obj.evaluateTruthValue(df, df)
+
+        except:
+            pass
 
 
     def getAllParams(self):
