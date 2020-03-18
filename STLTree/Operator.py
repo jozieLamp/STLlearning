@@ -119,6 +119,37 @@ class RelationalOperator(Operator):
 
         return truthVal
 
+    def evaluateTruthValue(self, df, originalDF):
+
+        varName = self.atomic1.value
+        param = float(self.atomic2.value)
+        value = df[varName].values[0]
+
+        # print("\nIn RELOP for ", self.type)
+        # print("Var Name", varName)
+        # print("Param", param, "Value", value)
+
+
+        if self.type == OperatorEnum.LT:
+            truthVal = value < param
+        elif self.type == OperatorEnum.LE:
+            truthVal = value <= param
+        elif self.type == OperatorEnum.GT:
+            truthVal = value > param
+        elif self.type == OperatorEnum.GE:
+            truthVal = value >= param
+        elif self.type == OperatorEnum.EQ:
+            truthVal = value == param
+        elif self.type == OperatorEnum.NEQ:
+            truthVal = value != param
+        else:
+            truthVal = False
+
+        # print(value, self.symbol, param)
+        # print(truthVal)
+
+        return truthVal
+
 class Operator_LT(RelationalOperator):
     def __init__(self, atomic1=None, atomic2=None, type=OperatorEnum.LT, symbol="<"):
         super(Operator_LT, self).__init__(atomic1, atomic2, type)

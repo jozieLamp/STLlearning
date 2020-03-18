@@ -132,3 +132,16 @@ class BooleanAtomic(Atomic): #can be TRUE, FALSE or ( exprO ) or relationalExpr
                 return self.relExpr.evaluateValue(traj, timeIndex)
             elif self.boolExpr != None:
                 return self.boolExpr.evaluateValue(traj, timeIndex)
+
+    def evaluateTruthValue(self, df, originalDF):
+
+        if self.notExpr != None:
+            if self.relExpr != None:
+                return not self.relExpr.evaluateTruthValue(df, originalDF)
+            elif self.boolExpr != None:
+                return not self.boolExpr.evaluateTruthValue(df, originalDF)
+        else:
+            if self.relExpr != None:
+                return self.relExpr.evaluateTruthValue(df, originalDF)
+            elif self.boolExpr != None:
+                return self.boolExpr.evaluateTruthValue(df, originalDF)

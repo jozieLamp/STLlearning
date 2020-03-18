@@ -48,6 +48,12 @@ class Statement(STLExpr):
         else:
             return self.boolExpr.evaluateRobustness(traj, timeIndex)
 
+    def evaluateTruthValue(self, df, originalDF):
+        if self.declaration != None:
+            return None
+        else:
+            return self.boolExpr.evaluateTruthValue(df, originalDF)
+
 class TimeBound(STLExpr):
     def __init__(self, type=ExprEnum.timeBound, lowerBound="l", upperBound="u"):
         super(TimeBound, self).__init__()
@@ -100,13 +106,26 @@ class BoolExpr(STLExpr):
             elif self.boolOperator.type == OperatorEnum.IMPLIES:
                 return (not self.stlTerm1.evaluateValue(traj, timeIndex)) or self.stlTerm2.evaluateValue(traj, timeIndex)
 
-
         elif self.stlTerm2 != None:
             return self.stlTerm2.evaluateValue(traj, timeIndex)
 
         else:
             return self.stlTerm1.evaluateValue(traj, timeIndex)
 
+    def evaluateTruthValue(self, df, originalDF):
+        if self.boolOperator != None:
+            if self.boolOperator.type == OperatorEnum.AND:
+                return self.stlTerm1.evaluateTruthValue(df, originalDF) and self.stlTerm2.evaluateTruthValue(df, originalDF)
+            elif self.boolOperator.type == OperatorEnum.OR:
+                return self.stlTerm1.evaluateTruthValue(df, originalDF) or self.stlTerm2.evaluateTruthValue(df, originalDF)
+            elif self.boolOperator.type == OperatorEnum.IMPLIES:
+                return (not self.stlTerm1.evaluateTruthValue(df, originalDF)) or self.stlTerm2.evaluateTruthValue(df, originalDF)
+
+        elif self.stlTerm2 != None:
+            return self.stlTerm2.evaluateTruthValue(df, originalDF)
+
+        else:
+            return self.stlTerm1.evaluateTruthValue(df, originalDF)
 
 
 class STLTerm(STLExpr):
@@ -250,7 +269,54 @@ class STLTerm(STLExpr):
         else:
             return self.boolAtomic1.evaluateValue(traj, timeIndex)
 
+    def evaluateTruthValue(self, df, originalDF):
+        if self.tempOperator != None:
+            if self.tempOperator.type == OperatorEnum.G:
+                tl = int(self.timebound.lowerBound)
+                tu = int(self.timebound.upperBound)
 
+                for i in range(tl, tu+1):
+                    d = originalDF.iloc[i:i+1]
+                    if not self.boolAtomic1.evaluateTruthValue(d, originalDF):
+                        return False
+
+                return True
+
+            elif self.tempOperator.type == OperatorEnum.F:
+                tl = int(self.timebound.lowerBound)
+                tu = int(self.timebound.upperBound)
+
+                for i in range(tl, tu+1):
+                    d = originalDF.iloc[i:i+1]
+                    if self.boolAtomic1.evaluateTruthValue(d, originalDF):
+                        return True
+
+                return False
+
+            elif self.tempOperator.type == OperatorEnum.U:
+                tl = int(self.timebound.lowerBound)
+                tu = int(self.timebound.upperBound)
+                s2true =  False
+                tprime = 0
+
+                for i in range(tl, tu+1):
+                    d = originalDF.iloc[i:i+1]
+                    if self.boolAtomic2.evaluateTruthValue(d, originalDF):
+                        s2true = True
+                        break
+
+                if not s2true:
+                    return False
+
+                for i in range(0, tl):
+                    d = originalDF.iloc[i:i + 1]
+                    if not self.boolAtomic1.evaluateTruthValue(d, originalDF):
+                        return False
+
+                return True
+
+        else:
+            return self.boolAtomic1.evaluateTruthValue(df, originalDF)
 
 #Genral STL Expression functions
 
