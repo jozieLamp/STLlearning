@@ -53,6 +53,9 @@ for i in range(11):
     #REHOSP Labels
     l = Learning(logging.INFO, "../Data/Card/cardDataHemoFull.txt", "../Data/Card/cardRehospLabelsHemoFull.txt", "../Data/Card/cardTimeHemoFull.txt", variables, lower, upper)
 
+    # start learning
+    generation = l.run()
+
     # save rules and scores to file
     nameScores = "CardHemoFullScoresRehosp" + str(i) + ".txt"
     ruleScores = generation.finalFormulaScoresToString(500)
