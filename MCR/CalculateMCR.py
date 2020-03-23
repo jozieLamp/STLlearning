@@ -370,8 +370,8 @@ def hemoFullMain():
     negRulesD = []
 
     for i in range(0, 11):
-        filepath1 = "Rules/3.HemoFull/Death/CardHemoFullRuleDeath" + str(i) + ".txt"
-        filepath2 = "Rules/3.HemoFull/Death/CardHemoFullScoresDeath" + str(i) + ".txt"
+        filepath1 = "MCR/Rules/3.HemoFull/Death/CardHemoFullRuleDeath" + str(i) + ".txt"
+        filepath2 = "MCR/Rules/3.HemoFull/Death/CardHemoFullScoresDeath" + str(i) + ".txt"
         a, p, n = readRulesFromFile(filepath1, filepath2)
         allRulesD.extend(a)
         posRulesD.extend(p)
@@ -383,8 +383,8 @@ def hemoFullMain():
     negRulesR = []
 
     for i in range(0, 11):
-        filepath1 = "Rules/3.HemoFull/Death+Rehosp/CardHemoFullRehosp" + str(i) + ".txt"
-        filepath2 = "Rules/3.HemoFull/Death+Rehosp/CardHemoFullScoresRehosp" + str(i) + ".txt"
+        filepath1 = "MCR/Rules/3.HemoFull/Death+Rehosp/CardHemoFullRehosp" + str(i) + ".txt"
+        filepath2 = "MCR/Rules/3.HemoFull/Death+Rehosp/CardHemoFullScoresRehosp" + str(i) + ".txt"
         a, p, n = readRulesFromFile(filepath1, filepath2)
         allRulesR.extend(a)
         posRulesR.extend(p)
@@ -601,8 +601,8 @@ def hemoNoneMain():
     negRulesD = []
 
     for i in range(0, 11):
-        filepath1 = "Rules/4.HemoNone/Death/CardHemoNoneRuleDeath" + str(i) + ".txt"
-        filepath2 = "Rules/4.HemoNone/Death/CardHemoNoneScoresDeath" + str(i) + ".txt"
+        filepath1 = "MCR/Rules/4.HemoNone/Death/CardHemoNoneRuleDeath" + str(i) + ".txt"
+        filepath2 = "MCR/Rules/4.HemoNone/Death/CardHemoNoneScoresDeath" + str(i) + ".txt"
         a, p, n = readRulesFromFile(filepath1, filepath2)
         allRulesD.extend(a)
         posRulesD.extend(p)
@@ -614,8 +614,8 @@ def hemoNoneMain():
     negRulesR = []
 
     for i in range(0, 11):
-        filepath1 = "Rules/4.HemoNone/Death+Rehosp/CardHemoNoneRuleRehosp" + str(i) + ".txt"
-        filepath2 = "Rules/4.HemoNone/Death+Rehosp/CardHemoNoneScoresRehosp" + str(i) + ".txt"
+        filepath1 = "MCR/Rules/4.HemoNone/Death+Rehosp/CardHemoNoneRuleRehosp" + str(i) + ".txt"
+        filepath2 = "MCR/Rules/4.HemoNone/Death+Rehosp/CardHemoNoneScoresRehosp" + str(i) + ".txt"
         a, p, n = readRulesFromFile(filepath1, filepath2)
         allRulesR.extend(a)
         posRulesR.extend(p)
@@ -823,7 +823,8 @@ def hemoNoneMain():
 
 # Main Runner
 def main():
-    absChangesMain()
+    #absChangesMain()
+    hemoNoneMain()
 
 
 
