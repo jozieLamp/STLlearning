@@ -161,6 +161,7 @@ def getMCRPosOutcome(posRules, dt, dataLabels):
         mcrList.append([p, TP, TN, FP, FN, actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR])
 
     mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes', 'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
+    mcrDF = mcrDF.sort_values(by='Accuracy', ascending=False)
 
     return mcrDF
 
@@ -208,6 +209,7 @@ def getMCRNegOutcome(negRules, dt, dataLabels):
         mcrList.append([p, TP, TN, FP, FN, actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR])
 
     mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes', 'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
+    mcrDF = mcrDF.sort_values(by='Accuracy', ascending=False)
 
     return mcrDF
 
@@ -340,7 +342,6 @@ def hemoFullMain():
     mcrDF.to_csv('HemoFullRehospNegativeMCR.csv', index=False)
 
 
-
 def hemoNoneMain():
 
     names = ['HEM', 'PLA', 'HEC', 'WBC', 'SOD', 'POT', 'BUN', 'CRT', 'ALT', 'TOTP',
@@ -408,8 +409,8 @@ def hemoNoneMain():
 
 # Main Runner
 def main():
-    absChangesMain()
-    #hemoFullMain()
+    #absChangesMain()
+    hemoFullMain()
     #hemoNoneMain()
 
 
