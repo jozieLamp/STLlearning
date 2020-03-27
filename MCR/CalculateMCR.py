@@ -118,16 +118,101 @@ def getOccDataframe(wordPairsPos, wordPairsNeg, names):
     return dfPos, dfNeg
 
 
+def getMCRPosOutcome(posRules, dt, dataLabels):
+    factory = STLFactory()
+    indexes = sorted(set(dt.index))
+    totalPatients = len(indexes)
+
+    mcrList = []
+    for p in posRules:
+        ft = factory.constructFormulaTree(p)
+
+        TP = 0
+        TN = 0
+        FP = 0
+        FN = 0
+
+        for i in indexes:
+            data = dt.loc[i]
+            label = dataLabels.loc[i].values[0]
+
+            val = ft.evaluateTruthValue(data)
+
+            if label == 1 and val == True:
+                TP += 1
+            elif label == -1 and val == False:
+                TN += 1
+            elif label == 1 and val == False:
+                FN += 1
+            else: #label == -1 and val == True
+                FP += 1
+
+        actualNo = TN + FP
+        actualYes = FN + TP
+        predictedNo = TN + FN
+        predictedYes = TP + FP
+        TPR = TP / actualYes if actualYes else 0
+        FPR = FP / actualNo if actualNo else 0
+        TNR = TN / actualNo  if actualNo else 0
+        prec = TP / predictedYes if predictedYes else 0
+        accuracy = (TP + TN) / totalPatients
+        MCR = 1 - accuracy
+
+        mcrList.append([p, TP, TN, FP, FN, actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR])
+
+    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes', 'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
+
+    return mcrDF
+
+
+def getMCRNegOutcome(negRules, dt, dataLabels):
+    factory = STLFactory()
+    indexes = sorted(set(dt.index))
+    totalPatients = len(indexes)
+    mcrList = []
+
+    for p in negRules:
+        ft = factory.constructFormulaTree(p)
+
+        TP = 0
+        TN = 0
+        FP = 0
+        FN = 0
+
+        for i in indexes:
+            data = dt.loc[i]
+            label = dataLabels.loc[i].values[0]
+
+            val = ft.evaluateTruthValue(data)
+
+            if label == -1 and val == True:
+                TN += 1
+            elif label == 1 and val == False:
+                TP += 1
+            elif label == -1 and val == False:
+                FP += 1
+            else: #label == 1 and val == True
+                FN += 1
+
+        actualNo = TN + FP
+        actualYes = FN + TP
+        predictedNo = TN + FN
+        predictedYes = TP + FP
+        TPR = TP / actualYes if actualYes else 0
+        FPR = FP / actualNo if actualNo else 0
+        TNR = TN / actualNo if actualNo else 0
+        prec = TP / predictedYes if predictedYes else 0
+        accuracy = (TP + TN) / totalPatients
+        MCR = 1 - accuracy
+
+        mcrList.append([p, TP, TN, FP, FN, actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR])
+
+    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes', 'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
+
+    return mcrDF
+
 
 def absChangesMain():
-
-    names = ['HEM', 'PLA', 'HEC', 'WBC', 'SOD', 'POT', 'BUN', 'CRT', 'ALT', 'TOTP',
-             'ALB', 'TALB', 'DIN', 'DOB', 'DOP', 'MIL', 'NIG', 'DIGX', 'ACE', 'BET',
-             'ANGIOT', 'Walk', 'VO', 'RAP', 'PAS', 'PAD', 'PCWP', 'PCPWMN', 'CI',
-             'BPSYS', 'BPDIAS', 'HR', 'RAPChange+', 'RAPChange-', 'PASChange+', 'PASChange-', 'PADChange+',
-             'PADChange-',
-             'PCWPChange+', 'PCWPChange-', 'PCPWMNChange+', 'PCPWMNChange-', 'CIChange+', 'CIChange-', 'BPSYSChange+',
-             'BPSYSChange-', 'BPDIASChange+', 'BPDIASChange-', 'HRChange+', 'HRChange-']
 
     # Load all rules Death
     allRulesD = []
@@ -161,195 +246,30 @@ def absChangesMain():
     absDataLabelsD = pd.read_csv('MCR/AbsChangesDeathLabels.csv', index_col=0)
     absDataLabelsR = pd.read_csv('MCR/AbsChangesRehospLabels.csv', index_col=0)
 
-    factory = STLFactory()
-    indexes = sorted(set(absData.index))
-    totalPatients = len(indexes)
-
-
-
-    #Death, Positive Rules MCR
-    print("Death, positive rules")
-    mcrList = []
-    for p in posRulesD:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsD.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == 1 and val == True:
-                TP += 1
-            elif label == -1 and val == False:
-                TN += 1
-            elif label == 1 and val == False:
-                FN += 1
-            else: #label == -1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Death, Positive Rules MCR
+    print("\nDeath, positive rules")
+    mcrDF = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
     print(mcrDF)
     mcrDF.to_csv('AbsChgDeathPositiveMCR.csv', index=False)
 
 
-
-    #Death, Negative Rules MCR
-    print("Death, negative rules")
-    mcrList = []
-    for p in negRulesD:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsD.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == -1 and val == True:
-                TP += 1
-            elif label == 1 and val == False:
-                TN += 1
-            elif label == -1 and val == False:
-                FN += 1
-            else: #label == 1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Death, Negative Rules MCR
+    print("\nDeath, negative rules")
+    mcrDF = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
     print(mcrDF)
     mcrDF.to_csv('AbsChgDeathNegativeMCR.csv', index=False)
 
 
-###################################################################################################################
-
-
-
-    #Rehosp, Positive Rules MCR
-    print("Rehosp, positive rules")
-    mcrList = []
-    for p in posRulesR:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsR.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == 1 and val == True:
-                TP += 1
-            elif label == -1 and val == False:
-                TN += 1
-            elif label == 1 and val == False:
-                FN += 1
-            else: #label == -1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Rehosp, Positive Rules MCR
+    print("\nRehosp, positive rules")
+    mcrDF = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
     print(mcrDF)
     mcrDF.to_csv('AbsChgRehospPositiveMCR.csv', index=False)
 
 
-
-
-    #Rehosp, Negative Rules MCR
-    print("Rehosp, negative rules")
-    mcrList = []
-    for p in negRulesR:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsR.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == -1 and val == True:
-                TP += 1
-            elif label == 1 and val == False:
-                TN += 1
-            elif label == -1 and val == False:
-                FN += 1
-            else: #label == 1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Rehosp, Negative Rules MCR
+    print("\nRehosp, negative rules")
+    mcrDF = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
     print(mcrDF)
     mcrDF.to_csv('AbsChgRehospNegativeMCR.csv', index=False)
 
@@ -390,203 +310,35 @@ def hemoFullMain():
         posRulesR.extend(p)
         negRulesR.extend(n)
 
-
     # Load Data
     absData = pd.read_csv('MCR/HemoFull.csv', index_col=0)
     absDataLabelsD = pd.read_csv('MCR/HemoFullDeathLabels.csv', index_col=0)
     absDataLabelsR = pd.read_csv('MCR/HemoFullRehospLabels.csv', index_col=0)
 
-    factory = STLFactory()
-    indexes = sorted(set(absData.index))
-    totalPatients = len(indexes)
-
-
-
-    #Death, Positive Rules MCR
-    print("Death, positive rules")
-    mcrList = []
-    for p in posRulesD:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsD.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == 1 and val == True:
-                TP += 1
-            elif label == -1 and val == False:
-                TN += 1
-            elif label == 1 and val == False:
-                FN += 1
-            else: #label == -1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Death, Positive Rules MCR
+    print("\nDeath, positive rules")
+    mcrDF = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
     print(mcrDF)
     mcrDF.to_csv('HemoFullDeathPositiveMCR.csv', index=False)
 
-
-
-    #Death, Negative Rules MCR
-    print("Death, negative rules")
-    mcrList = []
-    for p in negRulesD:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsD.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == -1 and val == True:
-                TP += 1
-            elif label == 1 and val == False:
-                TN += 1
-            elif label == -1 and val == False:
-                FN += 1
-            else: #label == 1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Death, Negative Rules MCR
+    print("\nDeath, negative rules")
+    mcrDF = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
     print(mcrDF)
     mcrDF.to_csv('HemoFullDeathNegativeMCR.csv', index=False)
 
-
-###################################################################################################################
-
-
-
-    #Rehosp, Positive Rules MCR
-    print("Rehosp, positive rules")
-    mcrList = []
-    for p in posRulesR:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsR.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == 1 and val == True:
-                TP += 1
-            elif label == -1 and val == False:
-                TN += 1
-            elif label == 1 and val == False:
-                FN += 1
-            else: #label == -1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Rehosp, Positive Rules MCR
+    print("\nRehosp, positive rules")
+    mcrDF = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
     print(mcrDF)
     mcrDF.to_csv('HemoFullRehospPositiveMCR.csv', index=False)
 
-
-
-
-    #Rehosp, Negative Rules MCR
-    print("Rehosp, negative rules")
-    mcrList = []
-    for p in negRulesR:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsR.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == -1 and val == True:
-                TP += 1
-            elif label == 1 and val == False:
-                TN += 1
-            elif label == -1 and val == False:
-                FN += 1
-            else: #label == 1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Rehosp, Negative Rules MCR
+    print("\nRehosp, negative rules")
+    mcrDF = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
     print(mcrDF)
     mcrDF.to_csv('HemoFullRehospNegativeMCR.csv', index=False)
+
 
 
 def hemoNoneMain():
@@ -621,210 +373,44 @@ def hemoNoneMain():
         posRulesR.extend(p)
         negRulesR.extend(n)
 
-
     # Load Data
     absData = pd.read_csv('MCR/HemoNone.csv', index_col=0)
     absDataLabelsD = pd.read_csv('MCR/HemoNoneDeathLabels.csv', index_col=0)
     absDataLabelsR = pd.read_csv('MCR/HemoNoneRehospLabels.csv', index_col=0)
 
-    factory = STLFactory()
-    indexes = sorted(set(absData.index))
-    totalPatients = len(indexes)
-
-
-
-    #Death, Positive Rules MCR
-    print("Death, positive rules")
-    mcrList = []
-    for p in posRulesD:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsD.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == 1 and val == True:
-                TP += 1
-            elif label == -1 and val == False:
-                TN += 1
-            elif label == 1 and val == False:
-                FN += 1
-            else: #label == -1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Death, Positive Rules MCR
+    print("\nDeath, positive rules")
+    mcrDF = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
     print(mcrDF)
     mcrDF.to_csv('HemoNoneDeathPositiveMCR.csv', index=False)
 
-
-
-    #Death, Negative Rules MCR
-    print("Death, negative rules")
-    mcrList = []
-    for p in negRulesD:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsD.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == -1 and val == True:
-                TP += 1
-            elif label == 1 and val == False:
-                TN += 1
-            elif label == -1 and val == False:
-                FN += 1
-            else: #label == 1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Death, Negative Rules MCR
+    print("\nDeath, negative rules")
+    mcrDF = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
     print(mcrDF)
     mcrDF.to_csv('HemoNoneDeathNegativeMCR.csv', index=False)
 
-
-###################################################################################################################
-
-
-
-    #Rehosp, Positive Rules MCR
-    print("Rehosp, positive rules")
-    mcrList = []
-    for p in posRulesR:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsR.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == 1 and val == True:
-                TP += 1
-            elif label == -1 and val == False:
-                TN += 1
-            elif label == 1 and val == False:
-                FN += 1
-            else: #label == -1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Rehosp, Positive Rules MCR
+    print("\nRehosp, positive rules")
+    mcrDF = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
     print(mcrDF)
     mcrDF.to_csv('HemoNoneRehospPositiveMCR.csv', index=False)
 
-
-
-
-    #Rehosp, Negative Rules MCR
-    print("Rehosp, negative rules")
-    mcrList = []
-    for p in negRulesR:
-        #print(p, end='')
-
-        ft = factory.constructFormulaTree(p)
-
-        TP = 0
-        TN = 0
-        FP = 0
-        FN = 0
-
-        for i in indexes:
-            data = absData.loc[i]
-            label = absDataLabelsR.loc[i].values[0]
-
-            val = ft.evaluateTruthValue(data)
-
-            if label == -1 and val == True:
-                TP += 1
-            elif label == 1 and val == False:
-                TN += 1
-            elif label == -1 and val == False:
-                FN += 1
-            else: #label == 1 and val == True
-                FP += 1
-
-        trueCount = TP + TN
-        falseCount  = FP + FN
-        accuracy = (TP + TN) / totalPatients
-        MCR = 1 - accuracy
-
-        #print("TP", trueCount, "False Count", falseCount, "Accuracy", accuracy, "MCR", MCR, "\n")
-
-        mcrList.append([p, TP, TN, FP, FN, accuracy, MCR])
-
-    #print(mcrList)
-    print(len(mcrList))
-
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Accuracy', 'MCR'])
+    # Rehosp, Negative Rules MCR
+    print("\nRehosp, negative rules")
+    mcrDF = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
     print(mcrDF)
     mcrDF.to_csv('HemoNoneRehospNegativeMCR.csv', index=False)
 
 
 
+
+
 # Main Runner
 def main():
-    #absChangesMain()
-    hemoNoneMain()
+    absChangesMain()
+    #hemoFullMain()
+    #hemoNoneMain()
 
 
 
