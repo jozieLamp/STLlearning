@@ -7,36 +7,31 @@ from collections import OrderedDict
 
 ## Make functions
 
-def readRulesFromFile(filepath, scorefilepath):
-    negRules = []
+def readRulesFromFile(scorefilepath):
     posRules = []
-    allRules = []
-    with open(filepath) as fp:  # read all rules from file
-        line = fp.readline()
-        while line:
-            allRules.append(line)
-            line = fp.readline()
+    negRules = []
 
     with open(scorefilepath) as fp:
         lineCount = 0
         line = fp.readline()
         while line:
-            rule = (re.search('(.*) \[Discrimination Score:', line)).group(1)
+            rule = (re.search('(.*) \[Discrimination Score:', line)).group(1) + "\n"
             result = re.search('\[Discrimination Score:(.*)\n', line)
             r = result.group(1)
+            nums = re.findall(r"[-+]?\d*\.\d+|\d+", r)
             p = (re.search('Percent Class \+ : (.*)]', r)).group(1)
             pos = (re.search('(.*);', p)).group(1)
             neg = (re.search('Percent Class - : (.*)', p)).group(1)
-
+            nums.insert(0, rule)
             if pos > neg:
-                posRules.append(allRules[lineCount])
+                posRules.append(nums)
             else:
-                negRules.append(allRules[lineCount])
+                negRules.append(nums)
 
             line = fp.readline()
             lineCount += 1
 
-    return allRules, posRules, negRules
+    return posRules, negRules
 
 
 def getWordPairs(posRules, negRules):
@@ -124,7 +119,8 @@ def getMCRPosOutcome(posRules, dt, dataLabels):
     totalPatients = len(indexes)
 
     mcrList = []
-    for p in posRules:
+    for line in posRules:
+        p = line[0]
         ft = factory.constructFormulaTree(p)
 
         TP = 0
@@ -158,12 +154,13 @@ def getMCRPosOutcome(posRules, dt, dataLabels):
         accuracy = (TP + TN) / totalPatients
         MCR = 1 - accuracy
 
-        mcrList.append([p, TP, TN, FP, FN, actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR])
+        mcrList.append([p, line[1], line[2], line[3], line[4], line[5], TP, TN, FP, FN, actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR])
 
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes', 'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
+    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'Discrimination Score', 'Pos Robustness', 'Neg Robustness', 'Percent Class +', 'Percent Class -',
+                    'TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes', 'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
     mcrDF = mcrDF.sort_values(by='Accuracy', ascending=False)
 
-    return mcrDF
+    return mcrDF, totalPatients
 
 
 def getMCRNegOutcome(negRules, dt, dataLabels):
@@ -172,7 +169,8 @@ def getMCRNegOutcome(negRules, dt, dataLabels):
     totalPatients = len(indexes)
     mcrList = []
 
-    for p in negRules:
+    for line in negRules:
+        p = line[0]
         ft = factory.constructFormulaTree(p)
 
         TP = 0
@@ -206,39 +204,113 @@ def getMCRNegOutcome(negRules, dt, dataLabels):
         accuracy = (TP + TN) / totalPatients
         MCR = 1 - accuracy
 
-        mcrList.append([p, TP, TN, FP, FN, actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR])
+        mcrList.append(
+            [p, line[1], line[2], line[3], line[4], line[5], TP, TN, FP, FN, actualYes, actualNo, predictedYes,
+             predictedNo, TPR, TNR, FPR, prec, accuracy, MCR])
 
-    mcrDF = pd.DataFrame(mcrList, columns=['Rule', 'TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes', 'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
+    mcrDF = pd.DataFrame(mcrList,
+                         columns=['Rule', 'Discrimination Score', 'Pos Robustness', 'Neg Robustness', 'Percent Class +',
+                                  'Percent Class -',
+                                  'TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes', 'Predicted No',
+                                  'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
     mcrDF = mcrDF.sort_values(by='Accuracy', ascending=False)
 
-    return mcrDF
+    return mcrDF, totalPatients
+
+#add rules that perfectly misclassify the data to other set
+def addMisclassifiedRules(posDF, negDF, totalPatients):
+    negRows = negDF[negDF["MCR"] > 0.826]
+    negDF.drop(negDF[negDF['MCR'] > 0.826].index, inplace=True)
+
+    posRows = posDF[posDF["MCR"] > 0.826]
+    posDF.drop(posDF[posDF["MCR"] > 0.826].index, inplace=True)
+
+    lst = []
+    for index, n in negRows.iterrows():
+        TP = n["FN"]
+        TN = n["FP"]
+        FP = n["TN"]
+        FN = n["TP"]
+        actualNo = TN + FP
+        actualYes = FN + TP
+        predictedNo = TN + FN
+        predictedYes = TP + FP
+        TPR = TP / actualYes if actualYes else 0
+        FPR = FP / actualNo if actualNo else 0
+        TNR = TN / actualNo if actualNo else 0
+        prec = TP / predictedYes if predictedYes else 0
+        accuracy = (TP + TN) / totalPatients
+        MCR = 1 - accuracy
+
+        l = [n["Rule"], n['Discrimination Score'], n['Neg Robustness'], n['Pos Robustness'], n['Percent Class -'], n['Percent Class +'], TP, TN, FP, FN,
+               actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR]
+
+        lst.append(l)
+
+    posLst = posDF.values.tolist()
+    posLst.extend(lst)
+
+    fullPosDF = pd.DataFrame(posLst, columns=['Rule', 'Discrimination Score', 'Pos Robustness', 'Neg Robustness',
+                                      'Percent Class +','Percent Class -','TP', 'TN', 'FP', 'FN', 'Actual Yes', 'Actual No', 'Predicted Yes',
+                                      'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy', 'MCR'])
+
+    lst = []
+    for index, n in posRows.iterrows():
+        TP = n["FN"]
+        TN = n["FP"]
+        FP = n["TN"]
+        FN = n["TP"]
+        actualNo = TN + FP
+        actualYes = FN + TP
+        predictedNo = TN + FN
+        predictedYes = TP + FP
+        TPR = TP / actualYes if actualYes else 0
+        FPR = FP / actualNo if actualNo else 0
+        TNR = TN / actualNo if actualNo else 0
+        prec = TP / predictedYes if predictedYes else 0
+        accuracy = (TP + TN) / totalPatients
+        MCR = 1 - accuracy
+
+        l = [n["Rule"], n['Discrimination Score'], n['Neg Robustness'], n['Pos Robustness'], n['Percent Class -'], n['Percent Class +'], TP, TN, FP, FN,
+               actualYes, actualNo, predictedYes, predictedNo, TPR, TNR, FPR, prec, accuracy, MCR]
+
+        lst.append(l)
+
+    negLst = negDF.values.tolist()
+    negLst.extend(lst)
+
+    fullNegDF = pd.DataFrame(negLst, columns=['Rule', 'Discrimination Score', 'Pos Robustness', 'Neg Robustness',
+                                              'Percent Class +', 'Percent Class -', 'TP', 'TN', 'FP', 'FN',
+                                              'Actual Yes', 'Actual No', 'Predicted Yes',
+                                              'Predicted No', 'TPR/Sens', 'TNR/Spec', 'FPR', 'Precision', 'Accuracy',
+                                              'MCR'])
+
+    fullPosDF = fullPosDF.sort_values(by='Accuracy', ascending=False)
+    fullNegDF = fullNegDF.sort_values(by='Accuracy', ascending=False)
+
+    return fullPosDF, fullNegDF
+
 
 
 def absChangesMain():
 
     # Load all rules Death
-    allRulesD = []
     posRulesD = []
     negRulesD = []
 
     for i in range(0, 11):
-        filepath1 = "MCR/Rules/1.AbsoluteChanges/Death/CardChangesRuleDeath" + str(i) + ".txt"
-        filepath2 = "MCR/Rules/1.AbsoluteChanges/Death/CardChangesRuleScoresDeath" + str(i) + ".txt"
-        a, p, n = readRulesFromFile(filepath1, filepath2)
-        allRulesD.extend(a)
+        filepath = "MCR/Rules/1.AbsoluteChanges/Death/CardChangesRuleScoresDeath" + str(i) + ".txt"
+        p, n = readRulesFromFile(filepath)
         posRulesD.extend(p)
         negRulesD.extend(n)
 
     # Load all rules Rehosp
-    allRulesR = []
     posRulesR = []
     negRulesR = []
 
     for i in range(0, 11):
-        filepath1 = "MCR/Rules/1.AbsoluteChanges/Death+Rehosp/CardChangesRuleRehosp" + str(i) + ".txt"
-        filepath2 = "MCR/Rules/1.AbsoluteChanges/Death+Rehosp/CardChangesRuleScoresRehosp" + str(i) + ".txt"
-        a, p, n = readRulesFromFile(filepath1, filepath2)
-        allRulesR.extend(a)
+        filepath = "MCR/Rules/1.AbsoluteChanges/Death+Rehosp/CardChangesRuleScoresRehosp" + str(i) + ".txt"
+        p, n = readRulesFromFile(filepath)
         posRulesR.extend(p)
         negRulesR.extend(n)
 
@@ -249,31 +321,34 @@ def absChangesMain():
     absDataLabelsR = pd.read_csv('MCR/AbsChangesRehospLabels.csv', index_col=0)
 
     # Death, Positive Rules MCR
-    print("\nDeath, positive rules")
-    mcrDF = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
-    print(mcrDF)
-    mcrDF.to_csv('AbsChgDeathPositiveMCR.csv', index=False)
-
+    posDF, totalPatients = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
 
     # Death, Negative Rules MCR
+    negDF, totalPatients = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
+
+    posDF, negDF = addMisclassifiedRules(posDF, negDF, totalPatients)
+    print("\nDeath, positive rules")
+    print(posDF)
     print("\nDeath, negative rules")
-    mcrDF = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
-    print(mcrDF)
-    mcrDF.to_csv('AbsChgDeathNegativeMCR.csv', index=False)
+    print(negDF)
+    posDF.to_csv('AbsChgDeathPositiveMCR.csv', index=False)
+    negDF.to_csv('AbsChgDeathNegativeMCR.csv', index=False)
 
 
     # Rehosp, Positive Rules MCR
-    print("\nRehosp, positive rules")
-    mcrDF = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
-    print(mcrDF)
-    mcrDF.to_csv('AbsChgRehospPositiveMCR.csv', index=False)
-
+    posDF, totalPatients = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
 
     # Rehosp, Negative Rules MCR
+    negDF, totalPatients = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
+
+    posDF, negDF = addMisclassifiedRules(posDF, negDF, totalPatients)
+    print("\nRehosp, positive rules")
+    print(posDF)
     print("\nRehosp, negative rules")
-    mcrDF = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
-    print(mcrDF)
-    mcrDF.to_csv('AbsChgRehospNegativeMCR.csv', index=False)
+    print(negDF)
+
+    posDF.to_csv('AbsChgRehospPositiveMCR.csv', index=False)
+    negDF.to_csv('AbsChgRehospNegativeMCR.csv', index=False)
 
 
 def hemoFullMain():
@@ -287,28 +362,22 @@ def hemoFullMain():
              'BPSYSChange-', 'BPDIASChange+', 'BPDIASChange-', 'HRChange+', 'HRChange-']
 
     # Load all rules Death
-    allRulesD = []
     posRulesD = []
     negRulesD = []
 
     for i in range(0, 11):
-        filepath1 = "MCR/Rules/3.HemoFull/Death/CardHemoFullRuleDeath" + str(i) + ".txt"
-        filepath2 = "MCR/Rules/3.HemoFull/Death/CardHemoFullScoresDeath" + str(i) + ".txt"
-        a, p, n = readRulesFromFile(filepath1, filepath2)
-        allRulesD.extend(a)
+        filepath = "MCR/Rules/3.HemoFull/Death/CardHemoFullScoresDeath" + str(i) + ".txt"
+        p, n = readRulesFromFile(filepath)
         posRulesD.extend(p)
         negRulesD.extend(n)
 
     # Load all rules Rehosp
-    allRulesR = []
     posRulesR = []
     negRulesR = []
 
     for i in range(0, 11):
-        filepath1 = "MCR/Rules/3.HemoFull/Death+Rehosp/CardHemoFullRehosp" + str(i) + ".txt"
-        filepath2 = "MCR/Rules/3.HemoFull/Death+Rehosp/CardHemoFullScoresRehosp" + str(i) + ".txt"
-        a, p, n = readRulesFromFile(filepath1, filepath2)
-        allRulesR.extend(a)
+        filepath = "MCR/Rules/3.HemoFull/Death+Rehosp/CardHemoFullScoresRehosp" + str(i) + ".txt"
+        p, n = readRulesFromFile(filepath)
         posRulesR.extend(p)
         negRulesR.extend(n)
 
@@ -318,28 +387,33 @@ def hemoFullMain():
     absDataLabelsR = pd.read_csv('MCR/HemoFullRehospLabels.csv', index_col=0)
 
     # Death, Positive Rules MCR
-    print("\nDeath, positive rules")
-    mcrDF = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
-    print(mcrDF)
-    mcrDF.to_csv('HemoFullDeathPositiveMCR.csv', index=False)
+    posDF, totalPatients = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
 
     # Death, Negative Rules MCR
+    negDF, totalPatients = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
+
+    posDF, negDF = addMisclassifiedRules(posDF, negDF, totalPatients)
+    print("\nDeath, positive rules")
+    print(posDF)
     print("\nDeath, negative rules")
-    mcrDF = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
-    print(mcrDF)
-    mcrDF.to_csv('HemoFullDeathNegativeMCR.csv', index=False)
+    print(negDF)
+    posDF.to_csv('HemoFullDeathPositiveMCR.csv', index=False)
+    negDF.to_csv('HemoFullDeathNegativeMCR.csv', index=False)
 
     # Rehosp, Positive Rules MCR
-    print("\nRehosp, positive rules")
-    mcrDF = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
-    print(mcrDF)
-    mcrDF.to_csv('HemoFullRehospPositiveMCR.csv', index=False)
+    posDF, totalPatients = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
 
     # Rehosp, Negative Rules MCR
+    negDF, totalPatients = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
+
+    posDF, negDF = addMisclassifiedRules(posDF, negDF, totalPatients)
+    print("\nRehosp, positive rules")
+    print(posDF)
     print("\nRehosp, negative rules")
-    mcrDF = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
-    print(mcrDF)
-    mcrDF.to_csv('HemoFullRehospNegativeMCR.csv', index=False)
+    print(negDF)
+
+    posDF.to_csv('HemoFullRehospPositiveMCR.csv', index=False)
+    negDF.to_csv('HemoFullRehospNegativeMCR.csv', index=False)
 
 
 def hemoNoneMain():
@@ -349,28 +423,22 @@ def hemoNoneMain():
              'ANGIOT', 'Walk', 'VO2']
 
     # Load all rules Death
-    allRulesD = []
     posRulesD = []
     negRulesD = []
 
     for i in range(0, 11):
-        filepath1 = "MCR/Rules/4.HemoNone/Death/CardHemoNoneRuleDeath" + str(i) + ".txt"
-        filepath2 = "MCR/Rules/4.HemoNone/Death/CardHemoNoneScoresDeath" + str(i) + ".txt"
-        a, p, n = readRulesFromFile(filepath1, filepath2)
-        allRulesD.extend(a)
+        filepath = "MCR/Rules/4.HemoNone/Death/CardHemoNoneScoresDeath" + str(i) + ".txt"
+        p, n = readRulesFromFile(filepath)
         posRulesD.extend(p)
         negRulesD.extend(n)
 
     # Load all rules Rehosp
-    allRulesR = []
     posRulesR = []
     negRulesR = []
 
     for i in range(0, 11):
-        filepath1 = "MCR/Rules/4.HemoNone/Death+Rehosp/CardHemoNoneRuleRehosp" + str(i) + ".txt"
-        filepath2 = "MCR/Rules/4.HemoNone/Death+Rehosp/CardHemoNoneScoresRehosp" + str(i) + ".txt"
-        a, p, n = readRulesFromFile(filepath1, filepath2)
-        allRulesR.extend(a)
+        filepath = "MCR/Rules/4.HemoNone/Death+Rehosp/CardHemoNoneScoresRehosp" + str(i) + ".txt"
+        p, n = readRulesFromFile(filepath)
         posRulesR.extend(p)
         negRulesR.extend(n)
 
@@ -380,38 +448,40 @@ def hemoNoneMain():
     absDataLabelsR = pd.read_csv('MCR/HemoNoneRehospLabels.csv', index_col=0)
 
     # Death, Positive Rules MCR
-    print("\nDeath, positive rules")
-    mcrDF = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
-    print(mcrDF)
-    mcrDF.to_csv('HemoNoneDeathPositiveMCR.csv', index=False)
+    posDF, totalPatients = getMCRPosOutcome(posRulesD, absData, absDataLabelsD)
 
     # Death, Negative Rules MCR
+    negDF, totalPatients = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
+
+    posDF, negDF = addMisclassifiedRules(posDF, negDF, totalPatients)
+    print("\nDeath, positive rules")
+    print(posDF)
     print("\nDeath, negative rules")
-    mcrDF = getMCRNegOutcome(negRulesD, absData, absDataLabelsD)
-    print(mcrDF)
-    mcrDF.to_csv('HemoNoneDeathNegativeMCR.csv', index=False)
+    print(negDF)
+    posDF.to_csv('HemoNoneDeathPositiveMCR.csv', index=False)
+    negDF.to_csv('HemoNoneDeathNegativeMCR.csv', index=False)
 
     # Rehosp, Positive Rules MCR
-    print("\nRehosp, positive rules")
-    mcrDF = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
-    print(mcrDF)
-    mcrDF.to_csv('HemoNoneRehospPositiveMCR.csv', index=False)
+    posDF, totalPatients = getMCRPosOutcome(posRulesR, absData, absDataLabelsR)
 
     # Rehosp, Negative Rules MCR
+    negDF, totalPatients = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
+
+    posDF, negDF = addMisclassifiedRules(posDF, negDF, totalPatients)
+    print("\nRehosp, positive rules")
+    print(posDF)
     print("\nRehosp, negative rules")
-    mcrDF = getMCRNegOutcome(negRulesR, absData, absDataLabelsR)
-    print(mcrDF)
-    mcrDF.to_csv('HemoNoneRehospNegativeMCR.csv', index=False)
+    print(negDF)
 
-
-
+    posDF.to_csv('HemoNoneRehospPositiveMCR.csv', index=False)
+    negDF.to_csv('HemoNoneRehospNegativeMCR.csv', index=False)
 
 
 # Main Runner
 def main():
     #absChangesMain()
-    hemoFullMain()
-    #hemoNoneMain()
+    #hemoFullMain()
+    hemoNoneMain()
 
 
 
