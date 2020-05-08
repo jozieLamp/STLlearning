@@ -2,6 +2,7 @@ import logging
 from Learning import Learning
 from GeneticSpec.GeneticPopulation import GeneticPopulation
 import MCR.CalculateMCR_ICU as mcr
+import os.path
 
 #make learning object
 variables = ['LOS', 'ICU_Pt_Days', 'Mort', 'n_evts', 'y', 'tte', 'death', 'direct',
@@ -48,33 +49,35 @@ upper = [1.22000000e+02, 1.04000000e+02, 1.00000000e+00, 4.00000000e+00,
        2.22452357e+00, 8.51720869e-01, 4.49814800e+00, 1.00000000e+00,
        1.00000000e+00] # upperbound
 
-for i in range(1, 2):
+for i in range(1,2):
     print("Patient: ", i)
 
     dataName =  "../Data/ICUData/" + repr(i) + ".txt"
     labelName = "../Data/ICUData/" + repr(i) + "labels.txt"
 
-    l = Learning(logging.INFO, dataName, labelName, "../Data/ICUData/time.txt", variables, lower, upper)
+    if os.path.exists(dataName):
 
-    #start learning
-    generation = l.run()
+        l = Learning(logging.INFO, dataName, labelName, "../Data/ICUData/time.txt", variables, lower, upper)
 
-    print("Saving Rules")
+        #start learning
+        generation = l.run()
 
-    #save rules and scores to file
-    ruleScores = generation.finalFormulaScoresToString(500)
-    with open("../Rules/ICU/" + repr(i) + "ruleScores.txt", 'w') as filehandle:
-        for r in ruleScores:
-            filehandle.write('%s\n' % r)
+        print("Saving Rules")
 
-    #save rules themselves
-    rules = generation.finalFormulasToString(500)
+        #save rules and scores to file
+        ruleScores = generation.finalFormulaScoresToString(500)
+        with open("../Rules/ICU/" + repr(i) + "ruleScores.txt", 'w') as filehandle:
+            for r in ruleScores:
+                filehandle.write('%s\n' % r)
 
-    with open("../Rules/ICU/" + repr(i) + "rules.txt", 'w') as filehandle:
-        for r in rules:
-            filehandle.write('%s\n' % r)
+        #save rules themselves
+        rules = generation.finalFormulasToString(500)
+
+        with open("../Rules/ICU/" + repr(i) + "rules.txt", 'w') as filehandle:
+            for r in rules:
+                filehandle.write('%s\n' % r)
 
 
-    #calculate MCR
-    print("Running MCR")
-    mcr.runMCR(i)
+        #calculate MCR
+        print("Running MCR")
+        mcr.runMCR(i)
