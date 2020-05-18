@@ -168,7 +168,7 @@ class GeneticGenerator:
         for i in range(negativeTestSet.shape[0]):
             testSet[posSz + i, :, :] = negativeTestSet[i, :, :]
 
-        totalTrajectories = len(labels)
+        totalTrajectories = len(testSet)
 
         for i in range(len(generation.rankFormulae)):
             f = generation.rankFormulae[i]
