@@ -336,7 +336,46 @@ def runMCR(patient):
             filehandle.write('%s\n' % b)
 
 
+def runMCRGenRules(patient):
 
+    # Load all rules
+    filepath = "Rules/ICU/" + str(patient) + "ruleScores.txt"
+    posRules, negRules = readRulesFromFile(filepath)
+
+    # Load Data
+    data = pd.read_csv('Data/ICUDataFrames/' + str(patient) + 'DataFrame.csv', index_col=0)
+    labels = pd.read_csv('Data/ICUDataFrames/' + str(patient) + 'Labels.csv')
+
+    # Positive Rules MCR
+    posDF, totalPatients = getMCRPosOutcome(posRules, data, labels)
+
+    # Negative Rules MCR
+    negDF, totalPatients = getMCRNegOutcome(negRules, data, labels)
+
+    # posDF, negDF = addMisclassifiedRules(posDF, negDF, totalPatients)
+    # print("\nPositive rules")
+    # print(posDF)
+    # print("\nNegative rules")
+    # print(negDF)
+    posDF.to_csv("Rules/MCR/" + str(patient) + 'PositiveMCR.csv', index=False)
+    negDF.to_csv("Rules/MCR/" + str(patient) + 'NegativeMCR.csv', index=False)
+
+    #make single file with mcr for all rules
+    posDF['Class'] = 1
+    negDF['Class'] = -1
+    giantDF = posDF.append(negDF)
+    giantDF = giantDF.sort_values(by='Accuracy', ascending=False)
+    giantDF.to_csv("Rules/MCR/" + str(patient) + 'AllMCR.csv', index=False)
+
+
+    #save top rules from giant DF into txt file
+    vals = giantDF[giantDF['Accuracy'] > 0.80]
+    bestRules = vals['Rule'].values
+    print("LEN BEST RULES =", len(bestRules))
+
+    with open("Rules/Best/" + repr(patient) + "Rules.txt", 'w') as filehandle:
+        for b in bestRules:
+            filehandle.write('%s' % b)
 
 
 
