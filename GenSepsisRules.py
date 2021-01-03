@@ -193,14 +193,24 @@ def genInitialRuleSet(df):
         ruleset.append(rule)
 
         # calc, potassium, magnesium
-        # tl, tu = makeTime(timeLower, timeUpper)
-        # val1 = makeParams(variables["Calcium"][1], variables["Calcium"][2])
-        # val2 = makeParams(variables["Potassium"][0], variables["Potassium"][1])
-        # val3 = makeParams(variables["Magnesium"][1], variables["Magnesium"][2])
-        # rule = "G" + "[" + str(tl) + "," + str(tu) + "]" + "(" + "Calcium" + " " + "<=" + " " + str(
-        #     val1) + " " + "&" + " " + "Potassium" + " " + ">=" + " " + str(
-        #     val2) + " " + "&" + " " + "Magnesium" + " " + "<=" + " " + str(val3) + ")"
-        # ruleset.append(rule)
+        tl, tu = makeTime(timeLower, timeUpper)
+        val1 = makeParams(variables["Calcium"][1], variables["Calcium"][2])
+        val2 = makeParams(variables["Potassium"][1], variables["Potassium"][2])
+        val3 = makeParams(variables["Magnesium"][0], variables["Magnesium"][1])
+        rule = "G" + "[" + str(tl) + "," + str(tu) + "]" + "((" + "Calcium" + " " + "<=" + " " + str(
+            val1) + " " + "& " + "Potassium" + " " + "<=" + " " + str(
+            val2) + ") " + "&" + " " + "Magnesium" + " " + ">=" + " " + str(val3) + ")"
+        ruleset.append(rule)
+
+        # o2sat, hr, map
+        tl, tu = makeTime(timeLower, timeUpper)
+        val1 = makeParams(variables["Phosphate"][0], variables["Phosphate"][1])
+        val2 = makeParams(variables["Magnesium"][0], variables["Magnesium"][1])
+        val3 = makeParams(variables["Calcium"][1], variables["Calcium"][2])
+        rule = "G" + "[" + str(tl) + "," + str(tu) + "]" + "((" + "Phosphate" + " " + ">=" + " " + str(
+            val1) + " " + "& " + "Magnesium" + " " + ">" + " " + str(
+            val2) + ") " + "->" + " " + "Calcium" + " " + "<" + " " + str(val3) + ")"
+        ruleset.append(rule)
 
         # MAP SBP
         tl, tu = makeTime(timeLower, timeUpper)

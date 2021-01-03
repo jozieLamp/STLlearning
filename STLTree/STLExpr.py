@@ -10,6 +10,7 @@ class ExprEnum(Enum):
     stlTerm = 5
     timeBound = 6
     boolExpr = 7
+    missing = 8
 
 
 
@@ -63,7 +64,10 @@ class TimeBound(STLExpr):
         self.timeBound = [lowerBound, upperBound]
 
     def toString(self):
-        return "[" + str(round(float(self.lowerBound))) + "," + str(round(float(self.upperBound))) + "]"
+        if self.lowerBound == "?":
+            return "[" + str(self.lowerBound) + "," + str(self.upperBound) + "]"
+        else:
+            return "[" + str(round(float(self.lowerBound))) + "," + str(round(float(self.upperBound))) + "]"
 
 class BoolExpr(STLExpr):
     def __init__(self, type=ExprEnum.boolExpr, boolOperator=None, stlTerm1=None, stlTerm2=None):
@@ -78,7 +82,10 @@ class BoolExpr(STLExpr):
         if self.boolOperator != None:
             st += " " +self.boolOperator.toString() + " "
         if self.stlTerm2 != None:
-            st += self.stlTerm2.toString()
+            if isinstance(self.stlTerm2, list):
+                st += self.stlTerm2[0].toString() + " & " + self.stlTerm2[1].toString()
+            else:
+                st += self.stlTerm2.toString()
 
         return st
 
@@ -105,6 +112,7 @@ class BoolExpr(STLExpr):
                 return self.stlTerm1.evaluateValue(traj, timeIndex) or self.stlTerm2.evaluateValue(traj, timeIndex)
             elif self.boolOperator.type == OperatorEnum.IMPLIES:
                 return (not self.stlTerm1.evaluateValue(traj, timeIndex)) or self.stlTerm2.evaluateValue(traj, timeIndex)
+
 
         elif self.stlTerm2 != None:
             return self.stlTerm2.evaluateValue(traj, timeIndex)
@@ -143,6 +151,12 @@ class STLTerm(STLExpr):
                 st = self.tempOperator.toString() + self.timebound.toString() + "(" + self.boolAtomic1.toString() + ")"
             elif self.tempOperator.type == OperatorEnum.U: #U
                 st = "((" + self.boolAtomic1.toString() + ") " + self.tempOperator.toString() + self.timebound.toString() + " ("+ self.boolAtomic2.toString() + "))"
+            elif self.tempOperator.type == OperatorEnum.NONE:
+                if self.boolAtomic2 != None:
+                    st = "((" + self.boolAtomic1.toString() + ") " + self.tempOperator.toString() + self.timebound.toString() + " (" + self.boolAtomic2.toString() + "))"
+                else:
+                    st = self.tempOperator.toString() + self.timebound.toString() + "(" + self.boolAtomic1.toString() + ")"
+
         else: #self.tempOperator == None:
             st = self.boolAtomic1.toString()
 
@@ -269,6 +283,7 @@ class STLTerm(STLExpr):
         else:
             return self.boolAtomic1.evaluateValue(traj, timeIndex)
 
+
     def evaluateTruthValue(self, df, originalDF):
         if self.tempOperator != None:
             if self.tempOperator.type == OperatorEnum.G:
@@ -317,6 +332,16 @@ class STLTerm(STLExpr):
 
         else:
             return self.boolAtomic1.evaluateTruthValue(df, originalDF)
+
+
+class Missing :
+    def __init__(self, type=ExprEnum.missing, symbol="?"):
+        self.type = type
+        self.symbol = symbol
+
+    def toString(self):
+        return self.symbol
+
 
 #Genral STL Expression functions
 
