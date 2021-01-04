@@ -55,6 +55,7 @@ names = ['HR',
  'Platelets',
  'SepsisLabel']
 temporalOp = ["G", "F", "U"]
+tempOpSmall = ["G", "F"]
 yboolOp = ["&", "->"]
 boolOp = ["|", "&", "->"]
 relOp = [">", ">=", "<", "<="]
@@ -111,33 +112,122 @@ def genYRule(tl, tu, var, variables):
 
 
 def genRule(tl, tu, var1, var2, variables):
-    temp = random.choice(temporalOp)
-    bol = random.choice(boolOp)
+    numOps = random.choice([2, 3, 4])
 
-    r1 = random.randint(0, 1)
-    r2 = random.randint(0, 1)
+    if numOps == 2:
+        temp = random.choice(temporalOp)
+        bol = random.choice(boolOp)
 
-    if r1 == 0:  # lower
-        rop1 = ">="
-        val1 = makeParams(variables[var1][0], variables[var1][1])
-    else:
-        rop1 = "<="
-        val1 = makeParams(variables[var1][1], variables[var1][2])
+        r1 = random.randint(0, 1)
+        r2 = random.randint(0, 1)
 
-    if r2 == 0:  # lower
-        rop2 = ">="
-        val2 = makeParams(variables[var2][0], variables[var2][1])
-    else:
-        rop2 = "<="
-        val2 = makeParams(variables[var2][1], variables[var2][2])
+        if r1 == 0:  # lower
+            rop1 = ">="
+            val1 = makeParams(variables[var1][0], variables[var1][1])
+        else:
+            rop1 = "<="
+            val1 = makeParams(variables[var1][1], variables[var1][2])
 
-    if temp != "U":
-        rule = temp + "[" + str(tl) + "," + str(tu) + "]" + "(" + var1 + " " + rop1 + " " + str(
-            val1) + " " + bol + " " + var2 + " " + rop2 + " " + str(val2) + ")"
+        if r2 == 0:  # lower
+            rop2 = ">="
+            val2 = makeParams(variables[var2][0], variables[var2][1])
+        else:
+            rop2 = "<="
+            val2 = makeParams(variables[var2][1], variables[var2][2])
 
-    else:
-        rule = "((" + var1 + " " + rop1 + " " + str(val1) + ") " + temp + "[" + str(tl) + "," + str(
-            tu) + "] " + "(" + var2 + " " + rop2 + " " + str(val2) + "))"
+        if temp != "U":
+            rule = temp + "[" + str(tl) + "," + str(tu) + "]" + "(" + var1 + " " + rop1 + " " + str(
+                val1) + " " + bol + " " + var2 + " " + rop2 + " " + str(val2) + ")"
+
+        else:
+            rule = "((" + var1 + " " + rop1 + " " + str(val1) + ") " + temp + "[" + str(tl) + "," + str(
+                tu) + "] " + "(" + var2 + " " + rop2 + " " + str(val2) + "))"
+
+    elif numOps == 3:
+        temp = random.choice(tempOpSmall)
+        var3 = random.choice(names)
+
+        bol1 = random.choice(boolOp)
+        bol2 = random.choice(boolOp)
+
+        r1 = random.randint(0, 1)
+        r2 = random.randint(0, 1)
+        r3 = random.randint(0,1)
+
+        if r1 == 0:  # lower
+            rop1 = ">="
+            val1 = makeParams(variables[var1][0], variables[var1][1])
+        else:
+            rop1 = "<="
+            val1 = makeParams(variables[var1][1], variables[var1][2])
+
+        if r2 == 0:  # lower
+            rop2 = ">="
+            val2 = makeParams(variables[var2][0], variables[var2][1])
+        else:
+            rop2 = "<="
+            val2 = makeParams(variables[var2][1], variables[var2][2])
+
+        if r3 == 0:  # lower
+            rop3 = ">="
+            val3 = makeParams(variables[var2][0], variables[var2][1])
+        else:
+            rop3 = "<="
+            val3 = makeParams(variables[var2][1], variables[var2][2])
+
+        rule = temp + "[" + str(tl) + "," + str(tu) + "]" + "((" + var1 + " " + rop1 + " " + str(
+            val1) + " " + bol1 + " " +  var2 + " " + rop2 + " " + str(
+            val2) + ") " + bol2 + " " + var3 + " " + rop3 + " " + str(val3) + ")"
+
+    else: #numOps == 4
+        temp = random.choice(tempOpSmall)
+
+        var3 = random.choice(names)
+        var4  = random.choice(names)
+
+        bol1 = random.choice(boolOp)
+        bol2 = random.choice(boolOp)
+        bol3 = random.choice(boolOp)
+
+        r1 = random.randint(0, 1)
+        r2 = random.randint(0, 1)
+        r3 = random.randint(0, 1)
+        r4 = random.randint(0, 1)
+
+        if r1 == 0:  # lower
+            rop1 = ">="
+            val1 = makeParams(variables[var1][0], variables[var1][1])
+        else:
+            rop1 = "<="
+            val1 = makeParams(variables[var1][1], variables[var1][2])
+
+        if r2 == 0:  # lower
+            rop2 = ">="
+            val2 = makeParams(variables[var2][0], variables[var2][1])
+        else:
+            rop2 = "<="
+            val2 = makeParams(variables[var2][1], variables[var2][2])
+
+        if r3 == 0:  # lower
+            rop3 = ">="
+            val3 = makeParams(variables[var2][0], variables[var2][1])
+        else:
+            rop3 = "<="
+            val3 = makeParams(variables[var2][1], variables[var2][2])
+
+        if r4 == 0:  # lower
+            rop4 = ">="
+            val4 = makeParams(variables[var2][0], variables[var2][1])
+        else:
+            rop4 = "<="
+            val4 = makeParams(variables[var2][1], variables[var2][2])
+
+
+        rule = temp + "[" + str(tl) + "," + str(tu) + "]" + "(((" + var1 + " " + rop1 + " " + str(
+            val1) + " " + bol1 +  " " + var2 + " " + rop2 + " " + str(
+            val2) + ") " + bol2 + " " + var3 + " " + rop3 + " " + str(
+            val3) + ") " + bol3 + " " + var4 + " " + rop4 + " " + str(val4) + ")"
+
 
     return rule
 
@@ -192,14 +282,37 @@ def genInitialRuleSet(df):
             val1) + " " + "->" + " " + "WBC" + " " + ">=" + " " + str(val2) + ")"
         ruleset.append(rule)
 
+        # hgb, hct, wbc, platelets
+        tl, tu = makeTime(timeLower, timeUpper)
+        val1 = makeParams(variables["Hgb"][1], variables["Hgb"][2])
+        val2 = makeParams(variables["Hct"][1], variables["Hct"][2])
+        val3 = makeParams(variables["WBC"][0], variables["WBC"][1])
+        val4 = makeParams(variables["Platelets"][0], variables["Platelets"][1])
+        rule = "G" + "[" + str(tl) + "," + str(tu) + "]" + "(((" + "Hgb" + " " + "<=" + " " + str(
+            val1) + " " + "| " + "Hct" + " " + "<=" + " " + str(
+            val2) + ") " + "->" + " " + "WBC" + " " + ">=" + " " + str(val3) + ") " + "&" + " " + "Platelets" + " " + ">=" + " " + str(val4) + ")"
+        ruleset.append(rule)
+
         # calc, potassium, magnesium
         tl, tu = makeTime(timeLower, timeUpper)
         val1 = makeParams(variables["Calcium"][1], variables["Calcium"][2])
         val2 = makeParams(variables["Potassium"][1], variables["Potassium"][2])
         val3 = makeParams(variables["Magnesium"][0], variables["Magnesium"][1])
-        rule = "G" + "[" + str(tl) + "," + str(tu) + "]" + "((" + "Calcium" + " " + "<=" + " " + str(
+        rule = "F" + "[" + str(tl) + "," + str(tu) + "]" + "((" + "Calcium" + " " + "<=" + " " + str(
             val1) + " " + "& " + "Potassium" + " " + "<=" + " " + str(
             val2) + ") " + "&" + " " + "Magnesium" + " " + ">=" + " " + str(val3) + ")"
+        ruleset.append(rule)
+
+        # caalc, pot, magnes, phosph
+        tl, tu = makeTime(timeLower, timeUpper)
+        val1 = makeParams(variables["Calcium"][1], variables["Calcium"][2])
+        val2 = makeParams(variables["Potassium"][1], variables["Potassium"][2])
+        val3 = makeParams(variables["Magnesium"][1], variables["Magnesium"][2])
+        val4 = makeParams(variables["Phosphate"][1], variables["Phosphate"][2])
+        rule = "F" + "[" + str(tl) + "," + str(tu) + "]" + "(((" + "Calcium" + " " + "<" + " " + str(
+            val1) + " " + "& " + "Potassium" + " " + "<" + " " + str(
+            val2) + ") " + "&" + " " + "Magnesium" + " " + "<" + " " + str(
+            val3) + ") " + "&" + " " + "Phosphate" + " " + "<" + " " + str(val4) + ")"
         ruleset.append(rule)
 
         # o2sat, hr, map
@@ -207,7 +320,7 @@ def genInitialRuleSet(df):
         val1 = makeParams(variables["Phosphate"][0], variables["Phosphate"][1])
         val2 = makeParams(variables["Magnesium"][0], variables["Magnesium"][1])
         val3 = makeParams(variables["Calcium"][1], variables["Calcium"][2])
-        rule = "G" + "[" + str(tl) + "," + str(tu) + "]" + "((" + "Phosphate" + " " + ">=" + " " + str(
+        rule = "F" + "[" + str(tl) + "," + str(tu) + "]" + "((" + "Phosphate" + " " + ">=" + " " + str(
             val1) + " " + "& " + "Magnesium" + " " + ">" + " " + str(
             val2) + ") " + "->" + " " + "Calcium" + " " + "<" + " " + str(val3) + ")"
         ruleset.append(rule)
@@ -224,7 +337,7 @@ def genInitialRuleSet(df):
         tl, tu = makeTime(timeLower, timeUpper)
         val1 = makeParams(variables["BUN"][1], variables["BUN"][2])
         val2 = makeParams(variables["Creatinine"][0], variables["Creatinine"][1])
-        rule = "F" + "[" + str(tl) + "," + str(tu) + "]" + "(" + "BUN" + " " + "<=" + " " + str(
+        rule = "G" + "[" + str(tl) + "," + str(tu) + "]" + "(" + "BUN" + " " + "<=" + " " + str(
             val1) + " " + "&" + " " + "Creatinine" + " " + ">=" + " " + str(val2) + ")"
         ruleset.append(rule)
 
@@ -423,7 +536,7 @@ def run():
 
     stlFac = STLFactory()
 
-    for i in range(1, 3):#40337):
+    for i in range(1, 40337):
         print("\nID is ", i)
 
         # try:
