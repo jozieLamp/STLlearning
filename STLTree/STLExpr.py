@@ -78,14 +78,15 @@ class BoolExpr(STLExpr):
         self.stlTerm2 = stlTerm2
 
     def toString(self):
-        st = self.stlTerm1.toString()
+        if(self.stlTerm1.toString()[0:1] == 'G[' or self.stlTerm1.toString()[0:1] == 'F[' or self.boolOperator  == None):
+            st = self.stlTerm1.toString()
+        else:
+            st = "(" + self.stlTerm1.toString()
+
         if self.boolOperator != None:
             st += " " +self.boolOperator.toString() + " "
         if self.stlTerm2 != None:
-            if isinstance(self.stlTerm2, list):
-                st += self.stlTerm2[0].toString() + " & " + self.stlTerm2[1].toString()
-            else:
-                st += self.stlTerm2.toString()
+            st += self.stlTerm2.toString() + ")"
 
         return st
 
@@ -148,8 +149,8 @@ class STLTerm(STLExpr):
     def toString(self):
         if self.tempOperator != None:
             if self.tempOperator.type == OperatorEnum.G or self.tempOperator.type == OperatorEnum.F:
-                st = self.tempOperator.toString() + self.timebound.toString() + "(" + self.boolAtomic1.toString() + ")"
-            elif self.tempOperator.type == OperatorEnum.U: #U
+                st = self.tempOperator.toString() + self.timebound.toString()  + self.boolAtomic1.toString()
+            elif self.tempOperator.type == OperatorEnum.U:  # U
                 st = "((" + self.boolAtomic1.toString() + ") " + self.tempOperator.toString() + self.timebound.toString() + " ("+ self.boolAtomic2.toString() + "))"
             elif self.tempOperator.type == OperatorEnum.NONE:
                 if self.boolAtomic2 != None:
