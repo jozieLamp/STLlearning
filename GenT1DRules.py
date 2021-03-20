@@ -302,8 +302,8 @@ def genInitialRuleSet(df):
         tl, tu = makeTime(timeLower, timeUpper)
         val1 = makeParams(variables["BGTestAvgNumMeter"][0], variables["BGTestAvgNumMeter"][1])
         val2 = makeParams(variables["BGTestAvgNumPtRep"][1], variables["BGTestAvgNumPtRep"][2])
-        rule = "((" + "MAP" + " " + ">=" + " " + str(val1) + ") " + "U" + "[" + str(tl) + "," + str(
-            tu) + "]" + " (" + "SBP" + " " + "<=" + " " + str(val2) + "))"
+        rule = "((" + "BGTestAvgNumMeter" + " " + ">=" + " " + str(val1) + ") " + "U" + "[" + str(tl) + "," + str(
+            tu) + "]" + " (" + "BGTestAvgNumPtRep" + " " + "<=" + " " + str(val2) + "))"
         ruleset.append(rule)
 
     # Make sepsislabel correlated rules
@@ -501,68 +501,69 @@ def run():
 
     stlFac = STLFactory()
 
-    for i in range(1, 34013):
+    for i in range(1, 34014):
+
         print("\nID is ", i)
 
-        # try:
-        #gen corr rules
-        df = pd.read_csv("Data/T1D/DataFrames/" + repr(i) + "DataFrame.csv", sep=",", index_col=0)
-        dfLabels = pd.read_csv("Data/T1D/DataFrames/" + repr(i) + "Labels.csv", sep=",")
-        ruleset, paramDict = genInitialRuleSet(df)
-        print("Length of Ruleset", len(ruleset))
+        try:
+            #gen corr rules
+            df = pd.read_csv("Data/T1D/DataFrames/" + repr(i) + "DataFrame.csv", sep=",", index_col=0)
+            dfLabels = pd.read_csv("Data/T1D/DataFrames/" + repr(i) + "Labels.csv", sep=",")
+            ruleset, paramDict = genInitialRuleSet(df)
+            print("Length of Ruleset", len(ruleset))
 
-        # Load labels, time and data
-        labels = readVectorFromFile("Data/T1D/Data/" + repr(i) + "Labels.txt")  # returns one D array of labels
-        time = list(range(0,len(df)))  # returns one D array of time
-        # print("Time ROWS " + str(len(time)))
+            # Load labels, time and data
+            labels = readVectorFromFile("Data/T1D/Data/" + repr(i) + "Labels.txt")  # returns one D array of labels
+            time = list(range(0,len(df)))  # returns one D array of time
+            # print("Time ROWS " + str(len(time)))
 
-        sliceTime = list(range(0,2))
-        # print("Labels/Num Layers DEPTH " + str(len(labels)))
-        data = readMatrixFromFile("Data/T1D/Data/" + repr(i) + ".txt", sliceTime)  # returns 3D array of data
-        # print("Data Loaded\n" + '%s' % (data) + "\n")
+            sliceTime = list(range(0,2))
+            # print("Labels/Num Layers DEPTH " + str(len(labels)))
+            data = readMatrixFromFile("Data/T1D/Data/" + repr(i) + ".txt", sliceTime)  # returns 3D array of data
+            # print("Data Loaded\n" + '%s' % (data) + "\n")
 
-        positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet = makeTrainingTrajectories(data, labels, 0.5)
-        testSet =  np.zeros((positiveTestSet.shape[0]+negativeTestSet.shape[0], positiveTestSet.shape[1], positiveTestSet.shape[2]))
-        totalTrajectories = len(testSet)
-
-
-        formulas = []
-        scores  = []
-        lst = []
-
-        #Make STL tree rules
-        for r in ruleset:
-            formulas.append(stlFac.constructFormulaTree(r + "\n"))
-
-        for f in formulas:
-            # get score, make score variable
-            val1Mean, val1Var = computeRobustness(positiveTrainSet, sliceTime, paramDict, 0, f)
-            val2Mean, val2Var = computeRobustness(negativeTrainSet, sliceTime, paramDict, 0, f)
-            classDif = discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
-            s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
-            scores.append(s)
-
-            #calc  positive and negative classes
-            posSum = calculateFinalScores(testSet, f, sliceTime, names, paramDict)
-            s.posClassPctg = posSum / totalTrajectories
-            s.negClassPctg = (totalTrajectories - posSum) / totalTrajectories
-
-            # print(f.toString() + " [" + s.toStringFull() + "]")
-            lst.append(f.toString() + " [" + s.toStringFull() + "]")
+            positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet = makeTrainingTrajectories(data, labels, 0.5)
+            testSet =  np.zeros((positiveTestSet.shape[0]+negativeTestSet.shape[0], positiveTestSet.shape[1], positiveTestSet.shape[2]))
+            totalTrajectories = len(testSet)
 
 
-        #save to file
-        with open("Data/T1D/Rules/" + repr(i) + "ruleScores.txt", 'w') as filehandle:
-            for r in lst:
-                filehandle.write('%s\n' % r)
+            formulas = []
+            scores  = []
+            lst = []
 
-        # calculate MCR
-        print("Running MCR")
-        mcr.runMCRGenRules(i)
+            #Make STL tree rules
+            for r in ruleset:
+                formulas.append(stlFac.constructFormulaTree(r + "\n"))
+
+            for f in formulas:
+                # get score, make score variable
+                val1Mean, val1Var = computeRobustness(positiveTrainSet, sliceTime, paramDict, 0, f)
+                val2Mean, val2Var = computeRobustness(negativeTrainSet, sliceTime, paramDict, 0, f)
+                classDif = discriminationFunction(val1Mean, val1Var, val2Mean, val2Var)
+                s = Score(val1Mean, val1Var, val2Mean, val2Var, classDif)
+                scores.append(s)
+
+                #calc  positive and negative classes
+                posSum = calculateFinalScores(testSet, f, sliceTime, names, paramDict)
+                s.posClassPctg = posSum / totalTrajectories
+                s.negClassPctg = (totalTrajectories - posSum) / totalTrajectories
+
+                # print(f.toString() + " [" + s.toStringFull() + "]")
+                lst.append(f.toString() + " [" + s.toStringFull() + "]")
 
 
-        # except FileNotFoundError:
-        #     print("******File not found for", repr(i))
+            #save to file
+            with open("Data/T1D/Rules/" + repr(i) + "ruleScores.txt", 'w') as filehandle:
+                for r in lst:
+                    filehandle.write('%s\n' % r)
+
+            # calculate MCR
+            print("Running MCR")
+            mcr.runMCRGenRules(i)
+
+
+        except FileNotFoundError:
+            print("******File not found for", repr(i))
 
 
 
