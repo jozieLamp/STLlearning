@@ -394,7 +394,7 @@ def run():
             sliceTime = list(range(0,2))
             # print("Labels/Num Layers DEPTH " + str(len(labels)))
             data = readMatrixFromFile("Data/ICUData/" + repr(i) + ".txt", sliceTime)  # returns 3D array of data
-            print("Data Loaded\n" + '%s' % (data) + "\n")
+            # print("Data Loaded\n" + '%s' % (data) + "\n")
 
             positiveTrainSet, negativeTrainSet, positiveTestSet, negativeTestSet = makeTrainingTrajectories(data, labels, 0.5)
             testSet =  np.zeros((positiveTestSet.shape[0]+negativeTestSet.shape[0], positiveTestSet.shape[1], positiveTestSet.shape[2]))
